@@ -26,27 +26,27 @@ private slots:
     void onCustomQuery();
     void onOpenThresholds();
     void onExportExcel();
-    void onTimeSliderChanged(int value);
-    void onResetZoom();
+    void onCardSliderChanged(int value);
 
 private:
     void setupUI();
     void loadData(QDateTime from, QDateTime to);
-    void updateSliderFromTimes(QDateTime from, QDateTime to);
+    void syncAllSliders();
+    void syncSliderFromTimes(QScrollBar *slider, QDateTime from, QDateTime to);
+    void zoomChartX(int sensorIndex, double factor);
+    void zoomChartY(int sensorIndex, double factor);
     QWidget* createChartCard(const QString &title, const QString &unit, int sensorIndex);
 
     QScrollArea *scrollArea;
     QDateTimeEdit *fromTime, *toTime;
-    QPushButton *thresholdBtn, *exportBtn, *resetZoomBtn;
+    QPushButton *thresholdBtn, *exportBtn;
     QMap<int, QtCharts::QChartView*> charts;
     QMap<int, QWidget*> chartCards;
+    QMap<int, QScrollBar*> cardSliders;
 
-    // 时间拖拉滑块
-    QScrollBar *timeSlider;
-    QLabel *sliderLabel;
     double dbEarliestSec = 0;
     double dbLatestSec   = 0;
-    int    sliderSteps   = 720;  // 滑块总步数（每步可调节精度）
+    static constexpr int sliderSteps = 720;
 };
 
 #endif // CHARTDASHBOARD_H
