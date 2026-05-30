@@ -170,7 +170,7 @@ void ChartDashboard::loadData(QDateTime from, QDateTime to) {
 
     struct SensorDef {
         QString unit;
-        double (SensorSnapshot::*field);
+        double SensorSnapshot::*field;
     };
     QVector<SensorDef> sensors = {
         {"℃",  &SensorSnapshot::airTemp},

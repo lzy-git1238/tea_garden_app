@@ -1,0 +1,81 @@
+<h2>数据看板 — 精化设计</h2>
+<p class="subtitle">新窗口 ChartDashboard，QWidget 独立窗口，800×700 可缩放</p>
+
+<div class="mockup">
+  <div class="mockup-header">ChartDashboard 窗口布局</div>
+  <div class="mockup-body" style="background:#051623;padding:10px;display:flex;flex-direction:column;gap:8px;">
+
+    <!-- 顶部工具栏 -->
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:6px;">
+      <div style="display:flex;gap:6px;">
+        <button class="mock-button" style="background:#00897B;font-size:10px;">1小时</button>
+        <button class="mock-button" style="font-size:10px;">6小时</button>
+        <button class="mock-button" style="font-size:10px;">24小时</button>
+        <button class="mock-button" style="font-size:10px;">7天</button>
+      </div>
+      <div style="display:flex;gap:4px;align-items:center;font-size:10px;color:#90A4AE;">
+        自 <input class="mock-input" style="width:100px;font-size:9px;" value="2026-05-31 00:00">
+        至 <input class="mock-input" style="width:100px;font-size:9px;" value="2026-05-31 12:00">
+        <button class="mock-button" style="font-size:10px;">查询</button>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="mock-button" style="font-size:10px;">⚙ 阈值设置</button>
+        <button class="mock-button" style="font-size:10px;">📤 导出CSV</button>
+      </div>
+    </div>
+
+    <!-- 图表滚动区 -->
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;padding:4px;">
+
+      <!-- 一张图 (重复8次) -->
+      <div style="background:rgba(0,0,0,0.3);border:1px solid #1a2a3a;border-radius:6px;padding:4px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#00E5FF;margin-bottom:3px;">
+          <span>📈 空气温度</span>
+          <span style="color:#FF5252;font-size:9px;">阈值: ≥35℃</span>
+        </div>
+        <div class="placeholder" style="height:180px;display:flex;align-items:center;justify-content:center;font-size:10px;background:rgba(255,255,255,0.02);">
+          折线图区域 (QtCharts QChartView)
+          <br>时间轴 X | 数值轴 Y
+          <br><span style="color:#FF5252;">⚠ 超阈值点红色高亮标记</span>
+        </div>
+      </div>
+
+      <!-- 提示: 8张图可滚动 -->
+      <div style="text-align:center;color:#90A4AE;font-size:9px;padding:4px;">
+        ↑ ↓ 共 8 张折线图，窗口内滚动
+        <br>空气温度 | 空气湿度 | 光照强度 | 土壤 pH | 风速 | 土壤温度 | 土壤湿度 | 土壤电导率
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">⚙ 阈值设置弹窗</div>
+    <div class="mockup-body" style="background:#051623;padding:8px;">
+      <table style="width:100%;font-size:10px;color:#E0E0E0;">
+        <tr><th style="text-align:left;color:#90A4AE;">传感器</th><th style="text-align:left;color:#90A4AE;">阈值上限</th><th style="text-align:left;color:#90A4AE;">阈值下限</th></tr>
+        <tr><td>空气温度</td><td><input class="mock-input" style="width:60px;font-size:9px;" value="35"> ℃</td><td><input class="mock-input" style="width:60px;font-size:9px;" value="0"> ℃</td></tr>
+        <tr><td>空气湿度</td><td><input class="mock-input" style="width:60px;font-size:9px;" value="90"> %</td><td><input class="mock-input" style="width:60px;font-size:9px;" value="20"> %</td></tr>
+        <tr><td>土壤 pH</td><td><input class="mock-input" style="width:60px;font-size:9px;" value="7.5"></td><td><input class="mock-input" style="width:60px;font-size:9px;" value="4.5"></td></tr>
+        <tr><td colspan="3" style="color:#90A4AE;">... 共 8 项，默认值已预设</td></tr>
+      </table>
+      <div style="display:flex;gap:6px;margin-top:8px;justify-content:flex-end;">
+        <button class="mock-button" style="font-size:10px;">恢复默认</button>
+        <button class="mock-button" style="font-size:10px;background:#00897B;">保存</button>
+      </div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">⚠ 超阈值标记</div>
+    <div class="mockup-body" style="background:#051623;padding:8px;font-size:10px;color:#E0E0E0;">
+      <p>图上展示方式：</p>
+      <ul style="margin:4px 0;">
+        <li><span style="color:#FF5252;">● 红色圆点</span> 标记超阈值数据点</li>
+        <li>虚线显示阈值线</li>
+        <li>右下角标注: "<span style="color:#FF5252;">⚠ 超限 3 处</span>"</li>
+      </ul>
+      <p style="margin-top:8px;color:#FFA000;">可选：阈值触发时在主窗口弹通知？</p>
+    </div>
+  </div>
+</div>

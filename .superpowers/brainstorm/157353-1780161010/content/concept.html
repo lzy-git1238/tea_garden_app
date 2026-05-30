@@ -1,0 +1,49 @@
+<h2>数据折线看板 — 概念设计</h2>
+<p class="subtitle">在主界面加一个按钮，点击打开独立的数据看板窗口，显示 8 项传感器历史折线图</p>
+
+<div class="section">
+  <h3>主界面改动</h3>
+  <p>左下角新增"📊 数据看板"按钮，点击打开新窗口</p>
+</div>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">主界面（TeaGardenSystem）</div>
+    <div class="mockup-body" style="display:flex;height:380px;background:#051623;gap:8px;">
+      <div style="width:20%;display:flex;flex-direction:column;border:1px solid #1a2a3a;padding:4px;">
+        <div class="placeholder" style="font-size:10px;">传感器卡片 ×8</div>
+        <div class="placeholder" style="font-size:10px;margin-top:auto;background:#00897B;">📊 数据看板</div>
+      </div>
+      <div style="width:60%;border:1px solid #1a2a3a;padding:4px;">
+        <div class="placeholder" style="font-size:10px;">实时视频 + 地图</div>
+      </div>
+      <div style="width:20%;border:1px solid #1a2a3a;padding:4px;">
+        <div class="placeholder" style="font-size:10px;">AI 管家聊天</div>
+      </div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">新窗口：数据看板 (ChartDashboard)</div>
+    <div class="mockup-body" style="background:#051623;height:380px;padding:8px;">
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <div class="placeholder" style="font-size:9px;background:#00897B;padding:2px 6px;">时间: 1小时</div>
+        <div class="placeholder" style="font-size:9px;padding:2px 6px;">6小时</div>
+        <div class="placeholder" style="font-size:9px;padding:2px 6px;">24小时</div>
+        <div class="placeholder" style="font-size:9px;padding:2px 6px;">7天</div>
+      </div>
+      <div class="placeholder" style="height:160px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-size:11px;">📈 空气温度折线图 (含阈值标记)</div>
+      <div class="placeholder" style="height:160px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-size:11px;">📈 空气湿度折线图</div>
+      <div class="placeholder" style="height:160px;margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-size:11px;">📈 光照 / 风速折线图（可滚动查看更多）</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>关键设计点（待确认）</h3>
+  <ul>
+    <li>8 项传感器各画一张折线图，还是合并在少数几个图上？</li>
+    <li>时间范围选项：预设按钮（1h/6h/24h/7d）还是自定义滑块？</li>
+    <li>阈值：每个传感器独立阈值？超出时在图上高亮标记 + 弹出通知？</li>
+    <li>数据存储：目前系统不存历史数据，需要新做一个循环缓冲区在内存中存 N 条数据</li>
+  </ul>
+</div>

@@ -1,0 +1,67 @@
+<h2>配色风格 + 图表布局 — 对比</h2>
+<p class="subtitle">点击选项选择偏好的方案</p>
+
+<div class="section">
+  <h3>一、图表尺寸布局 — 选一种</h3>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="layout-a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>2列网格，每图 140px 高</h3>
+      <p>8 张图排成 4行×2列，窗口内无需滚动或少滚即可看全。紧凑型。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="layout-b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>标签页分组，4 个标签页</h3>
+      <p>例如：温湿度 | 光照风速 | 土壤指标 | pH电导率。每个标签页 1-2 张大图 (250px高)，切换查看。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="layout-c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>单列滚动，每图可折叠</h3>
+      <p>保持 8 张单列堆叠，但每张图顶部可点击收起/展开，只看关心的图。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>二、配色风格 — 选一种</h3>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="style-a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:20px;align-items:center;padding:16px;">
+        <div style="width:200px;height:100px;background:#0d1f2d;border:1px solid #1a3a5a;border-radius:6px;position:relative;">
+          <div style="position:absolute;bottom:8px;left:4px;right:12px;height:60px;background:linear-gradient(180deg, transparent 0%, rgba(0,229,255,0.3) 100%);clip-path:polygon(0 80%, 10% 40%, 25% 60%, 40% 30%, 55% 45%, 70% 20%, 85% 50%, 100% 25%, 100% 100%, 0 100%);"></div>
+          <div style="position:absolute;top:4px;left:8px;color:#00e5ff;font-size:9px;">温度 21.5℃</div>
+        </div>
+        <div><code style="color:#00E5FF;">#00E5FF</code> 青蓝线 + 深蓝底<br><span style="font-size:12px;color:#90A4AE;">跟主界面一致，科技感</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>深空科技风（主界面同款）</h3>
+      <p>深蓝黑底 #051623，青蓝折线 #00E5FF，阈值红色 #FF5252</p>
+    </div>
+  </div>
+  <div class="card" data-choice="style-b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:20px;align-items:center;padding:16px;">
+        <div style="width:200px;height:100px;background:#fafafa;border:1px solid #e0e0e0;border-radius:6px;position:relative;">
+          <div style="position:absolute;bottom:8px;left:4px;right:12px;height:60px;background:linear-gradient(180deg, transparent 0%, rgba(76,175,80,0.3) 100%);clip-path:polygon(0 80%, 10% 40%, 25% 60%, 40% 30%, 55% 45%, 70% 20%, 85% 50%, 100% 25%, 100% 100%, 0 100%);"></div>
+          <div style="position:absolute;top:4px;left:8px;color:#2E7D32;font-size:9px;">温度 21.5℃</div>
+        </div>
+        <div><code style="color:#4CAF50;">#4CAF50</code> 绿色线 + 白底<br><span style="font-size:12px;color:#90A4AE;">农业/茶园风格，清新自然</span></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>茶园自然风</h3>
+      <p>白/浅绿底，绿色系折线，跟农业主题呼应，阈值红色显眼</p>
+    </div>
+  </div>
+</div>
