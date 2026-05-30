@@ -26,6 +26,10 @@ public:
     void append(const SensorSnapshot &snap);
     QVector<SensorSnapshot> query(QDateTime from, QDateTime to);
 
+    // 返回数据库中最早和最晚的时间戳（秒），用于时间滑块
+    struct TimeRange { double earliestSec = 0; double latestSec = 0; bool valid = false; };
+    TimeRange fullTimeRange();
+
 private:
     DataStore() = default;
     QString dbPath;

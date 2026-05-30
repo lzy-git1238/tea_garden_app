@@ -131,3 +131,18 @@ QVector<SensorSnapshot> DataStore::query(QDateTime from, QDateTime to) {
     }
     return result;
 }
+
+DataStore::TimeRange DataStore::fullTimeRange() {
+    TimeRange tr;
+    QSqlDatabase db = QSqlDatabase::database("sensor_conn");
+    if (!db.isOpen()) return tr;
+
+    QSqlQuery q(db);
+    q.exec("SELECT MIN(ts), MAX(ts) FROM sensor_log");
+    if (q.next() && !q.value(0).isNull() && !q.value(1).isNull()) {
+        tr.earliestSec = q.value(0).toDouble();
+        tr.latestSec   = q.value(1).toDouble();
+        tr.valid = true;
+    }
+    return tr;
+}

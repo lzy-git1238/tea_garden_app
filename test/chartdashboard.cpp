@@ -30,8 +30,16 @@ ChartDashboard::ChartDashboard(QWidget *parent)
     : QWidget(parent, Qt::Window)
 {
     setWindowTitle("数据折线看板");
-    resize(800, 700);
+    resize(900, 750);
     setStyleSheet("background-color: #051623; color: #E0E0E0; font-family: 'Microsoft YaHei';");
+
+    // 先查 DB 时间范围，用于滑块
+    auto tr = DataStore::instance()->fullTimeRange();
+    if (tr.valid) {
+        dbEarliestSec = tr.earliestSec;
+        dbLatestSec   = tr.latestSec;
+    }
+
     setupUI();
     loadData(QDateTime::currentDateTime().addSecs(-3600), QDateTime::currentDateTime());
 }
@@ -92,6 +100,12 @@ void ChartDashboard::setupUI() {
     connect(exportBtn, &QPushButton::clicked, this, &ChartDashboard::onExportExcel);
     toolbar->addWidget(exportBtn);
 
+    resetZoomBtn = new QPushButton("🔍 重置缩放");
+    resetZoomBtn->setStyleSheet("background: #455A64; color: white; padding: 6px 12px; "
+                                "border: 1px solid #334455; border-radius: 4px;");
+    connect(resetZoomBtn, &QPushButton::clicked, this, &ChartDashboard::onResetZoom);
+    toolbar->addWidget(resetZoomBtn);
+
     mainLayout->addLayout(toolbar);
 
     // ===== chart scroll area =====
@@ -114,6 +128,28 @@ void ChartDashboard::setupUI() {
 
     scrollArea->setWidget(scrollContent);
     mainLayout->addWidget(scrollArea, 1);
+
+    // ===== 底部时间拖拉滑块 =====
+    auto *sliderBar = new QHBoxLayout();
+
+    sliderLabel = new QLabel("时间轴拖动");
+    sliderLabel->setStyleSheet("color: #90A4AE; font-size: 11px;");
+    sliderBar->addWidget(sliderLabel);
+
+    timeSlider = new QScrollBar(Qt::Horizontal);
+    timeSlider->setMinimum(0);
+    timeSlider->setMaximum(sliderSteps);
+    timeSlider->setValue(0);
+    timeSlider->setPageStep(sliderSteps / 10);
+    timeSlider->setStyleSheet(
+        "QScrollBar:horizontal { background: #1a2a3a; height: 20px; border-radius: 4px; }"
+        "QScrollBar::handle:horizontal { background: #00E5FF; min-width: 30px; border-radius: 4px; }"
+        "QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }"
+        "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal { background: #0a1a2a; }");
+    connect(timeSlider, &QScrollBar::valueChanged, this, &ChartDashboard::onTimeSliderChanged);
+    sliderBar->addWidget(timeSlider, 1);
+
+    mainLayout->addLayout(sliderBar);
 }
 
 QWidget* ChartDashboard::createChartCard(const QString &title, const QString &unit, int sensorIndex) {
@@ -148,6 +184,9 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setMinimumHeight(200);
     chartView->setStyleSheet("background: transparent; border: none;");
+    // 启用框选缩放 + 滚轮缩放
+    chartView->setRubberBand(QChartView::RectangleRubberBand);
+    chartView->setDragMode(QGraphicsView::NoDrag);
     charts[sensorIndex] = chartView;
 
     connect(header, &QPushButton::clicked, this, [chartView, header]() {
@@ -278,6 +317,9 @@ void ChartDashboard::loadData(QDateTime from, QDateTime to) {
             }
         }
     }
+
+    // 同步时间滑块
+    updateSliderFromTimes(from, to);
 }
 
 void ChartDashboard::onPreset1h() {
@@ -315,6 +357,67 @@ void ChartDashboard::onOpenThresholds() {
 }
 void ChartDashboard::reapplyThresholds() {
     loadData(fromTime->dateTime(), toTime->dateTime());
+}
+
+// ---- 时间拖拉滑块 ----
+
+void ChartDashboard::updateSliderFromTimes(QDateTime from, QDateTime to) {
+    // 刷新 DB 范围（有新数据到达时范围会扩大）
+    auto tr = DataStore::instance()->fullTimeRange();
+    if (tr.valid) {
+        dbEarliestSec = tr.earliestSec;
+        dbLatestSec   = tr.latestSec;
+    }
+
+    double totalRange = dbLatestSec - dbEarliestSec;
+    if (totalRange <= 0) {
+        timeSlider->setEnabled(false);
+        return;
+    }
+    timeSlider->setEnabled(true);
+
+    double fromSec = from.toMSecsSinceEpoch() / 1000.0;
+    double toSec   = to.toMSecsSinceEpoch() / 1000.0;
+    double visibleWidth = toSec - fromSec;
+
+    int pos  = static_cast<int>((fromSec - dbEarliestSec) / totalRange * sliderSteps);
+    int page = static_cast<int>(visibleWidth / totalRange * sliderSteps);
+    if (page < 1) page = 1;
+    if (page > sliderSteps) page = sliderSteps;
+
+    timeSlider->blockSignals(true);
+    timeSlider->setPageStep(page);
+    timeSlider->setValue(pos);
+    timeSlider->blockSignals(false);
+
+    sliderLabel->setText(
+        QString("时间轴 %1 ~ %2")
+            .arg(from.toString("MM-dd hh:mm"))
+            .arg(to.toString("MM-dd hh:mm")));
+}
+
+void ChartDashboard::onTimeSliderChanged(int value) {
+    double totalRange = dbLatestSec - dbEarliestSec;
+    if (totalRange <= 0) return;
+
+    double visibleSec = static_cast<double>(timeSlider->pageStep()) / sliderSteps * totalRange;
+    double newFromSec = dbEarliestSec + static_cast<double>(value) / sliderSteps * totalRange;
+    double newToSec   = newFromSec + visibleSec;
+
+    QDateTime from = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(newFromSec * 1000.0));
+    QDateTime to   = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(newToSec * 1000.0));
+
+    fromTime->setDateTime(from);
+    toTime->setDateTime(to);
+    loadData(from, to);
+}
+
+// ---- 缩放重置 ----
+
+void ChartDashboard::onResetZoom() {
+    for (auto *cv : charts) {
+        if (cv) cv->chart()->zoomReset();
+    }
 }
 
 void ChartDashboard::onExportExcel() {
