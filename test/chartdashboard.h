@@ -23,6 +23,7 @@ private slots:
     void onPreset6h();
     void onPreset24h();
     void onPreset7d();
+    void onPreset30d();
     void onCustomQuery();
     void onOpenThresholds();
     void onExportExcel();

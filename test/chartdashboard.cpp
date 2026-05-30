@@ -142,16 +142,19 @@ void ChartDashboard::setupUI() {
     auto *btn1h  = makeBtn("1h");   btn1h->setFixedWidth(42);
     auto *btn6h  = makeBtn("6h");   btn6h->setFixedWidth(42);
     auto *btn24h = makeBtn("24h");  btn24h->setFixedWidth(48);
-    auto *btn7d  = makeBtn("7d");    btn7d->setFixedWidth(42);
+    auto *btn7d  = makeBtn("7d");   btn7d->setFixedWidth(42);
+    auto *btn30d = makeBtn("30d");  btn30d->setFixedWidth(48);
 
     connect(btn1h,  &QPushButton::clicked, this, &ChartDashboard::onPreset1h);
     connect(btn6h,  &QPushButton::clicked, this, &ChartDashboard::onPreset6h);
     connect(btn24h, &QPushButton::clicked, this, &ChartDashboard::onPreset24h);
     connect(btn7d,  &QPushButton::clicked, this, &ChartDashboard::onPreset7d);
+    connect(btn30d, &QPushButton::clicked, this, &ChartDashboard::onPreset30d);
     toolbar->addWidget(btn1h);
     toolbar->addWidget(btn6h);
     toolbar->addWidget(btn24h);
     toolbar->addWidget(btn7d);
+    toolbar->addWidget(btn30d);
     toolbar->addSpacing(8);
 
     auto *fromLbl = new QLabel("自"); fromLbl->setStyleSheet("color:#90A4AE; font-size:12px; border:none;");
@@ -632,6 +635,12 @@ void ChartDashboard::onPreset24h() {
 void ChartDashboard::onPreset7d() {
     QDateTime to = QDateTime::currentDateTime();
     QDateTime from = to.addDays(-7);
+    fromTime->setDateTime(from); toTime->setDateTime(to);
+    loadData(from, to);
+}
+void ChartDashboard::onPreset30d() {
+    QDateTime to = QDateTime::currentDateTime();
+    QDateTime from = to.addDays(-30);
     fromTime->setDateTime(from); toTime->setDateTime(to);
     loadData(from, to);
 }
