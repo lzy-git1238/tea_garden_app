@@ -15,6 +15,7 @@
 #include <QDateTimeAxis>
 #include <QValueAxis>
 #include <QFileDialog>
+#include <QFrame>
 #include <QMessageBox>
 #include <QProcess>
 #include <QTemporaryFile>
@@ -22,6 +23,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QDir>
+#include <QMouseEvent>
 #include <QtMath>
 
 using namespace QtCharts;
@@ -314,6 +316,24 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
 
     cardLayout->addWidget(chartView);
 
+    // ── 纵向拖拽把手（拉高/压矮图表） ──
+    auto *resizeHandle = new QFrame();
+    resizeHandle->setFixedHeight(7);
+    resizeHandle->setCursor(Qt::SplitVCursor);
+    resizeHandle->setStyleSheet(
+        "QFrame {"
+        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #1a3040, stop:0.4 #102838, stop:0.6 #081820, stop:1 #1a3040);"
+        "  border-top: 1px solid #304860; border-bottom: 1px solid #081018;"
+        "  border-radius: 2px;"
+        "}"
+        "QFrame:hover {"
+        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #284868, stop:0.4 #183848, stop:0.6 #102838, stop:1 #284868);"
+        "  border-top: 1px solid #5088c0;"
+        "}");
+    resizeHandle->installEventFilter(this);
+    resizeHandle->setProperty("sensorIndex", sensorIndex);
+    cardLayout->addWidget(resizeHandle);
+
     // ── 底部时间滑块 ──
     auto *slider = new QScrollBar(Qt::Horizontal);
     slider->setMinimum(0);
@@ -550,6 +570,39 @@ void ChartDashboard::zoomChartY(int sensorIndex, double factor) {
         if (newHalf < 0.001) newHalf = 0.001;
         valAxis->setRange(center - newHalf, center + newHalf);
     }
+}
+
+// ── 纵向拖拽把手事件 ──
+
+bool ChartDashboard::eventFilter(QObject *obj, QEvent *event) {
+    if (obj->isWidgetType() && obj->inherits("QFrame")) {
+        auto *handle = static_cast<QWidget*>(obj);
+        bool ok = false;
+        int idx = handle->property("sensorIndex").toInt(&ok);
+        if (ok && charts.contains(idx)) {
+            if (event->type() == QEvent::MouseButtonPress) {
+                auto *me = static_cast<QMouseEvent*>(event);
+                if (me->button() == Qt::LeftButton) {
+                    activeResizeIndex = idx;
+                    resizeStartPos = me->globalPos();
+                    resizeStartH  = charts[idx]->minimumHeight();
+                    return true;
+                }
+            } else if (event->type() == QEvent::MouseMove && activeResizeIndex == idx) {
+                auto *me = static_cast<QMouseEvent*>(event);
+                int deltaY = me->globalPos().y() - resizeStartPos.y();
+                int newH = resizeStartH + deltaY;
+                if (newH < 120) newH = 120;
+                if (newH > 600) newH = 600;
+                charts[idx]->setMinimumHeight(newH);
+                return true;
+            } else if (event->type() == QEvent::MouseButtonRelease && activeResizeIndex == idx) {
+                activeResizeIndex = -1;
+                return true;
+            }
+        }
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
 // ── 时间预设 ──

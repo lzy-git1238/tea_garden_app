@@ -36,6 +36,7 @@ private:
     void zoomChartX(int sensorIndex, double factor);
     void zoomChartY(int sensorIndex, double factor);
     QWidget* createChartCard(const QString &title, const QString &unit, int sensorIndex);
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
     QScrollArea *scrollArea;
     QDateTimeEdit *fromTime, *toTime;
@@ -43,6 +44,10 @@ private:
     QMap<int, QtCharts::QChartView*> charts;
     QMap<int, QWidget*> chartCards;
     QMap<int, QScrollBar*> cardSliders;
+
+    QPoint resizeStartPos;
+    int   resizeStartH = 0;
+    int   activeResizeIndex = -1;
 
     double dbEarliestSec = 0;
     double dbLatestSec   = 0;
