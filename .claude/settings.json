@@ -3,12 +3,12 @@
         "PostToolUse": [
             {
                 "matcher": "Edit|Write",
-                "command": "cd /home/lzy/文档/QTproject && git add -A && if ! git diff --cached --quiet; then git commit -m \"auto: 代码变更 $(date '+%Y-%m-%d %H:%M')\"; fi"
+                "command": "cd /home/lzy/文档/QTproject && git add -A && if ! git diff --cached --quiet; then git commit -m \"auto: 代码变更 $(date '+%Y-%m-%d %H:%M')\" && git push; fi"
             }
         ],
         "Stop": [
             {
-                "command": "cd /home/lzy/文档/QTproject && git add -A && if ! git diff --cached --quiet; then git commit -m \"checkpoint: 会话结束自动保存 $(date '+%Y-%m-%d %H:%M')\"; fi"
+                "command": "cd /home/lzy/文档/QTproject && git add -A && if ! git diff --cached --quiet; then git commit -m \"checkpoint: 会话结束自动保存 $(date '+%Y-%m-%d %H:%M')\" && git push; fi"
             }
         ]
     }
