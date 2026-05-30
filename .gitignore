@@ -1,0 +1,40 @@
+# ── 构建产物 ──────────────────────────
+build-*/
+*.o
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+moc_predefs.h
+Makefile
+.qmake.stash
+
+# ── Qt Creator ─────────────────────────
+*.pro.user
+*.pro.user.*
+
+# ── 编译目标 ──
+/test_regex
+moc_*.o
+qrc_*.o
+
+# ── 运行时日志 ─────────────────────────
+*.log
+
+# ── 敏感配置（含真实 API Key） ─────────
+amap.ini
+*.env
+
+# ── 桌面环境 ───────────────────────────
+*.desktop
+
+# ── IDE / 编辑器 ───────────────────────
+*.swp
+*.swo
+*~
+.DS_Store
+.vscode/
+.idea/
+
+# ── 系统文件 ───────────────────────────
+Thumbs.db

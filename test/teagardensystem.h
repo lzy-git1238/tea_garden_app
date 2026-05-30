@@ -1,0 +1,90 @@
+#ifndef TEAGARDENSYSTEM_H
+#define TEAGARDENSYSTEM_H
+
+#include <QWidget>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QTextEdit>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QTimer>
+#include <QFrame>
+#include <QList>
+#include <QDateTime>
+#include <QImage>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QProcess>
+
+#include "loramanager.h"
+
+class Ros2ImageSubscriber;
+
+// --- 主系统类 ---
+class TeaGardenSystem : public QWidget {
+    Q_OBJECT
+
+public:
+    explicit TeaGardenSystem(QWidget *parent = nullptr);
+    virtual ~TeaGardenSystem(); // 明确声明虚析构函数
+
+private slots:
+    void refreshData();         // 定时刷新环境数据
+    void handleChat();          // 处理用户聊天输入
+    void onLoraData(double windSpeed,
+                    double airTemp,
+                    double airHumidity,
+                    double lightLux,
+                    double soilHumidity,
+                    double soilTemp,
+                    double soilConductivity,
+                    double soilPh,
+                    const QDateTime &timestamp);
+    void onLoraStatus(const QString &status);
+    void onLoraParseError(const QString &errorText);
+    void onRosImageFrame(const QImage &image);
+    void onRosImageStatus(const QString &status);
+    void onNetworkReply(QNetworkReply *reply);
+    void startVoiceRecording();   // 开始录音 / 点击停止录音
+    void onVoiceRecorded(const QString &wavFilePath);
+
+private:
+    void setupUI();
+    void setupMapView(QVBoxLayout *midPanel);
+    void setupRos2ImageSubscription();
+    QWidget* createDataCard(QString title, int index, QString unit);
+    void appendChatMessage(QString role, QString message);
+    void requestAIAnalysis(const QString &userMessage);
+
+    // 成员变量
+    QList<QLabel*> valueLabels;
+    QLabel *loraStateLabel;
+    QLabel *videoLabel = nullptr;
+    QTextEdit *chatDisplay;
+    QLineEdit *chatInput;
+    QPushButton *voiceBtn;
+    QProcess *recordProcess = nullptr;  // 当前录音进程，非空时表示正在录音
+    QString  pendingWavPath;            // 录音目标文件路径
+    QTimer *updateTimer;
+    LoraManager *loraManager;
+    Ros2ImageSubscriber *ros2ImageSubscriber = nullptr;
+    QNetworkAccessManager *networkManager;
+    QWidget *mapView = nullptr;
+    QDateTime lastLoraFrameTime;
+
+    // 当前环境数值（用于AI分析）
+    double curTemp = 22.0;
+    double curHumi = 60.0;
+    int curLight = 2000;
+    double curPh = 5.6;
+    double curWindSpeed = 2.5;
+    double curSoilTemp = 18.0;
+    double curSoilHumi = 45.0;
+    double curSoilEc = 1.2;
+};
+
+#endif // TEAGARDENSYSTEM_H
