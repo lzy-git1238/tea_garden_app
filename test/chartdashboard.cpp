@@ -90,12 +90,12 @@ static const char* k3dZoomOrangeStyle = ""
 static const char* k3dSliderStyle = ""
     "QScrollBar:horizontal {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #0a1620, stop:0.5 #111d28, stop:1 #0a1620);"
-    "  height: 18px; border-radius: 4px;"
+    "  height: 10px; border-radius: 3px;"
     "  border-top: 1px solid #1a3040; border-bottom: 1px solid #051018;"
     "}"
     "QScrollBar::handle:horizontal {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #28c8e8, stop:0.4 #18a0c0, stop:0.6 #108090, stop:1 #0a5060);"
-    "  min-width: 36px; border-radius: 4px; margin: 1px 0;"
+    "  min-width: 24px; border-radius: 3px; margin: 1px 0;"
     "  border-top: 1px solid #60e0f8; border-left: 1px solid #38c8e0;"
     "  border-right: 1px solid #085060; border-bottom: 2px solid #043040;"
     "}"
@@ -516,7 +516,7 @@ void ChartDashboard::zoomChartX(int sensorIndex, double factor) {
     if (!chartView) return;
     auto *chart = chartView->chart();
 
-    // 找到 X 轴
+    // X 轴缩放
     for (auto *ax : chart->axes(Qt::Horizontal)) {
         auto *dtAxis = qobject_cast<QDateTimeAxis*>(ax);
         if (!dtAxis) continue;
@@ -524,9 +524,16 @@ void ChartDashboard::zoomChartX(int sensorIndex, double factor) {
             (dtAxis->min().toMSecsSinceEpoch() + dtAxis->max().toMSecsSinceEpoch()) / 2));
         qint64 halfRange = (dtAxis->max().toMSecsSinceEpoch() - dtAxis->min().toMSecsSinceEpoch()) / 2;
         qint64 newHalf = static_cast<qint64>(halfRange * factor);
-        if (newHalf < 1000) newHalf = 1000; // 最小 1 秒
+        if (newHalf < 1000) newHalf = 1000;
         dtAxis->setRange(center.addMSecs(-newHalf), center.addMSecs(newHalf));
     }
+
+    // X 轴缩放联动图表高度：缩小时间范围→图表拉高看细节，放大→还原
+    int curH = chartView->minimumHeight();
+    int newH = static_cast<int>(curH / factor);  // factor<1 → 变高, factor>1 → 变矮
+    if (newH < 120) newH = 120;
+    if (newH > 600) newH = 600;
+    chartView->setMinimumHeight(newH);
 }
 
 void ChartDashboard::zoomChartY(int sensorIndex, double factor) {
