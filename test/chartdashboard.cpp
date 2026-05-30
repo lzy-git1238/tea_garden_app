@@ -32,11 +32,11 @@ using namespace QtCharts;
 static const char* k3dSmallBtnStyle = ""
     "QPushButton {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a5068, stop:0.5 #1e3448, stop:1 #0f1f30);"
-    "  color: #c0d8f0; font-size: 11px; font-weight: bold; min-width: 28px; max-width: 28px;"
-    "  min-height: 24px; max-height: 24px; padding: 0;"
+    "  color: #c0d8f0; font-size: 14px; font-weight: bold; min-width: 38px; max-width: 38px;"
+    "  min-height: 32px; max-height: 32px; padding: 0;"
     "  border-top: 1px solid #5080b0; border-left: 1px solid #406890;"
     "  border-right: 1px solid #102030; border-bottom: 2px solid #081018;"
-    "  border-radius: 4px;"
+    "  border-radius: 5px;"
     "}"
     "QPushButton:hover {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #4a7090, stop:0.5 #2e5070, stop:1 #1a3048);"
@@ -52,11 +52,11 @@ static const char* k3dSmallBtnStyle = ""
 static const char* k3dZoomGreenStyle = ""
     "QPushButton {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a6850, stop:0.5 #1e4830, stop:1 #0f3018);"
-    "  color: #c0f0d0; font-size: 11px; font-weight: bold; min-width: 28px; max-width: 28px;"
-    "  min-height: 24px; max-height: 24px; padding: 0;"
+    "  color: #c0f0d0; font-size: 14px; font-weight: bold; min-width: 38px; max-width: 38px;"
+    "  min-height: 32px; max-height: 32px; padding: 0;"
     "  border-top: 1px solid #50b070; border-left: 1px solid #409060;"
     "  border-right: 1px solid #103020; border-bottom: 2px solid #081810;"
-    "  border-radius: 4px;"
+    "  border-radius: 5px;"
     "}"
     "QPushButton:hover {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #4a9070, stop:0.5 #2e7050, stop:1 #1a4830);"
@@ -72,11 +72,11 @@ static const char* k3dZoomGreenStyle = ""
 static const char* k3dZoomOrangeStyle = ""
     "QPushButton {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #684830, stop:0.5 #482818, stop:1 #301810);"
-    "  color: #f0d8c0; font-size: 11px; font-weight: bold; min-width: 28px; max-width: 28px;"
-    "  min-height: 24px; max-height: 24px; padding: 0;"
+    "  color: #f0d8c0; font-size: 14px; font-weight: bold; min-width: 38px; max-width: 38px;"
+    "  min-height: 32px; max-height: 32px; padding: 0;"
     "  border-top: 1px solid #b08050; border-left: 1px solid #906040;"
     "  border-right: 1px solid #302010; border-bottom: 2px solid #181008;"
-    "  border-radius: 4px;"
+    "  border-radius: 5px;"
     "}"
     "QPushButton:hover {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #907050, stop:0.5 #705030, stop:1 #483020);"
@@ -334,7 +334,9 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     resizeHandle->setProperty("sensorIndex", sensorIndex);
     cardLayout->addWidget(resizeHandle);
 
-    // ── 底部时间滑块 ──
+    // ── 底部时间滑块（居中，宽度约 40%） ──
+    auto *sliderRow = new QHBoxLayout();
+    sliderRow->addStretch(3);
     auto *slider = new QScrollBar(Qt::Horizontal);
     slider->setMinimum(0);
     slider->setMaximum(sliderSteps);
@@ -342,9 +344,11 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     slider->setPageStep(sliderSteps / 10);
     slider->setStyleSheet(k3dSliderStyle);
     cardSliders[sensorIndex] = slider;
+    sliderRow->addWidget(slider, 4);
+    sliderRow->addStretch(3);
 
     connect(slider, &QScrollBar::valueChanged, this, &ChartDashboard::onCardSliderChanged);
-    cardLayout->addWidget(slider);
+    cardLayout->addLayout(sliderRow);
 
     return card;
 }
@@ -381,7 +385,13 @@ void ChartDashboard::loadData(QDateTime from, QDateTime to) {
         for (auto *ax : chart->axes()) chart->removeAxis(ax);
 
         auto *axisX = new QDateTimeAxis();
-        axisX->setFormat("HH:mm");
+        // 自适应时间格式
+        qint64 rangeMs = to.toMSecsSinceEpoch() - from.toMSecsSinceEpoch();
+        if (rangeMs <= 60'000)             axisX->setFormat("HH:mm:ss");
+        else if (rangeMs <= 3600'000)       axisX->setFormat("HH:mm:ss");
+        else if (rangeMs <= 86'400'000)     axisX->setFormat("HH:mm");
+        else if (rangeMs <= 604'800'000)    axisX->setFormat("MM-dd HH:mm");
+        else                                axisX->setFormat("MM-dd");
         axisX->setLabelsColor(QColor("#90A4AE"));
         axisX->setGridLineColor(QColor("#1a2a3a"));
         axisX->setRange(from, to);
@@ -536,7 +546,6 @@ void ChartDashboard::zoomChartX(int sensorIndex, double factor) {
     if (!chartView) return;
     auto *chart = chartView->chart();
 
-    // X 轴缩放
     for (auto *ax : chart->axes(Qt::Horizontal)) {
         auto *dtAxis = qobject_cast<QDateTimeAxis*>(ax);
         if (!dtAxis) continue;
@@ -547,13 +556,6 @@ void ChartDashboard::zoomChartX(int sensorIndex, double factor) {
         if (newHalf < 1000) newHalf = 1000;
         dtAxis->setRange(center.addMSecs(-newHalf), center.addMSecs(newHalf));
     }
-
-    // X 轴缩放联动图表高度：缩小时间范围→图表拉高看细节，放大→还原
-    int curH = chartView->minimumHeight();
-    int newH = static_cast<int>(curH / factor);  // factor<1 → 变高, factor>1 → 变矮
-    if (newH < 120) newH = 120;
-    if (newH > 600) newH = 600;
-    chartView->setMinimumHeight(newH);
 }
 
 void ChartDashboard::zoomChartY(int sensorIndex, double factor) {
@@ -570,6 +572,13 @@ void ChartDashboard::zoomChartY(int sensorIndex, double factor) {
         if (newHalf < 0.001) newHalf = 0.001;
         valAxis->setRange(center - newHalf, center + newHalf);
     }
+
+    // Y 轴缩放联动图表高度：缩小数值范围→图表拉高看细节，放大→还原
+    int curH = chartView->minimumHeight();
+    int newH = static_cast<int>(curH / factor);
+    if (newH < 120) newH = 120;
+    if (newH > 600) newH = 600;
+    chartView->setMinimumHeight(newH);
 }
 
 // ── 纵向拖拽把手事件 ──
