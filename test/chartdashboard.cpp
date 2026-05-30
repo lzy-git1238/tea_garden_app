@@ -32,8 +32,7 @@ using namespace QtCharts;
 static const char* k3dSmallBtnStyle = ""
     "QPushButton {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a5068, stop:0.5 #1e3448, stop:1 #0f1f30);"
-    "  color: #c0d8f0; font-size: 14px; font-weight: bold; min-width: 38px; max-width: 38px;"
-    "  min-height: 32px; max-height: 32px; padding: 0;"
+    "  color: #c0d8f0; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
     "  border-top: 1px solid #5080b0; border-left: 1px solid #406890;"
     "  border-right: 1px solid #102030; border-bottom: 2px solid #081018;"
     "  border-radius: 5px;"
@@ -52,8 +51,7 @@ static const char* k3dSmallBtnStyle = ""
 static const char* k3dZoomGreenStyle = ""
     "QPushButton {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a6850, stop:0.5 #1e4830, stop:1 #0f3018);"
-    "  color: #c0f0d0; font-size: 14px; font-weight: bold; min-width: 38px; max-width: 38px;"
-    "  min-height: 32px; max-height: 32px; padding: 0;"
+    "  color: #c0f0d0; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
     "  border-top: 1px solid #50b070; border-left: 1px solid #409060;"
     "  border-right: 1px solid #103020; border-bottom: 2px solid #081810;"
     "  border-radius: 5px;"
@@ -72,8 +70,7 @@ static const char* k3dZoomGreenStyle = ""
 static const char* k3dZoomOrangeStyle = ""
     "QPushButton {"
     "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #684830, stop:0.5 #482818, stop:1 #301810);"
-    "  color: #f0d8c0; font-size: 14px; font-weight: bold; min-width: 38px; max-width: 38px;"
-    "  min-height: 32px; max-height: 32px; padding: 0;"
+    "  color: #f0d8c0; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
     "  border-top: 1px solid #b08050; border-left: 1px solid #906040;"
     "  border-right: 1px solid #302010; border-bottom: 2px solid #181008;"
     "  border-radius: 5px;"
@@ -113,7 +110,7 @@ ChartDashboard::ChartDashboard(QWidget *parent)
     : QWidget(parent, Qt::Window)
 {
     setWindowTitle("数据折线看板");
-    resize(900, 780);
+    resize(1050, 780);
     setStyleSheet("background-color: #051623; color: #E0E0E0; font-family: 'Microsoft YaHei';");
 
     auto tr = DataStore::instance()->fullTimeRange();
@@ -133,6 +130,8 @@ void ChartDashboard::setupUI() {
 
     // ===== 顶部工具栏 =====
     auto *toolbar = new QHBoxLayout();
+    toolbar->setSpacing(4);
+    toolbar->setContentsMargins(6, 4, 6, 4);
 
     auto makeBtn = [](const QString &text) {
         auto *b = new QPushButton(text);
@@ -140,10 +139,10 @@ void ChartDashboard::setupUI() {
         return b;
     };
 
-    auto *btn1h  = makeBtn("1h");   btn1h->setFixedWidth(48);
-    auto *btn6h  = makeBtn("6h");   btn6h->setFixedWidth(48);
-    auto *btn24h = makeBtn("24h");  btn24h->setFixedWidth(52);
-    auto *btn7d  = makeBtn("7d");    btn7d->setFixedWidth(48);
+    auto *btn1h  = makeBtn("1h");   btn1h->setFixedWidth(42);
+    auto *btn6h  = makeBtn("6h");   btn6h->setFixedWidth(42);
+    auto *btn24h = makeBtn("24h");  btn24h->setFixedWidth(48);
+    auto *btn7d  = makeBtn("7d");    btn7d->setFixedWidth(42);
 
     connect(btn1h,  &QPushButton::clicked, this, &ChartDashboard::onPreset1h);
     connect(btn6h,  &QPushButton::clicked, this, &ChartDashboard::onPreset6h);
@@ -153,35 +152,37 @@ void ChartDashboard::setupUI() {
     toolbar->addWidget(btn6h);
     toolbar->addWidget(btn24h);
     toolbar->addWidget(btn7d);
-    toolbar->addSpacing(12);
+    toolbar->addSpacing(8);
 
-    toolbar->addWidget(new QLabel("自"));
+    auto *fromLbl = new QLabel("自"); fromLbl->setStyleSheet("color:#90A4AE; font-size:12px; border:none;");
+    toolbar->addWidget(fromLbl);
     fromTime = new QDateTimeEdit(QDateTime::currentDateTime().addSecs(-3600));
-    fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
-    fromTime->setStyleSheet("background: #1a2a3a; color: white; border: 1px solid #334455; padding: 2px 4px;");
+    fromTime->setDisplayFormat("MM-dd HH:mm");
+    fromTime->setStyleSheet("background: #1a2a3a; color: white; border: 1px solid #334455; padding: 2px 4px; font-size:12px;");
     toolbar->addWidget(fromTime);
 
-    toolbar->addWidget(new QLabel("至"));
+    auto *toLbl = new QLabel("至"); toLbl->setStyleSheet("color:#90A4AE; font-size:12px; border:none;");
+    toolbar->addWidget(toLbl);
     toTime = new QDateTimeEdit(QDateTime::currentDateTime());
-    toTime->setDisplayFormat("yyyy-MM-dd hh:mm");
-    toTime->setStyleSheet("background: #1a2a3a; color: white; border: 1px solid #334455; padding: 2px 4px;");
+    toTime->setDisplayFormat("MM-dd HH:mm");
+    toTime->setStyleSheet("background: #1a2a3a; color: white; border: 1px solid #334455; padding: 2px 4px; font-size:12px;");
     toolbar->addWidget(toTime);
 
     auto *queryBtn = new QPushButton("查询");
     queryBtn->setStyleSheet(k3dZoomGreenStyle);
-    queryBtn->setFixedWidth(56);
+    queryBtn->setFixedWidth(50);
     connect(queryBtn, &QPushButton::clicked, this, &ChartDashboard::onCustomQuery);
     toolbar->addWidget(queryBtn);
 
     toolbar->addStretch();
 
-    thresholdBtn = new QPushButton("⚙ 阈值设置");
+    thresholdBtn = new QPushButton("⚙ 阈值");
     thresholdBtn->setStyleSheet(k3dSmallBtnStyle);
-    thresholdBtn->setFixedWidth(100);
+    thresholdBtn->setFixedWidth(86);
     connect(thresholdBtn, &QPushButton::clicked, this, &ChartDashboard::onOpenThresholds);
     toolbar->addWidget(thresholdBtn);
 
-    exportBtn = new QPushButton("📤 导出Excel");
+    exportBtn = new QPushButton("📤 导出");
     exportBtn->setStyleSheet(
         "QPushButton {"
         "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a6840, stop:0.5 #1e4820, stop:1 #0f3010);"
@@ -201,6 +202,7 @@ void ChartDashboard::setupUI() {
         "}"
     );
     connect(exportBtn, &QPushButton::clicked, this, &ChartDashboard::onExportExcel);
+    exportBtn->setFixedWidth(90);
     toolbar->addWidget(exportBtn);
 
     mainLayout->addLayout(toolbar);
@@ -572,13 +574,6 @@ void ChartDashboard::zoomChartY(int sensorIndex, double factor) {
         if (newHalf < 0.001) newHalf = 0.001;
         valAxis->setRange(center - newHalf, center + newHalf);
     }
-
-    // Y 轴缩放联动图表高度：缩小数值范围→图表拉高看细节，放大→还原
-    int curH = chartView->minimumHeight();
-    int newH = static_cast<int>(curH / factor);
-    if (newH < 120) newH = 120;
-    if (newH > 600) newH = 600;
-    chartView->setMinimumHeight(newH);
 }
 
 // ── 纵向拖拽把手事件 ──
