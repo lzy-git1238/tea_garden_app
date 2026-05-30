@@ -21,6 +21,10 @@
 #include <QProcess>
 
 #include "loramanager.h"
+#include <QSystemTrayIcon>
+#include <QMenu>
+
+class ChartDashboard;
 
 // --- 主系统类 ---
 class TeaGardenSystem : public QWidget {
@@ -47,6 +51,7 @@ private slots:
     void onNetworkReply(QNetworkReply *reply);
     void startVoiceRecording();   // 开始录音 / 点击停止录音
     void onVoiceRecorded(const QString &wavFilePath);
+    void openChartDashboard();
 
 private:
     void setupUI();
@@ -85,6 +90,11 @@ private:
     double curSoilTemp = 18.0;
     double curSoilHumi = 45.0;
     double curSoilEc = 1.2;
+
+    // 数据看板
+    ChartDashboard *chartDashboard = nullptr;
+    QSystemTrayIcon *trayIcon = nullptr;
+    QMap<int, QDateTime> lastAlertTime;
 };
 
 #endif // TEAGARDENSYSTEM_H

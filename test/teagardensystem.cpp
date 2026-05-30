@@ -1,4 +1,7 @@
 #include "teagardensystem.h"
+#include "chartdashboard.h"
+#include "thresholddialog.h"
+#include "datastore.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
@@ -12,6 +15,9 @@
 #include <QSettings>
 #include <QPixmap>
 #include <QDebug>
+#include <QStyle>
+#include <QApplication>
+#include <cmath>
 #ifdef TEA_ENABLE_MAP_WEBVIEW
 #include <QtWebEngineWidgets/QWebEngineView>
 #endif
@@ -55,13 +61,42 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(loraManager, &LoraManager::parseError, this, &TeaGardenSystem::onLoraParseError);
     loraManager->start();
 
+    // 初始化 SQLite 数据存储
+    DataStore::instance()->init(QCoreApplication::applicationDirPath() + "/sensor_data.db");
+
+    // 初始化系统托盘
+    trayIcon = new QSystemTrayIcon(this);
+    QIcon trayIconFile(":/icons/tray.png");
+    if (trayIconFile.isNull()) {
+        trayIcon->setIcon(style()->standardIcon(QStyle::SP_ComputerIcon));
+    } else {
+        trayIcon->setIcon(trayIconFile);
+    }
+    trayIcon->setToolTip("智慧茶园管理系统");
+    auto *trayMenu = new QMenu(this);
+    trayMenu->setStyleSheet("background: #0d1f2d; color: #E0E0E0;");
+    trayMenu->addAction("显示主窗口", this, [this]() { show(); raise(); });
+    trayMenu->addAction("数据看板", this, &TeaGardenSystem::openChartDashboard);
+    trayMenu->addSeparator();
+    trayMenu->addAction("退出", qApp, &QApplication::quit);
+    trayIcon->setContextMenu(trayMenu);
+    connect(trayIcon, &QSystemTrayIcon::activated, this, [this](QSystemTrayIcon::ActivationReason r) {
+        if (r == QSystemTrayIcon::DoubleClick) { show(); raise(); }
+    });
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        trayIcon->show();
+    }
+
     // 2. 初始化发送欢迎语
     appendChatMessage("管家", "您好！我是茶园AI管家。监测系统已就绪，当前各项指标稳定。");
 }
 
 // 【修复报错】明确定义析构函数
 TeaGardenSystem::~TeaGardenSystem() {
-    // Qt 会自动处理对象树中子控件的内存释放
+    if (chartDashboard) {
+        chartDashboard->close();
+        delete chartDashboard;
+    }
 }
 
 void TeaGardenSystem::setupUI() {
@@ -84,6 +119,11 @@ void TeaGardenSystem::setupUI() {
     for(int i=0; i<names.size(); ++i) {
         leftPanel->addWidget(createDataCard(names[i], i, units[i]));
     }
+    QPushButton *chartBtn = new QPushButton("📊 数据看板");
+    chartBtn->setStyleSheet("background: #00897B; color: white; padding: 8px; "
+                            "font-weight: bold; border-radius: 6px;");
+    connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
+    leftPanel->addWidget(chartBtn);
     leftPanel->addStretch();
     mainLayout->addLayout(leftPanel, 2);
 
@@ -293,6 +333,13 @@ void TeaGardenSystem::refreshData() {
     if (loraStateLabel && loraManager && loraManager->isRunning()) {
         loraStateLabel->setText("LoRa: 数据超时，暂用模拟数据");
     }
+
+    // 模拟数据也写入 SQLite
+    SensorSnapshot snap2;
+    snap2.timestamp = QDateTime::currentDateTime();
+    snap2.airTemp = curTemp;
+    snap2.airHumidity = curHumi;
+    DataStore::instance()->append(snap2);
 }
 
 void TeaGardenSystem::handleChat() {
@@ -598,6 +645,45 @@ void TeaGardenSystem::onLoraData(double windSpeed,
 
     lastLoraFrameTime = QDateTime::currentDateTime();
 
+    // 写入 SQLite
+    SensorSnapshot snap;
+    snap.timestamp = QDateTime::currentDateTime();
+    snap.windSpeed = curWindSpeed;
+    snap.airTemp = curTemp;
+    snap.airHumidity = curHumi;
+    snap.lightLux = curLight;
+    snap.soilPh = curPh;
+    snap.soilTemp = curSoilTemp;
+    snap.soilHumidity = curSoilHumi;
+    snap.soilConductivity = curSoilEc;
+    DataStore::instance()->append(snap);
+
+    // 阈值超限通知
+    QMap<int, ThresholdDialog::Thresholds> thresholds = ThresholdDialog::load();
+    auto checkThreshold = [&](int index, double value, const QString &name, const QString &unit) {
+        if (!std::isfinite(value)) return;
+        ThresholdDialog::Thresholds th = thresholds.value(index);
+        if (value > th.upper || value < th.lower) {
+            QDateTime now = QDateTime::currentDateTime();
+            if (!lastAlertTime.contains(index) || lastAlertTime[index].secsTo(now) > 60) {
+                lastAlertTime[index] = now;
+                QString msg = QString("%1 %2%3").arg(name)
+                    .arg(value, 0, 'f', 1).arg(unit);
+                QString detail = QString("阈值范围: %1 ~ %2").arg(th.lower).arg(th.upper);
+                trayIcon->showMessage("⚠ 阈值告警", msg + "\n" + detail,
+                                      QSystemTrayIcon::Warning, 5000);
+            }
+        }
+    };
+    checkThreshold(0, curTemp,      "空气温度",   "℃");
+    checkThreshold(1, curHumi,      "空气湿度",   "%");
+    checkThreshold(2, curLight,     "光照强度",   "Lux");
+    checkThreshold(3, curPh,        "土壤pH",     "");
+    checkThreshold(4, curWindSpeed, "风速",       "m/s");
+    checkThreshold(5, curSoilTemp,  "土壤温度",   "℃");
+    checkThreshold(6, curSoilHumi,  "土壤湿度",   "%");
+    checkThreshold(7, curSoilEc,    "土壤电导率", "mS/cm");
+
     valueLabels[0]->setText(QString::number(curTemp, 'f', 2) + " ℃");
     valueLabels[1]->setText(QString::number(curHumi, 'f', 2) + " %");
     valueLabels[2]->setText(QString::number(curLight) + " Lux");
@@ -628,4 +714,12 @@ void TeaGardenSystem::appendChatMessage(QString role, QString message) {
     QString color = (role == "管家") ? "#00E5FF" : "#FFA000";
     QString time = QDateTime::currentDateTime().toString("hh:mm:ss");
     chatDisplay->append(QString("<b style='color:%1;'>%2 [%3]:</b><br>%4<br>").arg(color, role, time, message));
+}
+
+void TeaGardenSystem::openChartDashboard() {
+    if (!chartDashboard) {
+        chartDashboard = new ChartDashboard();
+    }
+    chartDashboard->show();
+    chartDashboard->raise();
 }
