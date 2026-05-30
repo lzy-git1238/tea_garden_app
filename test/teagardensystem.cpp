@@ -454,9 +454,12 @@ void TeaGardenSystem::requestAIAnalysis(const QString &userMessage) {
     QJsonDocument doc(requestData);
     QByteArray postData = doc.toJson();
 
-    // 替换为您实际的 API 地址和 Key
     QString apiUrl = qEnvironmentVariable("TEA_AI_API_URL", "https://api.deepseek.com/v1/chat/completions");
-    QString apiKey = qEnvironmentVariable("TEA_AI_API_KEY", "sk-d1b7d18a36a243bb8a9abeb5f8a0e898");
+    QString apiKey = qEnvironmentVariable("TEA_AI_API_KEY");
+    if (apiKey.isEmpty()) {
+        appendChatMessage("系统", "未配置 TEA_AI_API_KEY 环境变量，AI 对话不可用。");
+        return;
+    }
 
     QNetworkRequest request((QUrl(apiUrl)));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
