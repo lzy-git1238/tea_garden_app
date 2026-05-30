@@ -31,9 +31,14 @@ QString readAmapSetting(const char *envName, const char *iniKey, const QString &
 
 TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     setupUI();
+
+    // 网络（MJPEG 流 + AI 对话共用）
+    networkManager = new QNetworkAccessManager(this);
+    connect(networkManager, &QNetworkAccessManager::finished, this, &TeaGardenSystem::onNetworkReply);
+
     setupMjpegStream();
 
-    // 1. 设置定时器：每3秒更新一次数据
+    // 定时器：每3秒更新一次数据
     updateTimer = new QTimer(this);
     connect(updateTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshData);
     updateTimer->start(3000);
@@ -49,9 +54,6 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(loraManager, &LoraManager::statusChanged, this, &TeaGardenSystem::onLoraStatus);
     connect(loraManager, &LoraManager::parseError, this, &TeaGardenSystem::onLoraParseError);
     loraManager->start();
-
-    networkManager = new QNetworkAccessManager(this);
-    connect(networkManager, &QNetworkAccessManager::finished, this, &TeaGardenSystem::onNetworkReply);
 
     // 2. 初始化发送欢迎语
     appendChatMessage("管家", "您好！我是茶园AI管家。监测系统已就绪，当前各项指标稳定。");
