@@ -22,15 +22,13 @@
 
 #include "loramanager.h"
 
-class Ros2ImageSubscriber;
-
 // --- 主系统类 ---
 class TeaGardenSystem : public QWidget {
     Q_OBJECT
 
 public:
     explicit TeaGardenSystem(QWidget *parent = nullptr);
-    virtual ~TeaGardenSystem(); // 明确声明虚析构函数
+    virtual ~TeaGardenSystem();
 
 private slots:
     void refreshData();         // 定时刷新环境数据
@@ -46,8 +44,6 @@ private slots:
                     const QDateTime &timestamp);
     void onLoraStatus(const QString &status);
     void onLoraParseError(const QString &errorText);
-    void onRosImageFrame(const QImage &image);
-    void onRosImageStatus(const QString &status);
     void onNetworkReply(QNetworkReply *reply);
     void startVoiceRecording();   // 开始录音 / 点击停止录音
     void onVoiceRecorded(const QString &wavFilePath);
@@ -55,7 +51,7 @@ private slots:
 private:
     void setupUI();
     void setupMapView(QVBoxLayout *midPanel);
-    void setupRos2ImageSubscription();
+    void setupMjpegStream();
     QWidget* createDataCard(QString title, int index, QString unit);
     void appendChatMessage(QString role, QString message);
     void requestAIAnalysis(const QString &userMessage);
@@ -71,10 +67,14 @@ private:
     QString  pendingWavPath;            // 录音目标文件路径
     QTimer *updateTimer;
     LoraManager *loraManager;
-    Ros2ImageSubscriber *ros2ImageSubscriber = nullptr;
     QNetworkAccessManager *networkManager;
     QWidget *mapView = nullptr;
     QDateTime lastLoraFrameTime;
+
+    // MJPEG 视频流
+    QByteArray mjpegBuffer;
+    QByteArray mjpegBoundary;
+    QNetworkReply *mjpegReply = nullptr;
 
     // 当前环境数值（用于AI分析）
     double curTemp = 22.0;

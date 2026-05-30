@@ -3,6 +3,7 @@
 #include <QMetaObject>
 #include <QString>
 
+#include <functional>
 #include <thread>
 
 #ifdef TEA_ENABLE_ROS2_IMAGE

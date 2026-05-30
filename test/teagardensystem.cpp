@@ -1,5 +1,4 @@
 #include "teagardensystem.h"
-#include "ros2imagesubscriber.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
@@ -32,7 +31,7 @@ QString readAmapSetting(const char *envName, const char *iniKey, const QString &
 
 TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     setupUI();
-    setupRos2ImageSubscription();
+    setupMjpegStream();
 
     // 1. 设置定时器：每3秒更新一次数据
     updateTimer = new QTimer(this);
@@ -60,9 +59,6 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
 
 // 【修复报错】明确定义析构函数
 TeaGardenSystem::~TeaGardenSystem() {
-    if (ros2ImageSubscriber) {
-        ros2ImageSubscriber->stop();
-    }
     // Qt 会自动处理对象树中子控件的内存释放
 }
 
@@ -94,7 +90,7 @@ void TeaGardenSystem::setupUI() {
     QLabel *vTitle = new QLabel("茶园实景与空间分布");
     vTitle->setStyleSheet("font-weight: bold; color: #00E5FF;");
 
-    videoLabel = new QLabel("【实时视频流：等待 ROS2 图像 /camera/color/image_raw】");
+    videoLabel = new QLabel("【实时视频流：等待 MJPEG 连接...】");
     videoLabel->setAlignment(Qt::AlignCenter);
     videoLabel->setStyleSheet("background: black; border: 2px solid #1a2a3a; min-height: 180px; color: #4CAF50;");
 
@@ -138,13 +134,74 @@ void TeaGardenSystem::setupUI() {
     mainLayout->addLayout(rightPanel, 2);
 }
 
-void TeaGardenSystem::setupRos2ImageSubscription() {
-    ros2ImageSubscriber = new Ros2ImageSubscriber(this);
-    connect(ros2ImageSubscriber, &Ros2ImageSubscriber::frameReady, this, &TeaGardenSystem::onRosImageFrame);
-    connect(ros2ImageSubscriber, &Ros2ImageSubscriber::statusMessage, this, &TeaGardenSystem::onRosImageStatus);
+void TeaGardenSystem::setupMjpegStream() {
+    const QString streamUrl = qEnvironmentVariable("TEA_MJPEG_URL", "http://100.108.217.12:8080/");
 
-    const QString topicName = qEnvironmentVariable("TEA_ROS_IMAGE_TOPIC", "/camera/color/image_raw");
-    ros2ImageSubscriber->start(topicName);
+    QNetworkRequest request{QUrl(streamUrl)};
+    mjpegReply = networkManager->get(request);
+
+    connect(mjpegReply, &QNetworkReply::readyRead, this, [this]() {
+        mjpegBuffer.append(mjpegReply->readAll());
+
+        // 首次收到数据时从 Content-Type 响应头提取 boundary
+        if (mjpegBoundary.isEmpty()) {
+            QByteArray contentType = mjpegReply->rawHeader("Content-Type");
+            int idx = contentType.indexOf("boundary=");
+            if (idx >= 0) {
+                mjpegBoundary = QByteArray("--") + contentType.mid(idx + 9).trimmed();
+            }
+        }
+
+        if (mjpegBoundary.isEmpty()) return;
+
+        // 按 boundary 分割帧
+        while (true) {
+            int start = mjpegBuffer.indexOf(mjpegBoundary);
+            if (start < 0) break;
+
+            int end = mjpegBuffer.indexOf(mjpegBoundary, start + mjpegBoundary.size());
+            if (end < 0) break; // 帧不完整，等更多数据
+
+            QByteArray part = mjpegBuffer.mid(start, end - start);
+            mjpegBuffer.remove(0, end);
+
+            // 跳过 HTTP 头部分，找到 JPEG 数据（以 \r\n\r\n 结束的头部）
+            int headerEnd = part.indexOf("\r\n\r\n");
+            if (headerEnd < 0) continue;
+
+            QByteArray jpegData = part.mid(headerEnd + 4);
+            if (jpegData.isEmpty()) continue;
+
+            QImage frame = QImage::fromData(jpegData, "JPEG");
+            if (frame.isNull()) continue;
+
+            if (videoLabel) {
+                const QPixmap pix = QPixmap::fromImage(frame);
+                videoLabel->setPixmap(pix.scaled(videoLabel->size(),
+                                                  Qt::KeepAspectRatio,
+                                                  Qt::SmoothTransformation));
+                videoLabel->setText(QString());
+            }
+        }
+    });
+
+    // 流断开或出错时尝试重连
+    connect(mjpegReply, &QNetworkReply::errorOccurred,
+            this, [this, streamUrl](QNetworkReply::NetworkError err) {
+        Q_UNUSED(err);
+        qWarning() << "MJPEG stream error:" << mjpegReply->errorString();
+        appendChatMessage("系统", "MJPEG 视频流断开，即将重连...");
+        mjpegReply->deleteLater();
+        mjpegReply = nullptr;
+        mjpegBuffer.clear();
+        mjpegBoundary.clear();
+        // 3 秒后重连
+        QTimer::singleShot(3000, this, [this]() {
+            setupMjpegStream();
+        });
+    });
+
+    appendChatMessage("系统", "MJPEG 视频流已连接: " + streamUrl);
 }
 
 void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
@@ -470,6 +527,11 @@ void TeaGardenSystem::requestAIAnalysis(const QString &userMessage) {
 }
 
 void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
+    // 跳过 MJPEG 流回复（由 setupMjpegStream 中的 readyRead 处理）
+    if (reply == mjpegReply) {
+        return;
+    }
+
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(responseData);
@@ -552,20 +614,6 @@ void TeaGardenSystem::onLoraStatus(const QString &status) {
     if (loraStateLabel) {
         loraStateLabel->setText(QString("LoRa: %1").arg(status));
     }
-}
-
-void TeaGardenSystem::onRosImageFrame(const QImage &image) {
-    if (!videoLabel || image.isNull()) {
-        return;
-    }
-
-    const QPixmap frame = QPixmap::fromImage(image);
-    videoLabel->setPixmap(frame.scaled(videoLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    videoLabel->setText(QString());
-}
-
-void TeaGardenSystem::onRosImageStatus(const QString &status) {
-    appendChatMessage("系统", status);
 }
 
 void TeaGardenSystem::onLoraParseError(const QString &errorText) {
