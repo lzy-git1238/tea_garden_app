@@ -88,7 +88,7 @@ private:
     void loadData(QDateTime from, QDateTime to);
     QWidget* createChartCard(const QString &title, const QString &unit, int sensorIndex);
     QChartView* createChart(QString title, QString unit);
-    void exportCSV();         // 导出当前时间范围数据为 CSV
+    void exportExcel();       // 导出当前时间范围数据为 .xlsx（通过 Python openpyxl）
 
     QScrollArea *scrollArea;
     QDateTimeEdit *fromTime, *toTime;
@@ -124,6 +124,44 @@ private:
 };
 ```
 
+### 2.5 阈值超限通知
+
+**方案**: 主窗口添加 `QSystemTrayIcon`，阈值为触发时桌面弹泡。
+
+```
+TeaGardenSystem::onLoraData() 中:
+  curValue > threshold.upper || curValue < threshold.lower
+    → trayIcon->showMessage("⚠ 阈值告警",
+          "空气温度 38.5℃ 超过上限 35℃",
+          QSystemTrayIcon::Warning, 5000)
+```
+
+**关键取舍**:
+- 使用 `QSystemTrayIcon`（Qt5 Widgets 内置），不需要额外依赖
+- 同一个传感器连续超限时 60 秒静默期，避免每 3 秒弹一次刷屏
+- 系统托盘图标常驻，右键菜单：显示主窗口 / 打开看板 / 退出
+- 用户可在主窗口设置中关闭通知（checkbox: "阈值超限通知"）
+
+### 2.6 Excel 导出
+
+**方案**: 生成 `.xlsx` 文件，通过 Python `openpyxl` 库。
+
+```
+ChartDashboard::exportExcel():
+  1. 弹出 QFileDialog 选择保存路径
+  2. DataStore::query(from, to) 拿数据
+  3. 生成临时 Python 脚本（openpyxl create workbook）
+  4. QProcess 调用 python3 执行
+  5. 完成提示: "已导出到 xxx.xlsx"
+```
+
+**关键取舍**:
+- 用 Python openpyxl 而非 C++ xlsx 库 — 项目已有 Python 依赖（语音识别），不加新 C++ 依赖
+- 生成的 xlsx 包含：表头行（时间 + 8 列传感器名）、数据行、冻结首行、自动列宽
+- Python 找不到 openpyxl 时自动安装：`pip3 install openpyxl`
+- 同时保留 CSV 文本导出作为命令行备选（`exportCSV()` 内部方法）
+```
+
 **关键取舍**:
 - 阈值存在 QSettings 而非 SQLite — 阈值是配置不是数据，跟数据库文件分开更清晰；换机/清数据不影响阈值
 - 弹窗 OK 后立即生效，调用 `ChartDashboard::reapplyThresholds()`
@@ -157,11 +195,17 @@ soil_conductivity_lower=0
 
 ### 3.1 `test/teagardensystem.h/.cpp`
 
-- 成员新增: `ChartDashboard *chartDashboard = nullptr;`
-- `setupUI()` 中左栏底部加按钮 `📊 数据看板`
+- 成员新增:
+  - `ChartDashboard *chartDashboard = nullptr;`
+  - `QSystemTrayIcon *trayIcon = nullptr;`
+  - `QMap<int, QDateTime> lastAlertTime;` — 60 秒静默期记录
+- `setupUI()` 中左栏底部加按钮 `📊 数据看板`；初始化系统托盘图标
 - 新增 slot `void openChartDashboard();` — 首次点击 new ChartDashboard + show，后续 `.show()` + `.raise()`
-- `onLoraData()` 中每次收到数据调用 `DataStore::instance()->append(...)` 写入 SQLite
+- `onLoraData()` 中:
+  - 每次收到数据调用 `DataStore::instance()->append(...)` 写入 SQLite
+  - 检查阈值 → 超限且距上次通知 >60s → `trayIcon->showMessage(...)`
 - 非 LoRa 模拟数据（refreshData 中）也写入 SQLite
+- 析构前关闭 ChartDashboard
 
 ### 3.2 `test/test.pro`
 
@@ -181,7 +225,8 @@ soil_conductivity_lower=0
 LoRa 串口 → LoraManager::parseTextLine()
   → TeaGardenSystem::onLoraData()
       ├→ 更新 UI 数据卡片 (现有逻辑不变)
-      └→ DataStore::append(snapshot)  ← 新：写入 SQLite
+      ├→ DataStore::append(snapshot)  ← 新：写入 SQLite
+      └→ 检查阈值 → 超限?(距上次>60s)? → trayIcon->showMessage() ← 新：桌面通知
 
 用户点 📊 按钮
   → TeaGardenSystem::openChartDashboard()
@@ -248,7 +293,8 @@ qmake ../test/test.pro && make -j$(nproc)
 # - 切换时间预设按钮 → 图表刷新
 # - 折叠/展开某张图
 # - 打开阈值弹窗 → 修改阈值 → 观察图中红线标记
-# - 导出 CSV → 检查文件内容
+# - 导出 Excel → 检查 .xlsx 文件内容
+# - 阈值超限 → 观察桌面通知弹泡（温度 > 35℃ 时触发）
 
 # 3. 数据持久化试验
 # - 运行 30 秒 → 关闭程序
@@ -267,11 +313,12 @@ qmake ../test/test.pro && make -j$(nproc)
 | 传感器偶尔缺失字段 (NaN) | 不写入 SQLite 该字段（NULL），图表跳过该点 |
 | 窗口最小化 / 关闭态 | show()+raise() 恢复 |
 | 阈值弹窗取消 | 不保存，恢复原值 |
+| 同一传感器连续超限 | 60 秒通知静默期，避免刷屏 |
+| Python openpyxl 未安装 | 自动 pip3 install openpyxl |
+| 导出时数据为空 | 提示"当前时间范围内无数据，无法导出" |
 
 ---
 
 ## 9. 不在本次范围
 
 - 不在这里做数据清理定时任务（>30天删除），先靠磁盘
-- 不做实时推送通知（阈值触发时只在图内标记，不弹系统通知）
-- CSV 导出只是简单格式（时间, 8列数值），不做 Excel 格式
