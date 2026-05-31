@@ -926,7 +926,15 @@ void TeaGardenSystem::showWeatherDetail() {
     auto *layout = new QVBoxLayout(dlg);
 
     // 标题
-    auto *title = new QLabel("🌤 24小时逐时预报");
+    QString innerTitle = "🌤 24小时逐时预报";
+    if (!weatherLocationPath.isEmpty()) {
+        QStringList parts = weatherLocationPath.split(",");
+        if (parts.size() >= 3)
+            innerTitle += QString(" · %1·%2").arg(parts[1], parts[2]);
+        else if (parts.size() >= 2)
+            innerTitle += " · " + parts[1];
+    }
+    auto *title = new QLabel(innerTitle);
     title->setStyleSheet("color: #4FC3F7; font-size: 18px; font-weight: bold; padding: 8px 0;");
     layout->addWidget(title);
 
