@@ -116,6 +116,12 @@ void TeaGardenSystem::setupUI() {
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     mainLayout->setSpacing(20);
 
+    // 主题切换按钮（放在窗口标题旁，右栏顶部）
+    themeBtn = new QPushButton("☀️ 日间");
+    themeBtn->setFixedSize(90, 28);
+    themeBtn->setCursor(Qt::PointingHandCursor);
+    connect(themeBtn, &QPushButton::clicked, this, &TeaGardenSystem::toggleTheme);
+
     // --- A. 左侧：传感器看板 ---
     QVBoxLayout *leftPanel = new QVBoxLayout();
     leftPanel->addWidget(new QLabel("实时环境指标"));
