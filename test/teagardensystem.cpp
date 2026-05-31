@@ -239,7 +239,7 @@ void TeaGardenSystem::setupUI() {
     voiceBtn->setStyleSheet("background: #FF9800; padding: 8px 15px; font-weight: bold; color: white;");
     connect(voiceBtn, &QPushButton::clicked, this, &TeaGardenSystem::startVoiceRecording);
 
-    QPushButton *sendBtn = new QPushButton("发送");
+    sendBtn = new QPushButton("发送");
     sendBtn->setStyleSheet("background: #00897B; padding: 8px 15px; font-weight: bold;");
 
     connect(sendBtn, &QPushButton::clicked, this, &TeaGardenSystem::handleChat);
@@ -371,10 +371,12 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     QFrame *card = new QFrame();
     card->setStyleSheet("background: rgba(255,255,255,0.05); border: 1px solid #1a2a3a; border-radius: 8px;");
     card->setFixedHeight(80);
+    dataCards.append(card);
 
     QVBoxLayout *vbox = new QVBoxLayout(card);
     QLabel *tLbl = new QLabel(title);
     tLbl->setStyleSheet("color: #909399; font-size: 12px;");
+    dataCardTitles.append(tLbl);
 
     QLabel *vLbl = new QLabel("-- " + unit);
     vLbl->setStyleSheet("color: #00E5FF; font-size: 22px; font-weight: bold;");
