@@ -328,7 +328,7 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
 #ifdef TEA_ENABLE_MAP_WEBVIEW
     QFile htmlFile(":/web/amap_view.html");
     if (!htmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QLabel *fallback = new QLabel("AMap page load failed: :/web/amap_view.html");
+        QLabel *fallback = new QLabel("Map page load failed: :/web/amap_view.html");
         fallback->setAlignment(Qt::AlignCenter);
         fallback->setMinimumHeight(350);
         fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
@@ -339,12 +339,14 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     QString html = QString::fromUtf8(htmlFile.readAll());
     htmlFile.close();
 
-    const QString amapKey = readAmapSetting("TEA_AMAP_KEY", "amap/key");
-    const QString centerLng = readAmapSetting("TEA_AMAP_LNG", "amap/lng", "120.135947");
-    const QString centerLat = readAmapSetting("TEA_AMAP_LAT", "amap/lat", "30.274084");
-    const QString zoom = readAmapSetting("TEA_AMAP_ZOOM", "amap/zoom", "14");
+    // Token: 优先 TEA_GEOVIS_TOKEN 环境变量，回退到天气 Token
+    const QString token = qEnvironmentVariable("TEA_GEOVIS_TOKEN",
+                           qEnvironmentVariable("TEA_WEATHER_TOKEN", ""));
+    const QString centerLng = qEnvironmentVariable("TEA_MAP_LNG", "120.135947");
+    const QString centerLat = qEnvironmentVariable("TEA_MAP_LAT", "30.274084");
+    const QString zoom = qEnvironmentVariable("TEA_MAP_ZOOM", "14");
 
-    html.replace("__AMAP_KEY__", amapKey.toHtmlEscaped());
+    html.replace("__GEOVIS_TOKEN__", token.toHtmlEscaped());
     html.replace("__CENTER_LNG__", centerLng.toHtmlEscaped());
     html.replace("__CENTER_LAT__", centerLat.toHtmlEscaped());
     html.replace("__ZOOM__", zoom.toHtmlEscaped());
@@ -352,10 +354,10 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     mapView = new QWebEngineView(this);
     mapView->setMinimumHeight(460);
     mapView->setStyleSheet("border: 1px solid #334455; border-radius: 10px;");
-    static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://webapi.amap.com/"));
+    static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
     midPanel->addWidget(mapView, 5);
 #else
-    QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable AMap.");
+    QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable Map.");
     fallback->setAlignment(Qt::AlignCenter);
     fallback->setMinimumHeight(460);
     fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
