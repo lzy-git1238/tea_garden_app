@@ -2,6 +2,9 @@
 #include "pestdata.h"
 
 #include <QVBoxLayout>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
