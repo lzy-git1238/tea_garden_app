@@ -22,21 +22,44 @@ void IotUploader::init(const QString &configPath) {
         qWarning() << "IotUploader: cannot read config" << configPath;
         return;
     }
-    QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
+    QString content = QString::fromUtf8(f.readAll());
     f.close();
 
-    if (!doc.isObject()) return;
-    QJsonObject cfg = doc.object();
+    // 文件包含两个独立 JSON 对象，逐对象解析并合并
+    QJsonObject merged;
+    int depth = 0, start = -1;
+    for (int i = 0; i < content.size(); ++i) {
+        if (content[i] == '{') {
+            if (depth == 0) start = i;
+            depth++;
+        } else if (content[i] == '}') {
+            depth--;
+            if (depth == 0 && start >= 0) {
+                QByteArray chunk = content.mid(start, i - start + 1).toUtf8();
+                QJsonDocument doc = QJsonDocument::fromJson(chunk);
+                if (doc.isObject()) {
+                    QJsonObject obj = doc.object();
+                    for (auto it = obj.begin(); it != obj.end(); ++it)
+                        merged[it.key()] = it.value();
+                }
+                start = -1;
+            }
+        }
+    }
 
-    deviceId = cfg["device_id"].toString();
-    secret   = cfg["secret"].toString();
-    username = cfg["username"].toString();
-    password = cfg["password"].toString();
-    clientId = cfg["clientId"].toString();
-    hostname = cfg["hostname"].toString();
-    port     = cfg["port"].toInt(8883);
+    deviceId = merged["device_id"].toString();
+    secret   = merged["secret"].toString();
+    username = merged["username"].toString();
+    password = merged["password"].toString();
+    clientId = merged["clientId"].toString();
+    hostname = merged["hostname"].toString();
+    port     = merged["port"].toInt(8883);
 
-    qDebug() << "[IoT] Config loaded:" << deviceId << "->" << hostname << ":" << port;
+    qDebug() << "[IoT] device:" << deviceId;
+    qDebug() << "[IoT] host:" << hostname << ":" << port;
+    qDebug() << "[IoT] username:" << username;
+    qDebug() << "[IoT] clientId:" << clientId;
+    qDebug() << "[IoT] password length:" << password.size();
 }
 
 void IotUploader::upload(const QJsonObject &sensorData) {
