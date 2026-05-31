@@ -417,9 +417,9 @@ void TeaGardenSystem::refreshData() {
     valueLabels[2]->setText(QString::number(curLight) + " Lux");
     valueLabels[3]->setText(QString::number(curPh, 'f', 2));
     valueLabels[4]->setText(QString::number(curWindSpeed, 'f', 2) + " m/s");
-    valueLabels[5]->setText("-- ℃");
-    valueLabels[6]->setText("-- %");
-    valueLabels[7]->setText("-- mS/cm");
+    valueLabels[5]->setText(QString::number(curSoilTemp, 'f', 2) + " ℃");
+    valueLabels[6]->setText(QString::number(curSoilHumi, 'f', 2) + " %");
+    valueLabels[7]->setText(QString::number(curSoilEc, 'f', 2) + " mS/cm");
 
     if (loraStateLabel && loraManager && loraManager->isRunning()) {
         loraStateLabel->setText("LoRa: 数据超时，暂用模拟数据");
