@@ -21,6 +21,7 @@
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
 #include <QPixmap>
+#include <QWebSocket>
 #include <QDebug>
 #include <QStyle>
 using namespace QtCharts;
