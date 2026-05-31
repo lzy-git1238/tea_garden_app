@@ -1162,3 +1162,58 @@ void TeaGardenSystem::showWeatherDetail() {
     dlg->setModal(false);
     dlg->show();
 }
+
+void TeaGardenSystem::openPestDashboard() {
+    if (!pestDashboard) {
+        pestDashboard = new PestDashboard();
+    }
+    pestDashboard->show();
+    pestDashboard->raise();
+    pestDashboard->refresh();
+}
+
+void TeaGardenSystem::injectMockPest() {
+    QStringList types = {"茶尺蠖", "茶小绿叶蝉", "茶炭疽病", "茶尺蠖", "茶小绿叶蝉"};
+    PestRecord rec;
+    rec.timestamp = QDateTime::currentDateTime();
+    rec.lat = 25.08 + (QRandomGenerator::global()->bounded(200) - 100) / 10000.0;
+    rec.lng = 118.232 + (QRandomGenerator::global()->bounded(200) - 100) / 10000.0;
+    rec.pestType = types[QRandomGenerator::global()->bounded(types.size())];
+    rec.severity = 1 + QRandomGenerator::global()->bounded(3);
+    PestStore::instance()->append(rec);
+
+    appendChatMessage("无人机", QString("检测到 %1 @ (%2, %3)")
+        .arg(rec.pestType)
+        .arg(rec.lat, 0, 'f', 6)
+        .arg(rec.lng, 0, 'f', 6));
+
+    injectPestMarkers();
+    if (pestDashboard && pestDashboard->isVisible()) pestDashboard->refresh();
+}
+
+void TeaGardenSystem::injectPestMarkers() {
+#ifdef TEA_ENABLE_MAP_WEBVIEW
+    if (!mapView) return;
+    QVector<PestRecord> records = PestStore::instance()->queryAll();
+    if (records.isEmpty()) return;
+
+    // 构建 JS 注入: 清除旧标注并添加新标注
+    QMap<QString, QString> colors;
+    colors["茶尺蠖"]   = "#4CAF50";
+    colors["茶小绿叶蝉"] = "#FF9800";
+    colors["茶炭疽病"]  = "#F44336";
+
+    QString js = "if(typeof pestMarkers !== 'undefined'){pestMarkers.forEach(function(m){map.removeLayer(m);});}"
+                 "pestMarkers=[];";
+    for (const auto& r : records) {
+        QString clr = colors.value(r.pestType, "#2196F3");
+        js += QString(
+            "var m=L.circleMarker([%1,%2],{radius:8,color:'%3',fillColor:'%3',fillOpacity:0.7,weight:2})"
+            ".addTo(map).bindPopup('%4<br>%5');pestMarkers.push(m);"
+        ).arg(r.lat, 0, 'f', 6).arg(r.lng, 0, 'f', 6)
+         .arg(clr, r.pestType, r.timestamp.toString("MM-dd HH:mm"));
+    }
+    static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
+#endif
+}
+
