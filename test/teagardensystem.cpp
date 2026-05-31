@@ -89,6 +89,12 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
 
     // 2. 初始化发送欢迎语
     appendChatMessage("管家", "您好！我是茶园AI管家。监测系统已就绪，当前各项指标稳定。");
+
+    // 天气预警定时器（启动时立刻查一次，之后每30分钟）
+    weatherTimer = new QTimer(this);
+    connect(weatherTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshWeatherAlert);
+    weatherTimer->start(30 * 60 * 1000);
+    refreshWeatherAlert();
 }
 
 // 【修复报错】明确定义析构函数
