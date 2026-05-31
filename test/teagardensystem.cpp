@@ -652,7 +652,7 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
                     QJsonArray alerts = result["alerts"].toArray();
                     if (alerts.isEmpty()) {
                         weatherLevelLabel->setText("✓ 当前无气象预警");
-                        weatherLevelLabel->setStyleSheet("color: #4CAF50; font-size: 15px; font-weight: bold; border: none; background: transparent;");
+                        weatherLevelLabel->setStyleSheet("color: #4CAF50; font-size: 18px; font-weight: bold; border: none; background: transparent;");
                         weatherDetailLabel->setText("");
                         weatherTimeLabel->setText("");
                     } else {
