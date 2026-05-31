@@ -64,6 +64,7 @@ private:
     void showWeatherDetail();   // 24h预报详情弹窗
     void appendChatMessage(QString role, QString message);
     void requestAIAnalysis(const QString &userMessage);
+    void applyTheme();  // 根据 isDarkMode 刷新整体样式
 
     // 成员变量
     QList<QLabel*> valueLabels;
