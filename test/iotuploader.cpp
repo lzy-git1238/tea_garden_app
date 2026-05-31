@@ -80,6 +80,7 @@ void IotUploader::startProcess() {
          << "-i" << clientId
          << "-t" << topic
          << "-l"           // 保持连接，从 stdin 读行发送
+         << "-d"           // 调试输出到 stderr
          << "--insecure"
          << "-q" << "1"
          << "-V" << "mqttv311";
