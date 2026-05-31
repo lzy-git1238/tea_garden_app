@@ -641,7 +641,7 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
         return;
     }
 
-    // 天气预警回复
+    // 24h逐时预报回复
     if (reply == weatherReply) {
         if (reply->error() == QNetworkReply::NoError) {
             QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
@@ -649,38 +649,57 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
                 QJsonObject obj = doc.object();
                 if (obj["status"].toInt() == 0 && obj.contains("result") && obj["result"].isObject()) {
                     QJsonObject result = obj["result"].toObject();
-                    QJsonArray alerts = result["alerts"].toArray();
-                    if (alerts.isEmpty()) {
-                        weatherLevelLabel->setText("✓ 当前无气象预警");
-                        weatherLevelLabel->setStyleSheet("color: #4CAF50; font-size: 18px; font-weight: bold; border: none; background: transparent;");
+                    QJsonArray datas = result["datas"].toArray();
+                    if (datas.isEmpty()) {
+                        weatherLevelLabel->setText("暂无预报数据");
+                        weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 18px; font-weight: bold; border: none; background: transparent;");
                         weatherDetailLabel->setText("");
                         weatherTimeLabel->setText("");
                     } else {
-                        QJsonObject alert = alerts[0].toObject();
-                        QString level     = alert["level"].toString();
-                        QString levelCode = alert["levelCode"].toString();
-                        QString type      = alert["type"].toString();
-                        QString detail    = alert["detail"].toString();
-                        QString effective = alert["effective"].toString();
-                        QString expires   = alert["expires"].toString();
+                        // 取第一条（最近一小时）
+                        QJsonObject first = datas[0].toObject();
+                        QString wp      = first["wp"].toString();           // 天气现象: 晴/多云/雨...
+                        double tem      = first["tem"].toDouble();          // 预报温度
+                        double real_tem = first["real_tem"].toDouble();     // 体感温度
+                        int rh          = first["rh"].toInt();              // 湿度
+                        QString wd_desc = first["wd_desc"].toString();      // 风向
+                        double ws       = first["ws"].toDouble();           // 风速
+                        QString ws_desc = first["ws_desc"].toString();      // 风力等级
+                        double pre      = first["pre"].toDouble();          // 降水量
 
-                        // 级别颜色
-                        QString color = "#FFC107"; // Yellow default
-                        if (levelCode == "Blue")   color = "#2196F3";
-                        if (levelCode == "Orange") color = "#FF9800";
-                        if (levelCode == "Red")    color = "#F44336";
+                        // 计算全天温度范围
+                        double dayMin = 99, dayMax = -99;
+                        for (const auto &d : datas) {
+                            double t = d.toObject()["tem"].toDouble();
+                            if (t < dayMin) dayMin = t;
+                            if (t > dayMax) dayMax = t;
+                        }
 
-                        weatherLevelLabel->setText(QString("⚠ %1 %2").arg(type, level));
+                        // 天气图标
+                        QString icon = "☀️";
+                        if (wp.contains("云"))     icon = "⛅";
+                        if (wp.contains("阴"))     icon = "☁️";
+                        if (wp.contains("雨"))     icon = "🌧";
+                        if (wp.contains("雪"))     icon = "🌨";
+                        if (wp.contains("雷"))     icon = "⛈";
+
+                        weatherLevelLabel->setText(
+                            QString("%1 %2  %3℃").arg(icon, wp).arg(tem, 0, 'f', 0));
                         weatherLevelLabel->setStyleSheet(
-                            QString("color: %1; font-size: 18px; font-weight: bold; border: none; background: transparent;").arg(color));
+                            "color: #4FC3F7; font-size: 18px; font-weight: bold; border: none; background: transparent;");
 
-                        // 详情截取前 60 字
-                        QString shortDetail = detail.left(60);
-                        if (detail.size() > 60) shortDetail += "...";
-                        weatherDetailLabel->setText(shortDetail);
+                        weatherDetailLabel->setText(
+                            QString("体感 %1℃ | 湿度 %2% | %3 %4 %5m/s\n"
+                                    "降水量 %6mm | 气温 %7~%8℃")
+                                .arg(real_tem, 0, 'f', 0).arg(rh)
+                                .arg(wd_desc, ws_desc).arg(ws, 0, 'f', 1)
+                                .arg(pre, 0, 'f', 1)
+                                .arg(dayMin, 0, 'f', 0).arg(dayMax, 0, 'f', 0));
 
                         weatherTimeLabel->setText(
-                            QString("生效: %1  到期: %2").arg(effective, expires));
+                            QString("更新: %1  |  %2小时逐时预报")
+                                .arg(obj["date"].toObject()["time"].toString(),
+                                     QString::number(datas.size())));
                     }
                 }
             }
