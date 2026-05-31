@@ -658,6 +658,14 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
                     // 保存地点名称
                     if (obj.contains("location") && obj["location"].isObject()) {
                         weatherLocationPath = obj["location"].toObject()["path"].toString();
+                        // 格式化：广东省,珠海市,斗门 → 珠海·斗门
+                        QStringList parts = weatherLocationPath.split(",");
+                        if (parts.size() >= 3)
+                            weatherTitleLabel->setText(QString("🌤 24h预报 · %1·%2").arg(parts[1], parts[2]));
+                        else if (parts.size() >= 2)
+                            weatherTitleLabel->setText(QString("🌤 24h预报 · %1").arg(parts[1]));
+                        else if (!weatherLocationPath.isEmpty())
+                            weatherTitleLabel->setText("🌤 24h预报 · " + weatherLocationPath);
                     }
                     QJsonObject result = obj["result"].toObject();
                     QJsonArray datas = result["datas"].toArray();
