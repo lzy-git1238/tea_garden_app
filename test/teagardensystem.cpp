@@ -878,3 +878,106 @@ void TeaGardenSystem::refreshWeatherAlert() {
     QNetworkRequest request{QUrl(url)};
     weatherReply = networkManager->get(request);
 }
+
+bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == weatherCard && event->type() == QEvent::MouseButtonPress) {
+        auto *me = static_cast<QMouseEvent*>(event);
+        if (me->button() == Qt::LeftButton) {
+            showWeatherDetail();
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
+void TeaGardenSystem::showWeatherDetail() {
+    if (weatherForecastData.isEmpty()) {
+        return;
+    }
+
+    auto *dlg = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint);
+    dlg->setWindowTitle("24小时逐时预报");
+    dlg->resize(680, 520);
+    dlg->setStyleSheet("background-color: #051623;");
+
+    auto *layout = new QVBoxLayout(dlg);
+
+    // 标题
+    auto *title = new QLabel("🌤 24小时逐时预报");
+    title->setStyleSheet("color: #4FC3F7; font-size: 18px; font-weight: bold; padding: 8px 0;");
+    layout->addWidget(title);
+
+    // 表格
+    auto *table = new QTableWidget(dlg);
+    table->setColumnCount(7);
+    table->setHorizontalHeaderLabels({"时间", "天气", "温度℃", "体感℃", "湿度%", "风向", "风力"});
+    table->horizontalHeader()->setStretchLastSection(true);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->verticalHeader()->setVisible(false);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setRowCount(weatherForecastData.size());
+    table->setStyleSheet(
+        "QTableWidget { background: #0a1628; color: #E0E0E0; gridline-color: #1a2a3a; border: 1px solid #1a3040; }"
+        "QHeaderView::section { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #1a3040, stop:1 #0d1f30); "
+        "color: #90A4AE; font-weight: bold; padding: 5px; border: 1px solid #1a2a3a; }"
+        "QTableWidget::item { padding: 4px 6px; }"
+        "QTableWidget::item:selected { background: #1a4050; color: #00E5FF; }");
+
+    for (int i = 0; i < weatherForecastData.size(); ++i) {
+        QJsonObject row = weatherForecastData[i].toObject();
+        QString fcTime = row["fc_time"].toString(); // "2024091113"
+        // 格式化为 HH:00
+        QString hour = fcTime.right(2) + ":00";
+
+        QString wp = row["wp"].toString();
+        double tem = row["tem"].toDouble();
+        double real_tem = row["real_tem"].toDouble();
+        int rh = row["rh"].toInt();
+        QString wd = row["wd_desc"].toString();
+        QString wsDesc = row["ws_desc"].toString();
+
+        auto makeCell = [&](const QString &text, const QString &color = "#E0E0E0") {
+            auto *item = new QTableWidgetItem(text);
+            item->setForeground(QColor(color));
+            item->setTextAlignment(Qt::AlignCenter);
+            return item;
+        };
+
+        // 天气颜色
+        QString wpColor = "#4FC3F7";  // 晴
+        if (wp.contains("云")) wpColor = "#90A4AE";
+        if (wp.contains("阴")) wpColor = "#78909C";
+        if (wp.contains("雨")) wpColor = "#64B5F6";
+        if (wp.contains("雷")) wpColor = "#FF9800";
+        if (wp.contains("雪")) wpColor = "#E0E0E0";
+
+        table->setItem(i, 0, makeCell(hour));
+        table->setItem(i, 1, makeCell(wp, wpColor));
+        table->setItem(i, 2, makeCell(QString::number(tem, 'f', 0), "#FFC107"));
+        table->setItem(i, 3, makeCell(QString::number(real_tem, 'f', 0), "#FF9800"));
+        table->setItem(i, 4, makeCell(QString::number(rh)));
+        table->setItem(i, 5, makeCell(wd));
+        table->setItem(i, 6, makeCell(wsDesc));
+    }
+
+    layout->addWidget(table);
+
+    // 关闭按钮
+    auto *closeBtn = new QPushButton("关闭");
+    closeBtn->setStyleSheet(
+        "QPushButton {"
+        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #1a3040, stop:1 #0d1f30);"
+        "  color: #90A4AE; padding: 6px 24px; font-size: 13px; font-weight: bold; border-radius: 4px;"
+        "  border-top: 1px solid #2a4050; border-bottom: 1px solid #081018;"
+        "}"
+        "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #284868, stop:1 #183848); color: #fff; }");
+    connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
+    auto *btnRow = new QHBoxLayout();
+    btnRow->addStretch();
+    btnRow->addWidget(closeBtn);
+    layout->addLayout(btnRow);
+
+    dlg->setModal(false);
+    dlg->show();
+}
