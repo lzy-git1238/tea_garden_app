@@ -97,7 +97,7 @@ void IotUploader::runUpload(const QString &payload) {
         + " -m '" + payload + "'"
         + " -d"   // 调试输出
         + " -q 1" // QoS 1
-        + " --cafile /usr/local/share/ca-certificates/iotda.crt"
+        + " --insecure"
         + " -V mqttv311";
 
     qDebug() << "[IoT] upload payload:" << payload.left(200);
