@@ -2,6 +2,8 @@
 #include "chartdashboard.h"
 #include "thresholddialog.h"
 #include "datastore.h"
+#include "pestdata.h"
+#include "pestdashboard.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
