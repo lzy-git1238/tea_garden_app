@@ -134,7 +134,7 @@ void TeaGardenSystem::setupUI() {
     // ── 天气预警卡片（立体3D） ──
     weatherCard = new QFrame();
     weatherCard = new QFrame();
-    weatherCard->setFixedHeight(145);
+    weatherCard->setFixedHeight(155);
     weatherCard->setStyleSheet(
         "QFrame#weatherCard {"
         "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #2a1a18, stop:0.4 #1e1018, stop:1 #100810);"
