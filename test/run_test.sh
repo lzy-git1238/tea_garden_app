@@ -24,7 +24,7 @@ if [[ "$(id -u)" == "0" ]]; then
 fi
 
 # 天气预警 API（星图云开放平台）
-export TEA_WEATHER_TOKEN="你的token填这里"
-export TEA_WEATHER_LOCATION="WTX_CH101280800"
+export TEA_WEATHER_TOKEN="fbc9df678447f3d3263734bce211f4f3"
+export TEA_WEATHER_LOCATION="WTX_CH101230502"
 
 exec ./test "$@"
