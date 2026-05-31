@@ -135,11 +135,10 @@ void TeaGardenSystem::setupUI() {
     for(int i=0; i<names.size(); ++i) {
         leftPanel->addWidget(createDataCard(names[i], i, units[i]));
     }
-    QPushButton *chartBtnLocal = new QPushButton("📊 数据看板");
-    chartBtn = chartBtnLocal;
-    chartBtnLocal->setStyleSheet("background: #00897B; color: white; padding: 8px; "
+    chartBtn = new QPushButton("📊 数据看板");
+    chartBtn->setStyleSheet("background: #00897B; color: white; padding: 8px; "
                             "font-weight: bold; border-radius: 6px;");
-    connect(chartBtnLocal, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
+    connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
 
     // ── 天气预警卡片（立体3D） ──
