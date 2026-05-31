@@ -293,17 +293,43 @@ void TeaGardenSystem::setupMjpegStream() {
     const QString streamUrl = qEnvironmentVariable("TEA_MJPEG_URL", "http://100.108.217.12:8080/");
 
     QNetworkRequest request{QUrl(streamUrl)};
+    request.setRawHeader("Accept", "multipart/x-mixed-replace,image/jpeg,*/*");
     mjpegReply = networkManager->get(request);
 
     connect(mjpegReply, &QNetworkReply::readyRead, this, [this]() {
         mjpegBuffer.append(mjpegReply->readAll());
 
-        // 首次收到数据时从 Content-Type 响应头提取 boundary
+        // 首次收到数据时从 Content-Type 响应头或响应体提取 boundary
         if (mjpegBoundary.isEmpty()) {
             QByteArray contentType = mjpegReply->rawHeader("Content-Type");
-            int idx = contentType.indexOf("boundary=");
-            if (idx >= 0) {
-                mjpegBoundary = QByteArray("--") + contentType.mid(idx + 9).trimmed();
+            qDebug() << "[MJPEG] Content-Type header:" << contentType;
+
+            if (!contentType.isEmpty()) {
+                int idx = contentType.indexOf("boundary=");
+                if (idx >= 0) {
+                    mjpegBoundary = QByteArray("--") + contentType.mid(idx + 9).trimmed();
+                    // 去掉可能的引号
+                    mjpegBoundary.replace("\"", "");
+                }
+            }
+            // 如果 header 里没有，尝试从响应体第一行提取
+            if (mjpegBoundary.isEmpty()) {
+                int endline = mjpegBuffer.indexOf('\n');
+                if (endline > 0) {
+                    QByteArray firstLine = mjpegBuffer.left(endline).trimmed();
+                    int bi = firstLine.indexOf("boundary=");
+                    if (bi >= 0) {
+                        mjpegBoundary = QByteArray("--") + firstLine.mid(bi + 9).trimmed();
+                        mjpegBoundary.replace("\"", "");
+                    }
+                }
+            }
+            qDebug() << "[MJPEG] Boundary:" << mjpegBoundary;
+
+            // 跳过 HTTP 响应头，直接定位到第一个 boundary
+            int bodyStart = mjpegBuffer.indexOf(mjpegBoundary);
+            if (bodyStart >= 0) {
+                mjpegBuffer.remove(0, bodyStart);
             }
         }
 
@@ -315,26 +341,35 @@ void TeaGardenSystem::setupMjpegStream() {
             if (start < 0) break;
 
             int end = mjpegBuffer.indexOf(mjpegBoundary, start + mjpegBoundary.size());
-            if (end < 0) break; // 帧不完整，等更多数据
+            if (end < 0) break;
 
             QByteArray part = mjpegBuffer.mid(start, end - start);
             mjpegBuffer.remove(0, end);
 
-            // 跳过 HTTP 头部分，找到 JPEG 数据（以 \r\n\r\n 结束的头部）
-            int headerEnd = part.indexOf("\r\n\r\n");
+            // 跳过 MIME 头部分，找到 JPEG 数据（支持 \r\n\r\n 和 \n\n）
+            QByteArray delim = "\r\n\r\n";
+            int headerEnd = part.indexOf(delim);
+            if (headerEnd < 0) {
+                delim = "\n\n";
+                headerEnd = part.indexOf(delim);
+            }
             if (headerEnd < 0) continue;
 
-            QByteArray jpegData = part.mid(headerEnd + 4);
+            QByteArray jpegData = part.mid(headerEnd + delim.size());
+            if (jpegData.startsWith('\n')) jpegData.remove(0, 1);
             if (jpegData.isEmpty()) continue;
 
             QImage frame = QImage::fromData(jpegData, "JPEG");
-            if (frame.isNull()) continue;
+            if (frame.isNull()) {
+                qDebug() << "[MJPEG] Invalid JPEG, size:" << jpegData.size();
+                continue;
+            }
 
             if (videoLabel) {
+                QSize sz = videoLabel->size();
+                if (sz.width() < 10) sz = QSize(640, 360); // fallback 最小尺寸
                 const QPixmap pix = QPixmap::fromImage(frame);
-                videoLabel->setPixmap(pix.scaled(videoLabel->size(),
-                                                  Qt::KeepAspectRatio,
-                                                  Qt::SmoothTransformation));
+                videoLabel->setPixmap(pix.scaled(sz, Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 videoLabel->setText(QString());
             }
         }
