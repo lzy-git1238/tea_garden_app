@@ -16,6 +16,8 @@ SOURCES += \
     datastore.cpp \
     loramanager.cpp \
     main.cpp \
+    pestdashboard.cpp \
+    pestdata.cpp \
     teagardensystem.cpp \
     thresholddialog.cpp \
     widget.cpp
@@ -24,6 +26,8 @@ HEADERS += \
     chartdashboard.h \
     datastore.h \
     loramanager.h \
+    pestdashboard.h \
+    pestdata.h \
     teagardensystem.h \
     thresholddialog.h \
     widget.h
