@@ -70,7 +70,7 @@ void IotUploader::upload(const QJsonObject &sensorData) {
     QJsonArray services;
 
     QJsonObject svc;
-    svc["service_id"] = "sensor";
+    svc["service_id"] = "tea_sensor";
     svc["properties"] = sensorData;
     svc["event_time"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
 

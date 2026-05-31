@@ -11,3 +11,6 @@
     "port": 8883,
     "protocol": "MQTTS"
 }
+
+服务  tea_sensor 
+属性：air_temp air_hum light_intensity light_intensity soli_temp  soli_hum  wind_speed soli_ec 
