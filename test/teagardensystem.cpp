@@ -127,6 +127,19 @@ void TeaGardenSystem::setupUI() {
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
 
+    auto *pestBtn = new QPushButton("🐛 病虫害面板");
+    pestBtn->setStyleSheet("background: #5D4037; color: white; padding: 8px; "
+                            "font-weight: bold; border-radius: 6px;");
+    connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
+    leftPanel->addWidget(pestBtn);
+
+    auto *mockPestBtn = new QPushButton("🐛 模拟检测");
+    mockPestBtn->setStyleSheet("background: #3E2723; color: #FF8A65; padding: 6px; "
+                               "font-size: 11px; font-weight: bold; border-radius: 4px;"
+                               "border-top: 1px solid #5D4037; border-bottom: 1px solid #1a0a08;");
+    connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
+    leftPanel->addWidget(mockPestBtn);
+
     // ── 天气预警卡片（立体3D） ──
     weatherCard = new QFrame();
     weatherCard->setFixedHeight(155);
