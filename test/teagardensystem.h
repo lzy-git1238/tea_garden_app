@@ -53,6 +53,7 @@ private slots:
     void onVoiceRecorded(const QString &wavFilePath);
     void openChartDashboard();
     void refreshWeatherAlert();  // 定时刷新天气预警
+    void toggleTheme();          // 切换日间/夜间模式
 
 private:
     void setupUI();
