@@ -655,6 +655,10 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
             if (!doc.isNull() && doc.isObject()) {
                 QJsonObject obj = doc.object();
                 if (obj["status"].toInt() == 0 && obj.contains("result") && obj["result"].isObject()) {
+                    // 保存地点名称
+                    if (obj.contains("location") && obj["location"].isObject()) {
+                        weatherLocationPath = obj["location"].toObject()["path"].toString();
+                    }
                     QJsonObject result = obj["result"].toObject();
                     QJsonArray datas = result["datas"].toArray();
                     weatherForecastData = datas;  // 缓存用于弹窗
