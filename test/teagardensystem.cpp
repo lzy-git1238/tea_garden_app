@@ -149,7 +149,7 @@ void TeaGardenSystem::setupUI() {
 
     // 标题行
     auto *wcTitleRow = new QHBoxLayout();
-    auto *wcTitle = new QLabel("🌤 天气预警");
+    auto *wcTitle = new QLabel("🌤 24h预报");
     wcTitle->setStyleSheet("color: #f0c0a0; font-size: 13px; font-weight: bold; border: none; background: transparent;");
     wcTitleRow->addWidget(wcTitle);
     wcTitleRow->addStretch();
