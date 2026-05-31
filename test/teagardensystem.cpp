@@ -672,7 +672,7 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
 
                         weatherLevelLabel->setText(QString("⚠ %1 %2").arg(type, level));
                         weatherLevelLabel->setStyleSheet(
-                            QString("color: %1; font-size: 15px; font-weight: bold; border: none; background: transparent;").arg(color));
+                            QString("color: %1; font-size: 18px; font-weight: bold; border: none; background: transparent;").arg(color));
 
                         // 详情截取前 60 字
                         QString shortDetail = detail.left(60);
