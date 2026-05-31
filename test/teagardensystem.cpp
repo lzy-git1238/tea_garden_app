@@ -640,6 +640,60 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
         return;
     }
 
+    // 天气预警回复
+    if (reply == weatherReply) {
+        if (reply->error() == QNetworkReply::NoError) {
+            QJsonDocument doc = QJsonDocument::fromJson(reply->readAll());
+            if (!doc.isNull() && doc.isObject()) {
+                QJsonObject obj = doc.object();
+                if (obj["status"].toInt() == 0 && obj.contains("result") && obj["result"].isObject()) {
+                    QJsonObject result = obj["result"].toObject();
+                    QJsonArray alerts = result["alerts"].toArray();
+                    if (alerts.isEmpty()) {
+                        weatherLevelLabel->setText("✓ 当前无气象预警");
+                        weatherLevelLabel->setStyleSheet("color: #4CAF50; font-size: 15px; font-weight: bold; border: none; background: transparent;");
+                        weatherDetailLabel->setText("");
+                        weatherTimeLabel->setText("");
+                    } else {
+                        QJsonObject alert = alerts[0].toObject();
+                        QString level     = alert["level"].toString();
+                        QString levelCode = alert["levelCode"].toString();
+                        QString type      = alert["type"].toString();
+                        QString detail    = alert["detail"].toString();
+                        QString effective = alert["effective"].toString();
+                        QString expires   = alert["expires"].toString();
+
+                        // 级别颜色
+                        QString color = "#FFC107"; // Yellow default
+                        if (levelCode == "Blue")   color = "#2196F3";
+                        if (levelCode == "Orange") color = "#FF9800";
+                        if (levelCode == "Red")    color = "#F44336";
+
+                        weatherLevelLabel->setText(QString("⚠ %1 %2").arg(type, level));
+                        weatherLevelLabel->setStyleSheet(
+                            QString("color: %1; font-size: 15px; font-weight: bold; border: none; background: transparent;").arg(color));
+
+                        // 详情截取前 60 字
+                        QString shortDetail = detail.left(60);
+                        if (detail.size() > 60) shortDetail += "...";
+                        weatherDetailLabel->setText(shortDetail);
+
+                        weatherTimeLabel->setText(
+                            QString("生效: %1  到期: %2").arg(effective, expires));
+                    }
+                }
+            }
+        } else {
+            weatherLevelLabel->setText("⚠ 天气服务不可用");
+            weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 13px; font-weight: bold; border: none; background: transparent;");
+            weatherDetailLabel->setText(reply->errorString());
+            weatherTimeLabel->setText("");
+        }
+        weatherReply->deleteLater();
+        weatherReply = nullptr;
+        return;
+    }
+
     if (reply->error() == QNetworkReply::NoError) {
         QByteArray responseData = reply->readAll();
         QJsonDocument doc = QJsonDocument::fromJson(responseData);
