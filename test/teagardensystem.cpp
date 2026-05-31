@@ -981,6 +981,8 @@ void TeaGardenSystem::applyTheme() {
             "QPushButton:hover { background: #c0b090; color: #302010; }");
     }
 }
+
+void TeaGardenSystem::refreshWeatherAlert() {
     QString location = qEnvironmentVariable("TEA_WEATHER_LOCATION", "WTX_CH101280800");
     QString token    = qEnvironmentVariable("TEA_WEATHER_TOKEN");
     if (token.isEmpty()) {
