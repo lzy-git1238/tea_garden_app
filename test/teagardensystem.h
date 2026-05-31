@@ -101,6 +101,7 @@ private:
 
     // 天气预警
     QFrame *weatherCard = nullptr;
+    QLabel *weatherTitleLabel = nullptr;
     QLabel *weatherLevelLabel = nullptr;
     QLabel *weatherDetailLabel = nullptr;
     QLabel *weatherTimeLabel = nullptr;
