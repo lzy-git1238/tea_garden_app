@@ -1250,3 +1250,33 @@ void TeaGardenSystem::injectPestMarkers() {
 #endif
 }
 
+
+void TeaGardenSystem::refreshPestPie() {
+    if (!pestPieView) return;
+    auto *chart = pestPieView->chart();
+    chart->removeAllSeries();
+
+    QMap<QString, int> counts = PestStore::instance()->typeCounts();
+    auto *series = new QPieSeries();
+
+    if (counts.isEmpty()) {
+        series->append("暂无数据", 1);
+        auto *sl = series->slices().first();
+        sl->setColor(QColor("#455A64"));
+        sl->setLabelVisible(false);
+    } else {
+        QMap<QString, QColor> colors;
+        colors["茶尺蠖"]   = QColor("#4CAF50");
+        colors["茶小绿叶蝉"] = QColor("#FF9800");
+        colors["茶炭疽病"]  = QColor("#F44336");
+
+        for (auto it = counts.begin(); it != counts.end(); ++it) {
+            auto *sl = series->append(QString("%1(%2)").arg(it.key()).arg(it.value()), it.value());
+            sl->setColor(colors.value(it.key(), QColor("#2196F3")));
+            sl->setLabelVisible(true);
+            sl->setLabelColor(QColor("#E0E0E0"));
+        }
+    }
+
+    chart->addSeries(series);
+}
