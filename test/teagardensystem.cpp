@@ -931,7 +931,13 @@ void TeaGardenSystem::showWeatherDetail() {
         QJsonObject row = weatherForecastData[i].toObject();
         QString fcTime = row["fc_time"].toString(); // "2024091113"
         // 格式化为 HH:00
-        QString hour = fcTime.right(2) + ":00";
+        // fc_time = "2024091113" → "09-11 13:00"
+        QString hour;
+        if (fcTime.size() >= 10) {
+            hour = fcTime.mid(4, 2) + "-" + fcTime.mid(6, 2) + " " + fcTime.right(2) + ":00";
+        } else {
+            hour = fcTime.right(2) + ":00";
+        }
 
         QString wp = row["wp"].toString();
         double tem = row["tem"].toDouble();
