@@ -290,108 +290,45 @@ void TeaGardenSystem::setupUI() {
 }
 
 void TeaGardenSystem::setupMjpegStream() {
-    const QString streamUrl = qEnvironmentVariable("TEA_MJPEG_URL", "http://100.108.217.12:8080/");
+    const QString streamUrl = qEnvironmentVariable("TEA_MJPEG_URL", "ws://100.108.217.12:8080/ws");
 
-    QNetworkRequest request{QUrl(streamUrl)};
-    request.setRawHeader("Accept", "multipart/x-mixed-replace,image/jpeg,*/*");
-    mjpegReply = networkManager->get(request);
+    videoSocket = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
+    videoSocket->open(QUrl(streamUrl));
 
-    connect(mjpegReply, &QNetworkReply::readyRead, this, [this]() {
-        mjpegBuffer.append(mjpegReply->readAll());
+    connect(videoSocket, &QWebSocket::textMessageReceived, this, [this](const QString &msg) {
+        QJsonDocument doc = QJsonDocument::fromJson(msg.toUtf8());
+        if (doc.isNull()) return;
+        QJsonObject obj = doc.object();
+        QString b64 = obj["image_b64"].toString();
+        if (b64.isEmpty()) return;
 
-        // 首次收到数据时从 Content-Type 响应头或响应体提取 boundary
-        if (mjpegBoundary.isEmpty()) {
-            QByteArray contentType = mjpegReply->rawHeader("Content-Type");
-            qDebug() << "[MJPEG] Content-Type header:" << contentType;
+        QByteArray jpegData = QByteArray::fromBase64(b64.toUtf8());
+        QImage frame = QImage::fromData(jpegData, "JPEG");
+        if (frame.isNull()) return;
 
-            if (!contentType.isEmpty()) {
-                int idx = contentType.indexOf("boundary=");
-                if (idx >= 0) {
-                    mjpegBoundary = QByteArray("--") + contentType.mid(idx + 9).trimmed();
-                    // 去掉可能的引号
-                    mjpegBoundary.replace("\"", "");
-                }
-            }
-            // 如果 header 里没有，尝试从响应体第一行提取
-            if (mjpegBoundary.isEmpty()) {
-                int endline = mjpegBuffer.indexOf('\n');
-                if (endline > 0) {
-                    QByteArray firstLine = mjpegBuffer.left(endline).trimmed();
-                    int bi = firstLine.indexOf("boundary=");
-                    if (bi >= 0) {
-                        mjpegBoundary = QByteArray("--") + firstLine.mid(bi + 9).trimmed();
-                        mjpegBoundary.replace("\"", "");
-                    }
-                }
-            }
-            qDebug() << "[MJPEG] Boundary:" << mjpegBoundary;
-
-            // 跳过 HTTP 响应头，直接定位到第一个 boundary
-            int bodyStart = mjpegBuffer.indexOf(mjpegBoundary);
-            if (bodyStart >= 0) {
-                mjpegBuffer.remove(0, bodyStart);
-            }
-        }
-
-        if (mjpegBoundary.isEmpty()) return;
-
-        // 按 boundary 分割帧
-        while (true) {
-            int start = mjpegBuffer.indexOf(mjpegBoundary);
-            if (start < 0) break;
-
-            int end = mjpegBuffer.indexOf(mjpegBoundary, start + mjpegBoundary.size());
-            if (end < 0) break;
-
-            QByteArray part = mjpegBuffer.mid(start, end - start);
-            mjpegBuffer.remove(0, end);
-
-            // 跳过 MIME 头部分，找到 JPEG 数据（支持 \r\n\r\n 和 \n\n）
-            QByteArray delim = "\r\n\r\n";
-            int headerEnd = part.indexOf(delim);
-            if (headerEnd < 0) {
-                delim = "\n\n";
-                headerEnd = part.indexOf(delim);
-            }
-            if (headerEnd < 0) continue;
-
-            QByteArray jpegData = part.mid(headerEnd + delim.size());
-            if (jpegData.startsWith('\n')) jpegData.remove(0, 1);
-            if (jpegData.isEmpty()) continue;
-
-            QImage frame = QImage::fromData(jpegData, "JPEG");
-            if (frame.isNull()) {
-                qDebug() << "[MJPEG] Invalid JPEG, size:" << jpegData.size();
-                continue;
-            }
-
-            if (videoLabel) {
-                QSize sz = videoLabel->size();
-                if (sz.width() < 10) sz = QSize(640, 360); // fallback 最小尺寸
-                const QPixmap pix = QPixmap::fromImage(frame);
-                videoLabel->setPixmap(pix.scaled(sz, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                videoLabel->setText(QString());
-            }
+        if (videoLabel) {
+            QSize sz = videoLabel->size();
+            if (sz.width() < 10) sz = QSize(640, 360);
+            const QPixmap pix = QPixmap::fromImage(frame);
+            videoLabel->setPixmap(pix.scaled(sz, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            videoLabel->setText(QString());
         }
     });
 
-    // 流断开或出错时尝试重连
-    connect(mjpegReply, &QNetworkReply::errorOccurred,
-            this, [this, streamUrl](QNetworkReply::NetworkError err) {
-        Q_UNUSED(err);
-        qWarning() << "MJPEG stream error:" << mjpegReply->errorString();
-        appendChatMessage("系统", "MJPEG 视频流断开，即将重连...");
-        mjpegReply->deleteLater();
-        mjpegReply = nullptr;
-        mjpegBuffer.clear();
-        mjpegBoundary.clear();
-        // 3 秒后重连
+    connect(videoSocket, &QWebSocket::disconnected, this, [this, streamUrl]() {
+        qWarning() << "WebSocket video disconnected, reconnecting in 3s...";
+        appendChatMessage("系统", "视频流断开，3 秒后重连...");
         QTimer::singleShot(3000, this, [this]() {
             setupMjpegStream();
         });
     });
 
-    appendChatMessage("系统", "MJPEG 视频流已连接: " + streamUrl);
+    connect(videoSocket, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+            this, [this](QAbstractSocket::SocketError) {
+        qWarning() << "WebSocket error:" << videoSocket->errorString();
+    });
+
+    appendChatMessage("系统", "WebSocket 视频流已连接: " + streamUrl);
 }
 
 void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
