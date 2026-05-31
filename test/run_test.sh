@@ -31,6 +31,6 @@ export TEA_WEATHER_LOCATION="WTX_CH101230502"
 export TEA_AI_API_KEY="你的DeepSeek-API-Key填这里"
 export TEA_MAP_LNG="118.232478"
 export TEA_MAP_LAT="25.08039"
-export TEA_MAP_ZOOM="15"
+export TEA_MAP_ZOOM="16"
 
 exec ./test "$@"
