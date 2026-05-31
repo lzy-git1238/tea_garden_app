@@ -77,7 +77,7 @@ void IotUploader::startProcess() {
          << "-p" << QString::number(port)
          << "-u" << username
          << "-P" << password
-         << "-i" << clientId + "_" + QString::number(QDateTime::currentMSecsSinceEpoch())
+         << "-i" << clientId
          << "-t" << topic
          << "-l"           // 保持连接，从 stdin 读行发送
          << "--insecure"
