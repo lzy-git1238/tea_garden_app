@@ -1206,8 +1206,11 @@ void TeaGardenSystem::injectPestMarkers() {
     colors["茶小绿叶蝉"] = "#FF9800";
     colors["茶炭疽病"]  = "#F44336";
 
-    QString js = "if(typeof pestMarkers !== 'undefined'){pestMarkers.forEach(function(m){map.removeLayer(m);});}"
-                 "pestMarkers=[];";
+    QString js = "try{"
+                 "if(typeof pestMarkers !== 'undefined'){pestMarkers.forEach(function(m){map.removeLayer(m);});}"
+                 "pestMarkers=[];"
+                 "if(typeof map==='undefined'||typeof L==='undefined'){console.log('Map or Leaflet not ready');}"
+                 "else{";
     for (const auto& r : records) {
         QString clr = colors.value(r.pestType, "#2196F3");
         js += QString(
@@ -1216,6 +1219,7 @@ void TeaGardenSystem::injectPestMarkers() {
         ).arg(r.lat, 0, 'f', 6).arg(r.lng, 0, 'f', 6)
          .arg(clr, r.pestType, r.timestamp.toString("MM-dd HH:mm"));
     }
+    js += "}}catch(e){console.log('Pest marker error:'+e.message);}";
     static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
 #endif
 }
