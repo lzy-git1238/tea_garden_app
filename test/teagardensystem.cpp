@@ -250,11 +250,22 @@ void TeaGardenSystem::setupUI() {
     auto *pestChart = new QChart();
     pestChart->setBackgroundBrush(QBrush(QColor("#051623")));
     pestChart->legend()->setLabelColor(QColor("#90A4AE"));
+    pestChart->legend()->setAlignment(Qt::AlignBottom);
     pestChart->setMargins(QMargins(0, 0, 0, 0));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(160);
-    pestPieView->setStyleSheet("background: transparent; border: 1px solid #2a1a1a; border-radius: 6px;");
+    pestPieView->setMinimumHeight(240);
+    pestPieView->setStyleSheet(
+        "background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 rgba(20,20,12,0.6), stop:1 rgba(10,10,5,0.8));"
+        "border-top: 1px solid #3a2a18; border-left: 1px solid #302018;"
+        "border-right: 1px solid #100808; border-bottom: 2px solid #080408;"
+        "border-radius: 8px; padding: 4px;");
+    // 阴影效果
+    auto *shadow = new QGraphicsDropShadowEffect();
+    shadow->setBlurRadius(12);
+    shadow->setColor(QColor(0, 0, 0, 80));
+    shadow->setOffset(3, 3);
+    pestPieView->setGraphicsEffect(shadow);
     rightPanel->addWidget(pestPieView);
 
     // 聊天区（缩小）
