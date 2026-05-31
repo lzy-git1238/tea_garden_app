@@ -130,6 +130,59 @@ void TeaGardenSystem::setupUI() {
                             "font-weight: bold; border-radius: 6px;");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
+
+    // ── 天气预警卡片（立体3D） ──
+    weatherCard = new QFrame();
+    weatherCard->setFixedHeight(110);
+    weatherCard->setStyleSheet(
+        "QFrame#weatherCard {"
+        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #2a1a18, stop:0.4 #1e1018, stop:1 #100810);"
+        "  border-top: 1px solid #603030; border-left: 1px solid #502828;"
+        "  border-right: 1px solid #100808; border-bottom: 2px solid #080408;"
+        "  border-radius: 8px;"
+        "}");
+    weatherCard->setObjectName("weatherCard");
+    auto *wcLayout = new QVBoxLayout(weatherCard);
+    wcLayout->setContentsMargins(8, 6, 8, 6);
+    wcLayout->setSpacing(3);
+
+    // 标题行
+    auto *wcTitleRow = new QHBoxLayout();
+    auto *wcTitle = new QLabel("🌤 天气预警");
+    wcTitle->setStyleSheet("color: #f0c0a0; font-size: 12px; font-weight: bold; border: none; background: transparent;");
+    wcTitleRow->addWidget(wcTitle);
+    wcTitleRow->addStretch();
+    auto *wcRefreshBtn = new QPushButton("↻");
+    wcRefreshBtn->setFixedSize(22, 22);
+    wcRefreshBtn->setStyleSheet(
+        "QPushButton {"
+        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #503828, stop:0.5 #382018, stop:1 #201008);"
+        "  color: #f0c8a0; font-size: 12px; font-weight: bold; border-radius: 3px;"
+        "  border-top: 1px solid #806040; border-bottom: 1px solid #100808;"
+        "}"
+        "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #705040, stop:0.5 #503828, stop:1 #302018); color: #fff; }"
+        "QPushButton:pressed { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #201008, stop:0.5 #382018, stop:1 #503828); padding-top: 1px; }");
+    connect(wcRefreshBtn, &QPushButton::clicked, this, &TeaGardenSystem::refreshWeatherAlert);
+    wcTitleRow->addWidget(wcRefreshBtn);
+    wcLayout->addLayout(wcTitleRow);
+
+    // 级别 + 类型
+    weatherLevelLabel = new QLabel("加载中...");
+    weatherLevelLabel->setStyleSheet("color: #FFC107; font-size: 15px; font-weight: bold; border: none; background: transparent;");
+    wcLayout->addWidget(weatherLevelLabel);
+
+    // 详情
+    weatherDetailLabel = new QLabel("");
+    weatherDetailLabel->setWordWrap(true);
+    weatherDetailLabel->setStyleSheet("color: #c0a090; font-size: 11px; border: none; background: transparent; padding: 2px 0;");
+    wcLayout->addWidget(weatherDetailLabel);
+
+    // 生效时间
+    weatherTimeLabel = new QLabel("");
+    weatherTimeLabel->setStyleSheet("color: #806860; font-size: 10px; border: none; background: transparent;");
+    wcLayout->addWidget(weatherTimeLabel);
+
+    leftPanel->addWidget(weatherCard);
     leftPanel->addStretch();
     mainLayout->addLayout(leftPanel, 2);
 
