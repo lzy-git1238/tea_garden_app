@@ -832,6 +832,21 @@ void TeaGardenSystem::onLoraData(double windSpeed,
     snap.soilConductivity = curSoilEc;
     DataStore::instance()->append(snap);
 
+    // 上传到华为云 IoT
+    QJsonObject iotData;
+    auto addField = [&](const char *key, double val) {
+        if (std::isfinite(val)) iotData[key] = val;
+    };
+    addField("air_temp", curTemp);
+    addField("air_humidity", curHumi);
+    addField("light_lux", curLight);
+    addField("soil_ph", curPh);
+    addField("wind_speed", curWindSpeed);
+    addField("soil_temp", curSoilTemp);
+    addField("soil_humidity", curSoilHumi);
+    addField("soil_conductivity", curSoilEc);
+    IotUploader::instance()->upload(iotData);
+
     // 阈值超限通知
     QMap<int, ThresholdDialog::Thresholds> thresholds = ThresholdDialog::load();
     auto checkThreshold = [&](int index, double value, const QString &name, const QString &unit) {
