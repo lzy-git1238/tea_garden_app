@@ -96,6 +96,14 @@ private:
     ChartDashboard *chartDashboard = nullptr;
     QSystemTrayIcon *trayIcon = nullptr;
     QMap<int, QDateTime> lastAlertTime;
+
+    // 天气预警
+    QFrame *weatherCard = nullptr;
+    QLabel *weatherLevelLabel = nullptr;
+    QLabel *weatherDetailLabel = nullptr;
+    QLabel *weatherTimeLabel = nullptr;
+    QTimer *weatherTimer = nullptr;
+    QNetworkReply *weatherReply = nullptr;
 };
 
 #endif // TEAGARDENSYSTEM_H
