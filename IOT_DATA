@@ -1,0 +1,13 @@
+{
+    "device_id": "6a1c28dec9429d337f4cf809_tea_elf2",
+    "secret": "92380c03765136070405fcb3cff92e45"
+}
+
+{
+    "username": "6a1c28dec9429d337f4cf809_tea_elf2",
+    "password": "35930a355b07d9e957f58e6af8ae12b9ea7d5f26e64ed1d374fc8562f42509db",
+    "clientId": "6a1c28dec9429d337f4cf809_tea_elf2_0_0_2026053112",
+    "hostname": "5fa66df6c4.st1.iotda-device.cn-south-1.myhuaweicloud.com",
+    "port": 8883,
+    "protocol": "MQTTS"
+}
