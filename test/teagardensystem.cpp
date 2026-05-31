@@ -838,13 +838,12 @@ void TeaGardenSystem::onLoraData(double windSpeed,
         if (std::isfinite(val)) iotData[key] = val;
     };
     addField("air_temp", curTemp);
-    addField("air_humidity", curHumi);
-    addField("light_lux", curLight);
-    addField("soil_ph", curPh);
+    addField("air_hum", curHumi);
+    addField("light_intensity", static_cast<double>(curLight));
     addField("wind_speed", curWindSpeed);
-    addField("soil_temp", curSoilTemp);
-    addField("soil_humidity", curSoilHumi);
-    addField("soil_conductivity", curSoilEc);
+    addField("soli_temp", curSoilTemp);
+    addField("soli_hum", curSoilHumi);
+    addField("soli_ec", curSoilEc);
     IotUploader::instance()->upload(iotData);
 
     // 阈值超限通知
