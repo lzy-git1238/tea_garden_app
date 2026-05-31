@@ -104,6 +104,7 @@ private:
     QLabel *weatherTimeLabel = nullptr;
     QTimer *weatherTimer = nullptr;
     QNetworkReply *weatherReply = nullptr;
+    QJsonArray weatherForecastData;  // 缓存24h逐时预报数据，用于弹窗
 };
 
 #endif // TEAGARDENSYSTEM_H
