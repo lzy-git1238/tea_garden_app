@@ -405,13 +405,12 @@ void TeaGardenSystem::refreshData() {
 
     curTemp = 15.0 + QRandomGenerator::global()->bounded(1500)/100.0;
     curHumi = 30.0 + QRandomGenerator::global()->bounded(5000)/100.0;
-    // 暂时不模拟其他数据，保持为空
-    // curLight = 800 + QRandomGenerator::global()->bounded(3000);
-    // curPh = 4.5 + QRandomGenerator::global()->bounded(25) / 10.0;
-    // curWindSpeed = QRandomGenerator::global()->bounded(100) / 10.0;
-    // curSoilTemp = 10.0 + QRandomGenerator::global()->bounded(150) / 10.0;
-    // curSoilHumi = 20 + QRandomGenerator::global()->bounded(60);
-    // curSoilEc = 0.5 + QRandomGenerator::global()->bounded(20) / 10.0;
+    curLight = 800 + QRandomGenerator::global()->bounded(3000);
+    curPh = 4.5 + QRandomGenerator::global()->bounded(25) / 10.0;
+    curWindSpeed = QRandomGenerator::global()->bounded(100) / 10.0;
+    curSoilTemp = 10.0 + QRandomGenerator::global()->bounded(150) / 10.0;
+    curSoilHumi = 20 + QRandomGenerator::global()->bounded(60);
+    curSoilEc = 0.5 + QRandomGenerator::global()->bounded(20) / 10.0;
 
     valueLabels[0]->setText(QString::number(curTemp, 'f', 2) + " ℃");
     valueLabels[1]->setText(QString::number(curHumi, 'f', 2) + " %");
