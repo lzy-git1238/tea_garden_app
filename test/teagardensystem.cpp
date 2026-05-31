@@ -143,7 +143,6 @@ void TeaGardenSystem::setupUI() {
 
     // ── 天气预警卡片（立体3D） ──
     weatherCard = new QFrame();
-    weatherCard = new QFrame();
     weatherCard->setFixedHeight(155);
     weatherCard->setStyleSheet(
         "QFrame#weatherCard {"
@@ -249,7 +248,7 @@ void TeaGardenSystem::setupUI() {
     inputBox->addWidget(voiceBtn);
     inputBox->addWidget(sendBtn);
 
-    rightPanel->addWidget(aiTitle);
+    rightPanel->addWidget(aiTitleLabel);
     rightPanel->addWidget(chatDisplay);
     rightPanel->addLayout(inputBox);
     mainLayout->addLayout(rightPanel, 2);
