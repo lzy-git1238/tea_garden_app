@@ -99,9 +99,8 @@ void IotUploader::connectBroker() {
     mosquitto_disconnect_callback_set(m_handle, onDisconnect);
     mosquitto_log_callback_set(m_handle, onLog);
 
-    // TLS: 跳过证书验证（同 --insecure）
+    // TLS: 跳过证书验证（同 mosquitto_pub --insecure）
     mosquitto_tls_insecure_set(m_handle, true);
-    mosquitto_int_option(m_handle, MOSQ_OPT_TLS_USE_OS_CERTS, 1);
 
     qDebug() << "[IoT] connecting..." << hostname << port;
     int rc = mosquitto_connect(m_handle,
