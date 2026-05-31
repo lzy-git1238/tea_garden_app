@@ -72,8 +72,34 @@ QVector<SensorSnapshot> DataStore::query(QDateTime from, QDateTime to) {
     double rangeSec = toSec - fromSec;
     if (rangeSec <= 0) return result;
 
-    double estimatedRows = rangeSec / 3.0;
-    if (estimatedRows <= 1000.0) {
+    // 动态降采样：先数实际行数，超过 800 条则按桶 AVG
+    static constexpr int kMaxPoints = 800;
+
+    int actualCount = 0;
+    {
+        QSqlQuery cnt(db);
+        cnt.prepare("SELECT COUNT(*) FROM sensor_log WHERE ts BETWEEN :from AND :to");
+        cnt.bindValue(":from", fromSec);
+        cnt.bindValue(":to", toSec);
+        cnt.exec();
+        if (cnt.next()) actualCount = cnt.value(0).toInt();
+    }
+
+    auto readRow = [&](QSqlQuery &q) -> SensorSnapshot {
+        SensorSnapshot s;
+        s.timestamp = QDateTime::fromMSecsSinceEpoch(
+            static_cast<qint64>(q.value(0).toDouble() * 1000.0));
+        auto rd = [&](int col) -> double {
+            return q.value(col).isNull() ? NAN : q.value(col).toDouble();
+        };
+        s.windSpeed = rd(1); s.airTemp = rd(2);
+        s.airHumidity = rd(3); s.lightLux = rd(4);
+        s.soilHumidity = rd(5); s.soilTemp = rd(6);
+        s.soilConductivity = rd(7); s.soilPh = rd(8);
+        return s;
+    };
+
+    if (actualCount <= kMaxPoints) {
         QSqlQuery q(db);
         q.prepare("SELECT ts, wind_speed, air_temp, air_humidity, light_lux, "
                   "soil_humidity, soil_temp, soil_conductivity, soil_ph "
@@ -81,25 +107,9 @@ QVector<SensorSnapshot> DataStore::query(QDateTime from, QDateTime to) {
         q.bindValue(":from", fromSec);
         q.bindValue(":to", toSec);
         q.exec();
-        while (q.next()) {
-            SensorSnapshot s;
-            s.timestamp = QDateTime::fromMSecsSinceEpoch(
-                static_cast<qint64>(q.value(0).toDouble() * 1000.0));
-            auto readD = [&](int col) -> double {
-                return q.value(col).isNull() ? NAN : q.value(col).toDouble();
-            };
-            s.windSpeed = readD(1);
-            s.airTemp = readD(2);
-            s.airHumidity = readD(3);
-            s.lightLux = readD(4);
-            s.soilHumidity = readD(5);
-            s.soilTemp = readD(6);
-            s.soilConductivity = readD(7);
-            s.soilPh = readD(8);
-            result.append(s);
-        }
+        while (q.next()) result.append(readRow(q));
     } else {
-        double bucket = rangeSec / 500.0;
+        double bucket = rangeSec / static_cast<double>(kMaxPoints);
         QSqlQuery q(db);
         q.prepare("SELECT AVG(ts), AVG(wind_speed), AVG(air_temp), "
                   "AVG(air_humidity), AVG(light_lux), AVG(soil_humidity), "
@@ -111,23 +121,7 @@ QVector<SensorSnapshot> DataStore::query(QDateTime from, QDateTime to) {
         q.bindValue(":to", toSec);
         q.bindValue(":bucket", bucket);
         q.exec();
-        while (q.next()) {
-            SensorSnapshot s;
-            s.timestamp = QDateTime::fromMSecsSinceEpoch(
-                static_cast<qint64>(q.value(0).toDouble() * 1000.0));
-            auto readD = [&](int col) -> double {
-                return q.value(col).isNull() ? NAN : q.value(col).toDouble();
-            };
-            s.windSpeed = readD(1);
-            s.airTemp = readD(2);
-            s.airHumidity = readD(3);
-            s.lightLux = readD(4);
-            s.soilHumidity = readD(5);
-            s.soilTemp = readD(6);
-            s.soilConductivity = readD(7);
-            s.soilPh = readD(8);
-            result.append(s);
-        }
+        while (q.next()) result.append(readRow(q));
     }
     return result;
 }
