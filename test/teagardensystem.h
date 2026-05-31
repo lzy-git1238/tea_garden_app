@@ -111,6 +111,10 @@ private:
     QNetworkReply *weatherReply = nullptr;
     QJsonArray weatherForecastData;  // 缓存24h逐时预报数据，用于弹窗
     QString weatherLocationPath;     // 缓存地点名称
+
+    // 主题
+    bool isDarkMode = true;
+    QPushButton *themeBtn = nullptr;
 };
 
 #endif // TEAGARDENSYSTEM_H
