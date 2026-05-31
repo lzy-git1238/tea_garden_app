@@ -52,6 +52,7 @@ private slots:
     void startVoiceRecording();   // 开始录音 / 点击停止录音
     void onVoiceRecorded(const QString &wavFilePath);
     void openChartDashboard();
+    void refreshWeatherAlert();  // 定时刷新天气预警
 
 private:
     void setupUI();
