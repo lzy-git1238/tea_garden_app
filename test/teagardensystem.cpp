@@ -13,6 +13,9 @@
 #include <QUrl>
 #include <QCoreApplication>
 #include <QSettings>
+#include <QTableWidget>
+#include <QHeaderView>
+#include <QDialog>
 #include <QPixmap>
 #include <QDebug>
 #include <QStyle>
