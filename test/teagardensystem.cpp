@@ -913,7 +913,7 @@ void TeaGardenSystem::showWeatherDetail() {
     // 表格
     auto *table = new QTableWidget(dlg);
     table->setColumnCount(7);
-    table->setHorizontalHeaderLabels({"时间", "天气", "温度℃", "体感℃", "湿度%", "风向", "风力"});
+    table->setHorizontalHeaderLabels({"日期时间", "天气", "温度℃", "体感℃", "湿度%", "风向", "风力"});
     table->horizontalHeader()->setStretchLastSection(true);
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     table->verticalHeader()->setVisible(false);
