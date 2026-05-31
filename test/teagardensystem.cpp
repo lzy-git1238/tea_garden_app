@@ -17,10 +17,10 @@
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QDialog>
-#include <QChart>
-#include <QChartView>
-#include <QPieSeries>
-#include <QPieSlice>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
 #include <QPixmap>
 #include <QDebug>
 #include <QStyle>
