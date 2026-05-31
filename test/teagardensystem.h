@@ -23,6 +23,7 @@
 #include "loramanager.h"
 #include <QSystemTrayIcon>
 #include <QMenu>
+#include <QtCharts/QChartView>
 
 class ChartDashboard;
 
