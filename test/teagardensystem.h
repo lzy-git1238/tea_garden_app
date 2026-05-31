@@ -125,9 +125,11 @@ private:
 
     // 病虫害
     void openPestDashboard();
-    void injectMockPest();  // 模拟检测
-    void injectPestMarkers(); // 注入地图标注
+    void injectMockPest();
+    void injectPestMarkers();
+    void refreshPestPie();
     class PestDashboard *pestDashboard = nullptr;
+    class QtCharts::QChartView *pestPieView = nullptr;
 };
 
 #endif // TEAGARDENSYSTEM_H
