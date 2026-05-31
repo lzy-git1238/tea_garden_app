@@ -80,8 +80,12 @@ void IotUploader::connectBroker() {
         mosquitto_destroy(m_handle);
         m_handle = nullptr;
     }
+    if (keepaliveTimer) keepaliveTimer->stop();
 
-    m_handle = mosquitto_new(clientId.toUtf8().constData(), true, this);
+    // 每次连接生成唯一 clientId，避免 "already connected" 被拒
+    QString uniqueId = clientId + "_" + QString::number(QDateTime::currentMSecsSinceEpoch());
+
+    m_handle = mosquitto_new(uniqueId.toUtf8().constData(), true, this);
     if (!m_handle) {
         qWarning() << "[IoT] mosquitto_new failed";
         reconnectTimer->start(5000);
