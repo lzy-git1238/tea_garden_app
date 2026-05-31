@@ -911,7 +911,15 @@ void TeaGardenSystem::showWeatherDetail() {
     }
 
     auto *dlg = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint);
-    dlg->setWindowTitle("24小时逐时预报");
+    QString dialogTitle = "24小时逐时预报";
+    if (!weatherLocationPath.isEmpty()) {
+        QStringList parts = weatherLocationPath.split(",");
+        if (parts.size() >= 3)
+            dialogTitle = QString("24小时逐时预报 · %1%2").arg(parts[1], parts[2]);
+        else
+            dialogTitle = "24小时逐时预报 · " + weatherLocationPath;
+    }
+    dlg->setWindowTitle(dialogTitle);
     dlg->resize(750, 520);
     dlg->setStyleSheet("background-color: #051623;");
 
