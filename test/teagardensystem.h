@@ -68,11 +68,18 @@ private:
 
     // 成员变量
     QList<QLabel*> valueLabels;
+    QList<QFrame*>  dataCards;      // 卡片 Frame
+    QList<QLabel*>  dataCardTitles; // 卡片标题（空气温度等）
+    QLabel *leftPanelTitle = nullptr;
     QLabel *loraStateLabel;
     QLabel *videoLabel = nullptr;
+    QLabel *videoTitleLabel = nullptr;
     QTextEdit *chatDisplay;
     QLineEdit *chatInput;
     QPushButton *voiceBtn;
+    QPushButton *sendBtn = nullptr;
+    QLabel *aiTitleLabel = nullptr;
+    QPushButton *chartBtn = nullptr;
     QProcess *recordProcess = nullptr;  // 当前录音进程，非空时表示正在录音
     QString  pendingWavPath;            // 录音目标文件路径
     QTimer *updateTimer;
