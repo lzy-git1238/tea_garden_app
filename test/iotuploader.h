@@ -16,6 +16,7 @@ public:
 
     void init(const QString &configPath);
     void upload(const QJsonObject &sensorData);
+    ~IotUploader() override;
 
 private:
     explicit IotUploader(QObject *parent = nullptr);
