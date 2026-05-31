@@ -900,7 +900,7 @@ void TeaGardenSystem::showWeatherDetail() {
 
     auto *dlg = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint);
     dlg->setWindowTitle("24小时逐时预报");
-    dlg->resize(680, 520);
+    dlg->resize(750, 520);
     dlg->setStyleSheet("background-color: #051623;");
 
     auto *layout = new QVBoxLayout(dlg);
