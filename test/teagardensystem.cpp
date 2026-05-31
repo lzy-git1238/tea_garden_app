@@ -183,6 +183,10 @@ void TeaGardenSystem::setupUI() {
     weatherTimeLabel->setStyleSheet("color: #806860; font-size: 11px; border: none; background: transparent;");
     wcLayout->addWidget(weatherTimeLabel);
 
+    // 点击卡片打开24h详情弹窗
+    weatherCard->setCursor(Qt::PointingHandCursor);
+    weatherCard->installEventFilter(this);
+
     leftPanel->addWidget(weatherCard);
     leftPanel->addStretch();
     mainLayout->addLayout(leftPanel, 2);
