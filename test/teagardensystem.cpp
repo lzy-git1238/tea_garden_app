@@ -210,7 +210,7 @@ void TeaGardenSystem::setupUI() {
     videoLabel->setAlignment(Qt::AlignCenter);
     videoLabel->setStyleSheet("background: black; border: 2px solid #1a2a3a; min-height: 180px; color: #4CAF50;");
 
-    midPanel->addWidget(vTitle);
+    midPanel->addWidget(videoTitleLabel);
     midPanel->addWidget(videoLabel, 2);
     setupMapView(midPanel);
     mainLayout->addLayout(midPanel, 6);
