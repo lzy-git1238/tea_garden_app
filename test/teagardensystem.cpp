@@ -124,7 +124,8 @@ void TeaGardenSystem::setupUI() {
 
     // --- A. 左侧：传感器看板 ---
     QVBoxLayout *leftPanel = new QVBoxLayout();
-    leftPanel->addWidget(new QLabel("实时环境指标"));
+    leftPanelTitle = new QLabel("实时环境指标");
+    leftPanel->addWidget(leftPanelTitle);
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     loraStateLabel->setStyleSheet("color: #80CBC4; font-size: 12px;");
     leftPanel->addWidget(loraStateLabel);
