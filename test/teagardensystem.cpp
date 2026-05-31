@@ -23,6 +23,7 @@
 #include <QPixmap>
 #include <QDebug>
 #include <QStyle>
+using namespace QtCharts;
 #include <QApplication>
 #include <cmath>
 #ifdef TEA_ENABLE_MAP_WEBVIEW
@@ -1219,6 +1220,7 @@ void TeaGardenSystem::injectMockPest() {
         .arg(rec.lng, 0, 'f', 6));
 
     injectPestMarkers();
+    refreshPestPie();
     if (pestDashboard && pestDashboard->isVisible()) pestDashboard->refresh();
 }
 
