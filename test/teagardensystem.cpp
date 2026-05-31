@@ -430,12 +430,23 @@ void TeaGardenSystem::refreshData() {
     snap2.timestamp = QDateTime::currentDateTime();
     snap2.airTemp = curTemp;
     snap2.airHumidity = curHumi;
+    snap2.lightLux = curLight;
+    snap2.soilPh = curPh;
+    snap2.windSpeed = curWindSpeed;
+    snap2.soilTemp = curSoilTemp;
+    snap2.soilHumidity = curSoilHumi;
+    snap2.soilConductivity = curSoilEc;
     DataStore::instance()->append(snap2);
 
     // 模拟数据也上报 IoT
     QJsonObject iotData2;
     iotData2["air_temp"] = curTemp;
     iotData2["air_hum"]  = curHumi;
+    iotData2["light_intensity"] = static_cast<double>(curLight);
+    iotData2["wind_speed"] = curWindSpeed;
+    iotData2["soli_temp"] = curSoilTemp;
+    iotData2["soli_hum"]  = curSoilHumi;
+    iotData2["soli_ec"]   = curSoilEc;
     IotUploader::instance()->upload(iotData2);
 }
 
