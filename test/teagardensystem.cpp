@@ -25,19 +25,6 @@
 #include <QtWebEngineWidgets/QWebEngineView>
 #endif
 
-namespace {
-QString readAmapSetting(const char *envName, const char *iniKey, const QString &defaultValue = QString()) {
-    const QByteArray envValue = qgetenv(envName);
-    if (!envValue.trimmed().isEmpty()) {
-        return QString::fromUtf8(envValue).trimmed();
-    }
-
-    const QString iniPath = QCoreApplication::applicationDirPath() + "/amap.ini";
-    QSettings settings(iniPath, QSettings::IniFormat);
-    return settings.value(QString::fromUtf8(iniKey), defaultValue).toString().trimmed();
-}
-}
-
 TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     setupUI();
 
