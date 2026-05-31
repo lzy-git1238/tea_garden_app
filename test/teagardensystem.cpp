@@ -1270,23 +1270,48 @@ void TeaGardenSystem::refreshPestPie() {
 
     QMap<QString, int> counts = PestStore::instance()->typeCounts();
     auto *series = new QPieSeries();
+    series->setPieSize(0.75);           // 饼图更大
+    series->setHorizontalPosition(0.5);
+    series->setVerticalPosition(0.55);
+    series->setHoleSize(0.30);          // 中心圆环（环形图）
 
     if (counts.isEmpty()) {
-        series->append("暂无数据", 1);
-        auto *sl = series->slices().first();
+        auto *sl = series->append("暂无数据", 1);
         sl->setColor(QColor("#455A64"));
         sl->setLabelVisible(false);
+        sl->setBorderColor(QColor("#2a3040"));
     } else {
-        QMap<QString, QColor> colors;
-        colors["茶尺蠖"]   = QColor("#4CAF50");
-        colors["茶小绿叶蝉"] = QColor("#FF9800");
-        colors["茶炭疽病"]  = QColor("#F44336");
+        // 颜色→亮暗渐变对
+        struct GradColors { QColor base, light; };
+        QMap<QString, GradColors> colorMap;
+        colorMap["茶尺蠖"]     = {QColor("#4CAF50"), QColor("#81C784")};
+        colorMap["茶小绿叶蝉"] = {QColor("#FF9800"), QColor("#FFB74D")};
+        colorMap["茶炭疽病"]   = {QColor("#F44336"), QColor("#E57373")};
+
+        int total = 0;
+        for (int v : counts.values()) total += v;
 
         for (auto it = counts.begin(); it != counts.end(); ++it) {
-            auto *sl = series->append(QString("%1(%2)").arg(it.key()).arg(it.value()), it.value());
-            sl->setColor(colors.value(it.key(), QColor("#2196F3")));
+            GradColors gc = colorMap.value(it.key(), {QColor("#2196F3"), QColor("#64B5F6")});
+            // 渐变填充：左上亮→右下暗，模拟立体光照
+            QLinearGradient grad(0, 0, 1, 1);
+            grad.setCoordinateMode(QGradient::ObjectBoundingMode);
+            grad.setColorAt(0.0, gc.light);
+            grad.setColorAt(0.6, gc.base);
+            grad.setColorAt(1.0, gc.base.darker(130));
+
+            double pct = total > 0 ? it.value() * 100.0 / total : 0;
+            auto *sl = series->append(
+                QString("%1 %2(%3%)").arg(it.key()).arg(it.value()).arg(pct, 0, 'f', 0),
+                it.value());
+
+            sl->setBrush(QBrush(grad));
+            sl->setBorderColor(gc.base.darker(150));
+            sl->setBorderWidth(2);
             sl->setLabelVisible(true);
             sl->setLabelColor(QColor("#E0E0E0"));
+            sl->setExploded(true);          // 扇形突出，立体感
+            sl->setExplodeDistanceFactor(0.05);
         }
     }
 
