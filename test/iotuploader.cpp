@@ -141,7 +141,8 @@ void IotUploader::sendPayload(const QString &payload) {
     if (ready && proc && proc->state() == QProcess::Running) {
         // mosquitto_pub -l 从 stdin 逐行读取 JSON
         QByteArray line = payload.toUtf8().replace('\n', ' ') + '\n';
-        proc->write(line);
+        qint64 written = proc->write(line);
+        qDebug() << "[IoT] wrote" << written << "bytes to stdin";
     } else {
         // 进程还没就绪，缓存最新一条数据
         pendingPayload = payload;
