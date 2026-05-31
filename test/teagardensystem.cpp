@@ -1213,11 +1213,21 @@ void TeaGardenSystem::injectPestMarkers() {
                  "else{";
     for (const auto& r : records) {
         QString clr = colors.value(r.pestType, "#2196F3");
+        QString label = r.pestType;
+        label.replace("'", "\\'");
         js += QString(
-            "var m=L.circleMarker([%1,%2],{radius:8,color:'%3',fillColor:'%3',fillOpacity:0.7,weight:2})"
-            ".addTo(map).bindPopup('%4<br>%5');pestMarkers.push(m);"
+            // 圆点
+            "var cm=L.circleMarker([%1,%2],{radius:8,color:'%3',fillColor:'%3',fillOpacity:0.7,weight:2}).addTo(map);"
+            // 箭头 + 文字标签 (用 divIcon)
+            "var icon=L.divIcon({"
+            "  html:'<div style=\"position:relative;left:12px;top:-12px;white-space:nowrap;\">"
+            "    <span style=\"font-size:11px;background:rgba(0,0,0,0.75);color:%3;padding:2px 6px;border-radius:3px;"
+            "      border-left:2px solid %3;\">%4</span></div>',"
+            "  iconSize:[0,0],iconAnchor:[-10,8]});"
+            "var lbl=L.marker([%1,%2],{icon:icon}).addTo(map);"
+            "pestMarkers.push(cm);pestMarkers.push(lbl);"
         ).arg(r.lat, 0, 'f', 6).arg(r.lng, 0, 'f', 6)
-         .arg(clr, r.pestType, r.timestamp.toString("MM-dd HH:mm"));
+         .arg(clr, label);
     }
     js += "}}catch(e){console.log('Pest marker error:'+e.message);}";
     static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
