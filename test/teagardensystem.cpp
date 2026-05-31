@@ -432,6 +432,12 @@ void TeaGardenSystem::refreshData() {
     snap2.airTemp = curTemp;
     snap2.airHumidity = curHumi;
     DataStore::instance()->append(snap2);
+
+    // 模拟数据也上报 IoT
+    QJsonObject iotData2;
+    iotData2["air_temp"] = curTemp;
+    iotData2["air_hum"]  = curHumi;
+    IotUploader::instance()->upload(iotData2);
 }
 
 void TeaGardenSystem::handleChat() {
