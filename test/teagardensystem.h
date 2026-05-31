@@ -122,6 +122,12 @@ private:
     // 主题
     bool isDarkMode = true;
     QPushButton *themeBtn = nullptr;
+
+    // 病虫害
+    void openPestDashboard();
+    void injectMockPest();  // 模拟检测
+    void injectPestMarkers(); // 注入地图标注
+    class PestDashboard *pestDashboard = nullptr;
 };
 
 #endif // TEAGARDENSYSTEM_H
