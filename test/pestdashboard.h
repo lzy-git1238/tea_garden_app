@@ -3,14 +3,16 @@
 
 #include <QWidget>
 #include "pestdata.h"
+#include <QtCharts/QChartView>
 
 class QLabel;
+class QTableWidget;
 
 class PestDashboard : public QWidget {
     Q_OBJECT
 public:
     explicit PestDashboard(QWidget *parent = nullptr);
-    void refresh();  // 外部调用刷新
+    void refresh();
 
 private:
     void setupUI();
@@ -19,8 +21,8 @@ private:
     void onClearData();
 
     QLabel *countLabel;
-    class QTableWidget *table;
-    class QtCharts::QChartView *chartView;
+    QTableWidget *table;
+    QtCharts::QChartView *chartView;
 };
 
 #endif // PESTDASHBOARD_H
