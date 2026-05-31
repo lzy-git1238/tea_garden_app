@@ -836,3 +836,20 @@ void TeaGardenSystem::openChartDashboard() {
     chartDashboard->show();
     chartDashboard->raise();
 }
+
+void TeaGardenSystem::refreshWeatherAlert() {
+    QString location = qEnvironmentVariable("TEA_WEATHER_LOCATION", "WTX_CH101280800");
+    QString token    = qEnvironmentVariable("TEA_WEATHER_TOKEN");
+    if (token.isEmpty()) {
+        weatherLevelLabel->setText("⚠ 未配置Token");
+        weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 13px; font-weight: bold; border: none; background: transparent;");
+        weatherDetailLabel->setText("设置 TEA_WEATHER_TOKEN 环境变量");
+        weatherTimeLabel->setText("");
+        return;
+    }
+
+    QString url = QString("https://api.open.geovisearth.com/v2/cn/weather/alert?location=%1&token=%2")
+                      .arg(location, token);
+    QNetworkRequest request{QUrl(url)};
+    weatherReply = networkManager->get(request);
+}
