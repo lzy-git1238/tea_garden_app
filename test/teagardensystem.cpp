@@ -203,8 +203,8 @@ void TeaGardenSystem::setupUI() {
 
     // --- B. 中间：空间可视化 ---
     QVBoxLayout *midPanel = new QVBoxLayout();
-    QLabel *vTitle = new QLabel("茶园实景与空间分布");
-    vTitle->setStyleSheet("font-weight: bold; color: #00E5FF;");
+    videoTitleLabel = new QLabel("茶园实景与空间分布");
+    videoTitleLabel->setStyleSheet("font-weight: bold; color: #00E5FF;");
 
     videoLabel = new QLabel("【实时视频流：等待 MJPEG 连接...】");
     videoLabel->setAlignment(Qt::AlignCenter);
