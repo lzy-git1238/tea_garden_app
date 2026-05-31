@@ -868,7 +868,7 @@ void TeaGardenSystem::refreshWeatherAlert() {
         return;
     }
 
-    QString url = QString("https://api.open.geovisearth.com/v2/cn/weather/alert?location=%1&token=%2")
+    QString url = QString("https://api.open.geovisearth.com/v2/cn/hourly/basic?location=%1&token=%2")
                       .arg(location, token);
     QNetworkRequest request{QUrl(url)};
     weatherReply = networkManager->get(request);
