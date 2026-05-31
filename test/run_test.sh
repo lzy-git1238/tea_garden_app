@@ -26,5 +26,8 @@ fi
 # 天气预警 API（星图云开放平台）
 export TEA_WEATHER_TOKEN="fbc9df678447f3d3263734bce211f4f3"
 export TEA_WEATHER_LOCATION="WTX_CH101230502"
+export TEA_MAP_LNG="118.232478"
+export TEA_MAP_LAT="25.08039"
+export TEA_MAP_ZOOM="15"
 
 exec ./test "$@"
