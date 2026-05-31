@@ -20,6 +20,7 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
+#include <QGraphicsDropShadowEffect>
 #include <QPixmap>
 #include <QDebug>
 #include <QStyle>
