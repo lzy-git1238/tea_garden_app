@@ -328,9 +328,9 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     // Token: 优先 TEA_GEOVIS_TOKEN 环境变量，回退到天气 Token
     const QString token = qEnvironmentVariable("TEA_GEOVIS_TOKEN",
                            qEnvironmentVariable("TEA_WEATHER_TOKEN", ""));
-    const QString centerLng = qEnvironmentVariable("TEA_MAP_LNG", "120.135947");
-    const QString centerLat = qEnvironmentVariable("TEA_MAP_LAT", "30.274084");
-    const QString zoom = qEnvironmentVariable("TEA_MAP_ZOOM", "14");
+    const QString centerLng = qEnvironmentVariable("TEA_MAP_LNG", "118.232478");
+    const QString centerLat = qEnvironmentVariable("TEA_MAP_LAT", "25.08039");
+    const QString zoom = qEnvironmentVariable("TEA_MAP_ZOOM", "15");
 
     html.replace("__GEOVIS_TOKEN__", token.toHtmlEscaped());
     html.replace("__CENTER_LNG__", centerLng.toHtmlEscaped());
