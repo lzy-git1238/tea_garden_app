@@ -9,6 +9,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
+LIBS += -lmosquitto
+
 # ROS2 视频流已替换为 HTTP MJPEG（桌面调试用），ARM 版本见 git 历史
 
 SOURCES += \
