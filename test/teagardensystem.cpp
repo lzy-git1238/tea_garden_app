@@ -650,6 +650,7 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
                 if (obj["status"].toInt() == 0 && obj.contains("result") && obj["result"].isObject()) {
                     QJsonObject result = obj["result"].toObject();
                     QJsonArray datas = result["datas"].toArray();
+                    weatherForecastData = datas;  // 缓存用于弹窗
                     if (datas.isEmpty()) {
                         weatherLevelLabel->setText("暂无预报数据");
                         weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 18px; font-weight: bold; border: none; background: transparent;");
