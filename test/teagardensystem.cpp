@@ -218,6 +218,8 @@ void TeaGardenSystem::setupUI() {
 
     // --- C. 右侧：AI 管家聊天 ---
     QVBoxLayout *rightPanel = new QVBoxLayout();
+
+    // 标题行
     auto *rightTopRow = new QHBoxLayout();
     aiTitleLabel = new QLabel("AI 智慧管家分析");
     aiTitleLabel->setStyleSheet("font-size: 16px; color: #00E5FF; font-weight: bold;");
@@ -226,8 +228,35 @@ void TeaGardenSystem::setupUI() {
     rightTopRow->addWidget(themeBtn);
     rightPanel->addLayout(rightTopRow);
 
+    // ── 病虫害饼图（嵌入式） ──
+    auto *pestHeaderRow = new QHBoxLayout();
+    auto *pestPieTitle = new QLabel("🐛 病虫害统计");
+    pestPieTitle->setStyleSheet("font-size: 13px; color: #FF8A65; font-weight: bold;");
+    pestHeaderRow->addWidget(pestPieTitle);
+    pestHeaderRow->addStretch();
+    auto *pestDetailBtn = new QPushButton("详情 ▶");
+    pestDetailBtn->setStyleSheet(
+        "QPushButton { background: #3E2723; color: #FF8A65; font-size: 11px; padding: 2px 8px; "
+        "border: 1px solid #5D4037; border-radius: 3px; }"
+        "QPushButton:hover { background: #4E332E; }");
+    connect(pestDetailBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
+    pestHeaderRow->addWidget(pestDetailBtn);
+    rightPanel->addLayout(pestHeaderRow);
+
+    auto *pestChart = new QChart();
+    pestChart->setBackgroundBrush(QBrush(QColor("#051623")));
+    pestChart->legend()->setLabelColor(QColor("#90A4AE"));
+    pestChart->setMargins(QMargins(0, 0, 0, 0));
+    pestPieView = new QChartView(pestChart);
+    pestPieView->setRenderHint(QPainter::Antialiasing);
+    pestPieView->setMinimumHeight(160);
+    pestPieView->setStyleSheet("background: transparent; border: 1px solid #2a1a1a; border-radius: 6px;");
+    rightPanel->addWidget(pestPieView);
+
+    // 聊天区（缩小）
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
+    chatDisplay->setMinimumHeight(80);
     chatDisplay->setStyleSheet("background: rgba(0,0,0,0.4); border: 1px solid #334455; border-radius: 5px; padding: 10px;");
 
     QHBoxLayout *inputBox = new QHBoxLayout();
@@ -250,10 +279,9 @@ void TeaGardenSystem::setupUI() {
     inputBox->addWidget(voiceBtn);
     inputBox->addWidget(sendBtn);
 
-    rightPanel->addWidget(aiTitleLabel);
-    rightPanel->addWidget(chatDisplay);
+    rightPanel->addWidget(chatDisplay, 1);
     rightPanel->addLayout(inputBox);
-    mainLayout->addLayout(rightPanel, 2);
+    mainLayout->addLayout(rightPanel, 3);
 }
 
 void TeaGardenSystem::setupMjpegStream() {
