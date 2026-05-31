@@ -686,7 +686,7 @@ void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
             }
         } else {
             weatherLevelLabel->setText("⚠ 天气服务不可用");
-            weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 13px; font-weight: bold; border: none; background: transparent;");
+            weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 16px; font-weight: bold; border: none; background: transparent;");
             weatherDetailLabel->setText(reply->errorString());
             weatherTimeLabel->setText("");
         }
@@ -843,7 +843,7 @@ void TeaGardenSystem::refreshWeatherAlert() {
     QString token    = qEnvironmentVariable("TEA_WEATHER_TOKEN");
     if (token.isEmpty()) {
         weatherLevelLabel->setText("⚠ 未配置Token");
-        weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 13px; font-weight: bold; border: none; background: transparent;");
+        weatherLevelLabel->setStyleSheet("color: #FF9800; font-size: 16px; font-weight: bold; border: none; background: transparent;");
         weatherDetailLabel->setText("设置 TEA_WEATHER_TOKEN 环境变量");
         weatherTimeLabel->setText("");
         return;
