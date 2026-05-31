@@ -216,8 +216,13 @@ void TeaGardenSystem::setupUI() {
 
     // --- C. 右侧：AI 管家聊天 ---
     QVBoxLayout *rightPanel = new QVBoxLayout();
+    auto *rightTopRow = new QHBoxLayout();
     QLabel *aiTitle = new QLabel("AI 智慧管家分析");
     aiTitle->setStyleSheet("font-size: 16px; color: #00E5FF; font-weight: bold;");
+    rightTopRow->addWidget(aiTitle);
+    rightTopRow->addStretch();
+    rightTopRow->addWidget(themeBtn);
+    rightPanel->addLayout(rightTopRow);
 
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
