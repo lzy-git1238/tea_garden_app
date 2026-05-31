@@ -665,10 +665,6 @@ void TeaGardenSystem::requestAIAnalysis(const QString &userMessage) {
 }
 
 void TeaGardenSystem::onNetworkReply(QNetworkReply *reply) {
-    // 跳过 MJPEG 流回复（由 setupMjpegStream 中的 readyRead 处理）
-    if (reply == mjpegReply) {
-        return;
-    }
 
     // 24h逐时预报回复
     if (reply == weatherReply) {
