@@ -14,6 +14,7 @@ CONFIG += c++17
 SOURCES += \
     chartdashboard.cpp \
     datastore.cpp \
+    iotuploader.cpp \
     loramanager.cpp \
     main.cpp \
     pestdashboard.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 HEADERS += \
     chartdashboard.h \
     datastore.h \
+    iotuploader.h \
     loramanager.h \
     pestdashboard.h \
     pestdata.h \
