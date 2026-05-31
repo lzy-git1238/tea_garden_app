@@ -59,6 +59,8 @@ private:
     void setupMapView(QVBoxLayout *midPanel);
     void setupMjpegStream();
     QWidget* createDataCard(QString title, int index, QString unit);
+    bool eventFilter(QObject *obj, QEvent *event) override;
+    void showWeatherDetail();   // 24h预报详情弹窗
     void appendChatMessage(QString role, QString message);
     void requestAIAnalysis(const QString &userMessage);
 
