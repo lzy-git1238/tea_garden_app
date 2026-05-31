@@ -23,4 +23,8 @@ if [[ "$(id -u)" == "0" ]]; then
   export QTWEBENGINE_DISABLE_SANDBOX=1
 fi
 
+# 天气预警 API（星图云开放平台）
+export TEA_WEATHER_TOKEN="你的token填这里"
+export TEA_WEATHER_LOCATION="WTX_CH101280800"
+
 exec ./test "$@"
