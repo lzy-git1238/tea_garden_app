@@ -414,9 +414,9 @@ void TeaGardenSystem::refreshData() {
 
     valueLabels[0]->setText(QString::number(curTemp, 'f', 2) + " ℃");
     valueLabels[1]->setText(QString::number(curHumi, 'f', 2) + " %");
-    valueLabels[2]->setText("-- Lux");
-    valueLabels[3]->setText("--");
-    valueLabels[4]->setText("-- m/s");
+    valueLabels[2]->setText(QString::number(curLight) + " Lux");
+    valueLabels[3]->setText(QString::number(curPh, 'f', 2));
+    valueLabels[4]->setText(QString::number(curWindSpeed, 'f', 2) + " m/s");
     valueLabels[5]->setText("-- ℃");
     valueLabels[6]->setText("-- %");
     valueLabels[7]->setText("-- mS/cm");
