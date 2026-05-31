@@ -888,7 +888,99 @@ void TeaGardenSystem::openChartDashboard() {
     chartDashboard->raise();
 }
 
-void TeaGardenSystem::refreshWeatherAlert() {
+void TeaGardenSystem::toggleTheme() {
+    isDarkMode = !isDarkMode;
+    themeBtn->setText(isDarkMode ? "☀️ 日间" : "🌙 夜间");
+    applyTheme();
+}
+
+void TeaGardenSystem::applyTheme() {
+    // 颜色定义
+    QString bg, fg, cardBg, borderColor, muted, accent, inputBg;
+    QString btnBg, btnText, chatBg;
+    QString wCardBg1, wCardBg2, wCardBg3, wCardBorder1, wCardBorder2;
+    QString titleBarColor;
+
+    if (isDarkMode) {
+        bg        = "#051623"; fg      = "#E0E0E0";
+        cardBg    = "rgba(255,255,255,0.05)"; borderColor = "#1a2a3a";
+        muted     = "#90A4AE"; accent  = "#00E5FF";
+        inputBg   = "#1a2a3a"; chatBg  = "rgba(0,0,0,0.4)";
+        btnBg     = "#1a2a3a"; btnText = "#E0E0E0";
+        wCardBg1  = "#2a1a18"; wCardBg2 = "#1e1018"; wCardBg3 = "#100810";
+        wCardBorder1 = "#603030"; wCardBorder2 = "#100808";
+        titleBarColor = "#0d1f2d";
+    } else {
+        bg        = "#F5F0EB"; fg      = "#2c2416";
+        cardBg    = "rgba(0,0,0,0.04)"; borderColor = "#d4c8b8";
+        muted     = "#7a7060"; accent  = "#00897B";
+        inputBg   = "#ffffff"; chatBg  = "rgba(0,0,0,0.03)";
+        btnBg     = "#e8e0d5"; btnText = "#2c2416";
+        wCardBg1  = "#f0e8d8"; wCardBg2 = "#e8dcc8"; wCardBg3 = "#ddd0b8";
+        wCardBorder1 = "#c8b898"; wCardBorder2 = "#b0a080";
+        titleBarColor = "#e8dcc8";
+    }
+
+    // 托盘菜单
+    if (trayIcon && trayIcon->contextMenu()) {
+        trayIcon->contextMenu()->setStyleSheet(
+            QString("background: %1; color: %2;").arg(isDarkMode ? "#0d1f2d" : "#f5f0eb", fg));
+    }
+
+    // ==== 主窗口 ====
+    this->setStyleSheet(QString(
+        "QWidget { background-color: %1; color: %2; font-family: 'Microsoft YaHei'; }"
+    ).arg(bg, fg));
+
+    // ==== LoRa 状态 ====
+    if (loraStateLabel) loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px;").arg(muted));
+
+    // ==== 数据卡片 ====
+    for (auto *lbl : valueLabels) lbl->setStyleSheet(QString("color: %1; font-size: 22px; font-weight: bold;").arg(accent));
+
+    // ==== 数据看板按钮 ====
+    // (keep its green accent, just text color)
+
+    // ==== 视频 ====
+    if (videoLabel) videoLabel->setStyleSheet(
+        QString("background: black; border: 2px solid %1; min-height: 180px; color: #4CAF50;").arg(borderColor));
+
+    // ==== AI 聊天 ====
+    if (chatDisplay) chatDisplay->setStyleSheet(
+        QString("background: %1; border: 1px solid %2; border-radius: 5px; padding: 10px;").arg(chatBg, borderColor));
+    if (chatInput) chatInput->setStyleSheet(
+        QString("padding: 8px; background: %1; color: %2; border: 1px solid %3;").arg(inputBg, fg, borderColor));
+
+    // ==== 天气卡片 ====
+    if (weatherCard) weatherCard->setStyleSheet(
+        QString("QFrame#weatherCard {"
+                "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 %1, stop:0.4 %2, stop:1 %3);"
+                "  border-top: 1px solid %4; border-left: 1px solid %5;"
+                "  border-right: 1px solid %6; border-bottom: 2px solid #080408;"
+                "  border-radius: 8px;"
+                "}").arg(wCardBg1, wCardBg2, wCardBg3, wCardBorder1, wCardBorder2, wCardBorder2));
+
+    // ==== 地图 ====
+    if (mapView) mapView->setStyleSheet(
+        QString("border: 1px solid %1; border-radius: 10px;").arg(borderColor));
+
+    // ==== 看板窗口 ====
+    if (chartDashboard) {
+        chartDashboard->setStyleSheet(QString(
+            "background-color: %1; color: %2; font-family: 'Microsoft YaHei';").arg(bg, fg));
+    }
+
+    // ==== 主题按钮样式 ====
+    if (themeBtn) {
+        themeBtn->setStyleSheet(isDarkMode ?
+            "QPushButton { background: #3a5068; color: #c0d8f0; font-size: 12px; font-weight: bold; "
+            "border: 1px solid #506880; border-radius: 5px; padding: 2px 8px; }"
+            "QPushButton:hover { background: #4a6080; color: #fff; }" :
+            "QPushButton { background: #d4c8b0; color: #5a4020; font-size: 12px; font-weight: bold; "
+            "border: 1px solid #c0a880; border-radius: 5px; padding: 2px 8px; }"
+            "QPushButton:hover { background: #c0b090; color: #302010; }");
+    }
+}
     QString location = qEnvironmentVariable("TEA_WEATHER_LOCATION", "WTX_CH101280800");
     QString token    = qEnvironmentVariable("TEA_WEATHER_TOKEN");
     if (token.isEmpty()) {
