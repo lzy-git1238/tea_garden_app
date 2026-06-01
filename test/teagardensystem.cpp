@@ -131,22 +131,27 @@ void TeaGardenSystem::setupUI() {
     for(int i=0; i<names.size(); ++i) {
         leftPanel->addWidget(createDataCard(names[i], i, units[i]));
     }
-    chartBtn = new QPushButton("📊 数据看板");
-    chartBtn->setStyleSheet("background: #00897B; color: white; padding: 8px; "
-                            "font-weight: bold; border-radius: 6px;");
+    chartBtn = new QPushButton("📊  数据看板");
+    chartBtn->setStyleSheet("QPushButton { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #00897B 3px, stop:3px rgba(0,137,123,0.15), stop:1 rgba(0,137,123,0.08));"
+                            "color: #80CBC4; padding: 9px 12px; text-align: left;"
+                            "font-weight: bold; font-size: 12px; border: 1px solid #1a3a30; border-radius: 6px; }"
+                            "QPushButton:hover { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #00BFA5 3px, stop:3px rgba(0,191,165,0.25), stop:1 rgba(0,191,165,0.12)); color: #fff; }");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
 
-    auto *pestBtn = new QPushButton("🐛 病虫害面板");
-    pestBtn->setStyleSheet("background: #5D4037; color: white; padding: 8px; "
-                            "font-weight: bold; border-radius: 6px;");
+    auto *pestBtn = new QPushButton("🐛  病虫害面板");
+    pestBtn->setStyleSheet("QPushButton { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #FF6D00 3px, stop:3px rgba(255,109,0,0.15), stop:1 rgba(255,109,0,0.08));"
+                            "color: #FFAB40; padding: 9px 12px; text-align: left;"
+                            "font-weight: bold; font-size: 12px; border: 1px solid #3a2010; border-radius: 6px; }"
+                            "QPushButton:hover { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #FF9100 3px, stop:3px rgba(255,145,0,0.25), stop:1 rgba(255,145,0,0.12)); color: #fff; }");
     connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     leftPanel->addWidget(pestBtn);
 
-    auto *mockPestBtn = new QPushButton("🐛 模拟检测");
-    mockPestBtn->setStyleSheet("background: #3E2723; color: #FF8A65; padding: 6px; "
-                               "font-size: 11px; font-weight: bold; border-radius: 4px;"
-                               "border-top: 1px solid #5D4037; border-bottom: 1px solid #1a0a08;");
+    auto *mockPestBtn = new QPushButton("🐛  模拟检测");
+    mockPestBtn->setStyleSheet("QPushButton { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #C62828 3px, stop:3px rgba(198,40,40,0.15), stop:1 rgba(198,40,40,0.08));"
+                               "color: #EF9A9A; padding: 8px 12px; text-align: left;"
+                               "font-size: 11px; font-weight: bold; border: 1px solid #3a1010; border-radius: 6px; }"
+                               "QPushButton:hover { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #E53935 3px, stop:3px rgba(229,57,53,0.25), stop:1 rgba(229,57,53,0.12)); color: #fff; }");
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
@@ -176,7 +181,7 @@ void TeaGardenSystem::setupUI() {
     wcRefreshBtn->setStyleSheet(
         "QPushButton {"
         "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #503828, stop:0.5 #382018, stop:1 #201008);"
-        "  color: #f0c8a0; font-size: 14px; font-weight: bold; border-radius: 3px;"
+        "  color: #f0c8a0; font-size: 14px; font-weight: bold; border-radius: 6px;"
         "  border-top: 1px solid #806040; border-bottom: 1px solid #100808;"
         "}"
         "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #705040, stop:0.5 #503828, stop:1 #302018); color: #fff; }"
@@ -244,7 +249,7 @@ void TeaGardenSystem::setupUI() {
     auto *pestDetailBtn = new QPushButton("详情 ▶");
     pestDetailBtn->setStyleSheet(
         "QPushButton { background: #3E2723; color: #FF8A65; font-size: 11px; padding: 2px 8px; "
-        "border: 1px solid #5D4037; border-radius: 3px; }"
+        "border: 1px solid #5D4037; border-radius: 6px; }"
         "QPushButton:hover { background: #4E332E; }");
     connect(pestDetailBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     pestHeaderRow->addWidget(pestDetailBtn);
@@ -265,7 +270,7 @@ void TeaGardenSystem::setupUI() {
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
     chatDisplay->setMinimumHeight(80);
-    chatDisplay->setStyleSheet("background: rgba(0,0,0,0.4); border: 1px solid #334455; border-radius: 5px; padding: 10px;");
+    chatDisplay->setStyleSheet("background: rgba(0,0,0,0.4); border: 1px solid #334455; border-radius: 6px; padding: 10px;");
 
     QHBoxLayout *inputBox = new QHBoxLayout();
     chatInput = new QLineEdit();
@@ -363,7 +368,7 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
 
     mapView = new QWebEngineView(this);
     mapView->setMinimumHeight(460);
-    mapView->setStyleSheet("border: 1px solid #334455; border-radius: 10px;");
+    mapView->setStyleSheet("border: 1px solid #334455; border-radius: 8px;");
     static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
     midPanel->addWidget(mapView, 5);
 #else
@@ -1012,13 +1017,13 @@ void TeaGardenSystem::applyTheme() {
     if (videoLabel)
         videoLabel->setStyleSheet(QString("background: black; border: 2px solid %1; min-height: 180px; color: #4CAF50;").arg(border));
     if (mapView)
-        mapView->setStyleSheet(QString("border: 1px solid %1; border-radius: 10px;").arg(border));
+        mapView->setStyleSheet(QString("border: 1px solid %1; border-radius: 8px;").arg(border));
 
     // ══════ 右侧面板 ══════
     if (aiTitleLabel)
         aiTitleLabel->setStyleSheet(QString("font-size: 16px; color: %1; font-weight: bold;").arg(aiTitleClr));
     if (chatDisplay)
-        chatDisplay->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 5px; padding: 10px;").arg(chatBg, border));
+        chatDisplay->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 6px; padding: 10px;").arg(chatBg, border));
     if (chatInput)
         chatInput->setStyleSheet(QString("padding: 8px; background: %1; color: %2; border: 1px solid %3;").arg(inputBg, fg, border));
     if (sendBtn)
@@ -1044,7 +1049,7 @@ void TeaGardenSystem::applyTheme() {
     if (themeBtn)
         themeBtn->setStyleSheet(QString(
             "QPushButton { background: %1; color: %2; font-size: 12px; font-weight: bold;"
-            "  border: 1px solid %3; border-radius: 5px; padding: 2px 8px; }"
+            "  border: 1px solid %3; border-radius: 6px; padding: 2px 8px; }"
             "QPushButton:hover { background: %4; color: %5; }")
             .arg(tbBg, tbColor, tbBorder, tbHoverBg, tbHoverColor));
 
@@ -1183,7 +1188,7 @@ void TeaGardenSystem::showWeatherDetail() {
     closeBtn->setStyleSheet(
         "QPushButton {"
         "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #1a3040, stop:1 #0d1f30);"
-        "  color: #90A4AE; padding: 6px 24px; font-size: 13px; font-weight: bold; border-radius: 4px;"
+        "  color: #90A4AE; padding: 6px 24px; font-size: 13px; font-weight: bold; border-radius: 6px;"
         "  border-top: 1px solid #2a4050; border-bottom: 1px solid #081018;"
         "}"
         "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #284868, stop:1 #183848); color: #fff; }");
