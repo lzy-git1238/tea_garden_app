@@ -928,9 +928,21 @@ void TeaGardenSystem::onLoraParseError(const QString &errorText) {
 }
 
 void TeaGardenSystem::appendChatMessage(QString role, QString message) {
-    QString color = (role == "管家") ? "#00E5FF" : "#FFA000";
     QString time = QDateTime::currentDateTime().toString("hh:mm:ss");
-    chatDisplay->append(QString("<b style='color:%1;'>%2 [%3]:</b><br>%4<br>").arg(color, role, time, message));
+    QString bgColor, textColor, align;
+    if (role == "管家") {
+        bgColor = "rgba(0,137,123,0.15)"; textColor = "#80CBC4"; align = "left";
+    } else if (role == "用户" || role == "用户(语音)") {
+        bgColor = "rgba(255,152,0,0.12)"; textColor = "#FFB74D"; align = "right";
+    } else {
+        bgColor = "rgba(96,125,139,0.10)"; textColor = "#90A4AE"; align = "left";
+    }
+    chatDisplay->append(QString(
+        "<div style='display:block;text-align:%1;margin:3px 0;'>"
+        "<span style='color:%5;font-size:10px;'>%2 [%3]</span><br>"
+        "<span style='display:inline-block;background:%4;color:%6;padding:4px 10px;border-radius:6px;font-size:12px;max-width:85%%;text-align:left;'>%7</span>"
+        "</div>")
+        .arg(align, role, time, bgColor, "#546E7A", textColor, message));
 }
 
 void TeaGardenSystem::openChartDashboard() {
