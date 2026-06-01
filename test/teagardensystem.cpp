@@ -135,13 +135,13 @@ void TeaGardenSystem::setupUI() {
     }
     chartBtn = new QPushButton("📊 数据看板");
     chartBtn->setStyleSheet("background: #00897B; color: white; padding: 8px; "
-                            "font-weight: bold; border-radius: 6px;");
+                            "font-weight: bold; border-radius: 4px;");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
 
     auto *pestBtn = new QPushButton("🐛 病虫害面板");
     pestBtn->setStyleSheet("background: #5D4037; color: white; padding: 8px; "
-                            "font-weight: bold; border-radius: 6px;");
+                            "font-weight: bold; border-radius: 4px;");
     connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     leftPanel->addWidget(pestBtn);
 
@@ -178,7 +178,7 @@ void TeaGardenSystem::setupUI() {
     wcRefreshBtn->setStyleSheet(
         "QPushButton {"
         "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #503828, stop:0.5 #382018, stop:1 #201008);"
-        "  color: #f0c8a0; font-size: 14px; font-weight: bold; border-radius: 6px;"
+        "  color: #f0c8a0; font-size: 14px; font-weight: bold; border-radius: 4px;"
         "  border-top: 1px solid #806040; border-bottom: 1px solid #100808;"
         "}"
         "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #705040, stop:0.5 #503828, stop:1 #302018); color: #fff; }"
@@ -250,7 +250,7 @@ void TeaGardenSystem::setupUI() {
     auto *pestDetailBtn = new QPushButton("详情 ▶");
     pestDetailBtn->setStyleSheet(
         "QPushButton { background: #3E2723; color: #FF8A65; font-size: 11px; padding: 2px 8px; "
-        "border: 1px solid #5D4037; border-radius: 6px; }"
+        "border: 1px solid #5D4037; border-radius: 4px; }"
         "QPushButton:hover { background: #4E332E; }");
     connect(pestDetailBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     pestHeaderRow->addWidget(pestDetailBtn);
@@ -264,14 +264,14 @@ void TeaGardenSystem::setupUI() {
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
     pestPieView->setMinimumHeight(240);
-    pestPieView->setStyleSheet("background: transparent; border: 1px solid #2a1a1a; border-radius: 6px;");
+    pestPieView->setStyleSheet("background: transparent; border: 1px solid #2a1a1a; border-radius: 4px;");
     rightPanel->addWidget(pestPieView);
 
     // 聊天区（缩小）
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
     chatDisplay->setMinimumHeight(80);
-    chatDisplay->setStyleSheet("background: rgba(0,0,0,0.4); border: 1px solid #334455; border-radius: 6px; padding: 10px;");
+    chatDisplay->setStyleSheet("background: rgba(0,0,0,0.4); border: 1px solid #334455; border-radius: 4px; padding: 10px;");
 
     QHBoxLayout *inputBox = new QHBoxLayout();
     chatInput = new QLineEdit();
@@ -921,21 +921,9 @@ void TeaGardenSystem::onLoraParseError(const QString &errorText) {
 }
 
 void TeaGardenSystem::appendChatMessage(QString role, QString message) {
+    QString color = (role == "管家") ? "#00E5FF" : "#FFA000";
     QString time = QDateTime::currentDateTime().toString("hh:mm:ss");
-    QString bgColor, textColor, align;
-    if (role == "管家") {
-        bgColor = "rgba(0,137,123,0.15)"; textColor = "#80CBC4"; align = "left";
-    } else if (role == "用户" || role == "用户(语音)") {
-        bgColor = "rgba(255,152,0,0.12)"; textColor = "#FFB74D"; align = "right";
-    } else {
-        bgColor = "rgba(96,125,139,0.10)"; textColor = "#90A4AE"; align = "left";
-    }
-    chatDisplay->append(QString(
-        "<div style='display:block;text-align:%1;margin:3px 0;'>"
-        "<span style='color:%5;font-size:10px;'>%2 [%3]</span><br>"
-        "<span style='display:inline-block;background:%4;color:%6;padding:4px 10px;border-radius:6px;font-size:12px;max-width:85%%;text-align:left;'>%7</span>"
-        "</div>")
-        .arg(align, role, time, bgColor, "#546E7A", textColor, message));
+    chatDisplay->append(QString("<b style='color:%1;'>%2 [%3]:</b><br>%4<br>").arg(color, role, time, message));
 }
 
 void TeaGardenSystem::openChartDashboard() {
@@ -1037,7 +1025,7 @@ void TeaGardenSystem::applyTheme() {
     // 数据看板按钮
     if (chartBtn)
         chartBtn->setStyleSheet(QString("background: %1; color: white; padding: 8px; "
-            "font-weight: bold; border-radius: 6px;").arg(chartBtnBg));
+            "font-weight: bold; border-radius: 4px;").arg(chartBtnBg));
 
     // ══════ 中间面板 ══════
     if (videoTitleLabel)
@@ -1051,7 +1039,7 @@ void TeaGardenSystem::applyTheme() {
     if (aiTitleLabel)
         aiTitleLabel->setStyleSheet(QString("font-size: 16px; color: %1; font-weight: bold;").arg(aiTitleClr));
     if (chatDisplay)
-        chatDisplay->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 6px; padding: 10px;").arg(chatBg, border));
+        chatDisplay->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 4px; padding: 10px;").arg(chatBg, border));
     if (chatInput)
         chatInput->setStyleSheet(QString("padding: 8px; background: %1; color: %2; border: 1px solid %3;").arg(inputBg, fg, border));
     if (sendBtn)
@@ -1077,7 +1065,7 @@ void TeaGardenSystem::applyTheme() {
     if (themeBtn)
         themeBtn->setStyleSheet(QString(
             "QPushButton { background: %1; color: %2; font-size: 12px; font-weight: bold;"
-            "  border: 1px solid %3; border-radius: 6px; padding: 2px 8px; }"
+            "  border: 1px solid %3; border-radius: 4px; padding: 2px 8px; }"
             "QPushButton:hover { background: %4; color: %5; }")
             .arg(tbBg, tbColor, tbBorder, tbHoverBg, tbHoverColor));
 
@@ -1216,7 +1204,7 @@ void TeaGardenSystem::showWeatherDetail() {
     closeBtn->setStyleSheet(
         "QPushButton {"
         "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #1a3040, stop:1 #0d1f30);"
-        "  color: #90A4AE; padding: 6px 24px; font-size: 13px; font-weight: bold; border-radius: 6px;"
+        "  color: #90A4AE; padding: 6px 24px; font-size: 13px; font-weight: bold; border-radius: 4px;"
         "  border-top: 1px solid #2a4050; border-bottom: 1px solid #081018;"
         "}"
         "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #284868, stop:1 #183848); color: #fff; }");
