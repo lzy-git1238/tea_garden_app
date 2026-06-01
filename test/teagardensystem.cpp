@@ -390,7 +390,7 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     dataCardTitles.append(tLbl);
 
     QLabel *vLbl = new QLabel("-- " + unit);
-    vLbl->setStyleSheet("color: #00E5FF; font-size: 22px; font-weight: bold;");
+    vLbl->setStyleSheet("color: #00E5FF; font-size: 18px; font-weight: bold;");
 
     valueLabels.append(vLbl);
     vbox->addWidget(tLbl);
