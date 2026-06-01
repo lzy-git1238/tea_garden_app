@@ -21,6 +21,8 @@
 #include <QtCharts/QChart>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 #include <QPixmap>
 #include <QWebSocket>
 #include <QDebug>
