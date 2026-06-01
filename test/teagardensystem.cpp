@@ -1027,9 +1027,15 @@ void TeaGardenSystem::applyTheme() {
     if (loraStateLabel)
         loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px;").arg(loraColor));
 
-    // 数据卡片（Frame + 标题 + 数值）
-    for (auto *card : dataCards)
-        card->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 8px;").arg(cardBg, border));
+    // 数据卡片（Frame + 标题 + 数值）—— 保留色条
+    QStringList stripeColors = {"#F44336", "#2196F3", "#FFC107", "#9C27B0",
+                                "#00BCD4", "#FF9800", "#4CAF50", "#795548"};
+    for (int i = 0; i < dataCards.size(); ++i) {
+        QString c = stripeColors.value(i, "#00E5FF");
+        dataCards[i]->setStyleSheet(QString(
+            "QFrame { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 %1 4px, stop:4px %2, stop:1 %2);"
+            "border: 1px solid %3; border-radius: 8px; }").arg(c, cardBg, border));
+    }
     for (auto *tlbl : dataCardTitles)
         tlbl->setStyleSheet(QString("color: %1; font-size: 12px;").arg(muted));
     for (auto *vlbl : valueLabels)
