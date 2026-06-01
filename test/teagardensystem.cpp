@@ -385,8 +385,14 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     Q_UNUSED(index);
 
     QFrame *card = new QFrame();
-    card->setStyleSheet("background: rgba(255,255,255,0.05); border: 1px solid #1a2a3a; border-radius: 8px;");
-    card->setFixedHeight(80);
+    // 各传感器不同左侧色条
+    QStringList stripeColors = {"#F44336", "#2196F3", "#FFC107", "#9C27B0",
+                                "#00BCD4", "#FF9800", "#4CAF50", "#795548"};
+    QString c = stripeColors.value(index, "#00E5FF");
+    card->setStyleSheet(QString(
+        "QFrame { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 %1 4px, stop:4px rgba(255,255,255,0.06), stop:1 rgba(255,255,255,0.02));"
+        "border: 1px solid #1a2a3a; border-radius: 8px; }").arg(c));
+    card->setFixedHeight(72);
     dataCards.append(card);
 
     QVBoxLayout *vbox = new QVBoxLayout(card);
