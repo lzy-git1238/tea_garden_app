@@ -222,10 +222,6 @@ void TeaGardenSystem::setupUI() {
 
     midPanel->addWidget(videoTitleLabel);
     midPanel->addWidget(videoLabel, 2);
-    auto *divider = new QFrame();
-    divider->setFrameShape(QFrame::HLine);
-    divider->setStyleSheet("QFrame { color: rgba(255,255,255,0.06); margin: 4px 0; }");
-    midPanel->addWidget(divider);
     setupMapView(midPanel);
     mainLayout->addLayout(midPanel, 6);
 
