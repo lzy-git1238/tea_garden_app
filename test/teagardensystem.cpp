@@ -998,7 +998,7 @@ void TeaGardenSystem::applyTheme() {
     for (auto *tlbl : dataCardTitles)
         tlbl->setStyleSheet(QString("color: %1; font-size: 12px;").arg(muted));
     for (auto *vlbl : valueLabels)
-        vlbl->setStyleSheet(QString("color: %1; font-size: 18px; font-weight: bold;").arg(accent));
+        vlbl->setStyleSheet(QString("color: %1; font-size: 22px; font-weight: bold;").arg(accent));
 
     // 数据看板按钮
     if (chartBtn)
