@@ -109,7 +109,7 @@ TeaGardenSystem::~TeaGardenSystem() {
 void TeaGardenSystem::setupUI() {
     this->setWindowTitle("智慧茶园综合管理系统 v2.0");
     this->resize(1200, 800);
-    this->setStyleSheet("background-color: #051623; color: #B0B8C0; font-family: 'Microsoft YaHei'; font-size: 12px;");
+    this->setStyleSheet("background-color: #051623; color: #E0E0E0; font-family: 'Microsoft YaHei';");
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     mainLayout->setSpacing(20);
