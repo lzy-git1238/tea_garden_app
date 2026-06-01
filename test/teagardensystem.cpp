@@ -133,27 +133,22 @@ void TeaGardenSystem::setupUI() {
     for(int i=0; i<names.size(); ++i) {
         leftPanel->addWidget(createDataCard(names[i], i, units[i]));
     }
-    chartBtn = new QPushButton("📊  数据看板");
-    chartBtn->setStyleSheet("QPushButton { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #00897B 3px, stop:3px rgba(0,137,123,0.15), stop:1 rgba(0,137,123,0.08));"
-                            "color: #80CBC4; padding: 9px 12px; text-align: left;"
-                            "font-weight: bold; font-size: 12px; border: 1px solid #1a3a30; border-radius: 6px; }"
-                            "QPushButton:hover { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #00BFA5 3px, stop:3px rgba(0,191,165,0.25), stop:1 rgba(0,191,165,0.12)); color: #fff; }");
+    chartBtn = new QPushButton("📊 数据看板");
+    chartBtn->setStyleSheet("background: #00897B; color: white; padding: 8px; "
+                            "font-weight: bold; border-radius: 6px;");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
 
-    auto *pestBtn = new QPushButton("🐛  病虫害面板");
-    pestBtn->setStyleSheet("QPushButton { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #FF6D00 3px, stop:3px rgba(255,109,0,0.15), stop:1 rgba(255,109,0,0.08));"
-                            "color: #FFAB40; padding: 9px 12px; text-align: left;"
-                            "font-weight: bold; font-size: 12px; border: 1px solid #3a2010; border-radius: 6px; }"
-                            "QPushButton:hover { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #FF9100 3px, stop:3px rgba(255,145,0,0.25), stop:1 rgba(255,145,0,0.12)); color: #fff; }");
+    auto *pestBtn = new QPushButton("🐛 病虫害面板");
+    pestBtn->setStyleSheet("background: #5D4037; color: white; padding: 8px; "
+                            "font-weight: bold; border-radius: 6px;");
     connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     leftPanel->addWidget(pestBtn);
 
-    auto *mockPestBtn = new QPushButton("🐛  模拟检测");
-    mockPestBtn->setStyleSheet("QPushButton { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #C62828 3px, stop:3px rgba(198,40,40,0.15), stop:1 rgba(198,40,40,0.08));"
-                               "color: #EF9A9A; padding: 8px 12px; text-align: left;"
-                               "font-size: 11px; font-weight: bold; border: 1px solid #3a1010; border-radius: 6px; }"
-                               "QPushButton:hover { background: qlineargradient(x1:1,y1:0,x2:0,y2:0, stop:0 #E53935 3px, stop:3px rgba(229,57,53,0.25), stop:1 rgba(229,57,53,0.12)); color: #fff; }");
+    auto *mockPestBtn = new QPushButton("🐛 模拟检测");
+    mockPestBtn->setStyleSheet("background: #3E2723; color: #FF8A65; padding: 6px; "
+                               "font-size: 11px; font-weight: bold; border-radius: 4px;"
+                               "border-top: 1px solid #5D4037; border-bottom: 1px solid #1a0a08;");
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
