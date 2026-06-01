@@ -929,15 +929,6 @@ void TeaGardenSystem::appendChatMessage(QString role, QString message) {
 void TeaGardenSystem::openChartDashboard() {
     if (!chartDashboard) {
         chartDashboard = new ChartDashboard();
-        // 淡入动画
-        auto *fx = new QGraphicsOpacityEffect(chartDashboard);
-        chartDashboard->setGraphicsEffect(fx);
-        auto *anim = new QPropertyAnimation(fx, "opacity", chartDashboard);
-        anim->setDuration(200);
-        anim->setStartValue(0.0);
-        anim->setEndValue(1.0);
-        fx->setOpacity(0.0);
-        anim->start(QAbstractAnimation::DeleteWhenStopped);
     }
     chartDashboard->show();
     chartDashboard->raise();
