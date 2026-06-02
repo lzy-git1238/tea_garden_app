@@ -1215,6 +1215,15 @@ void TeaGardenSystem::injectMockPest() {
     rec.severity = 1 + QRandomGenerator::global()->bounded(3);
     PestStore::instance()->append(rec);
 
+    // 上传病虫害到华为云 IoT
+    QJsonObject pestData;
+    pestData["pest_type"]   = rec.pestType;
+    pestData["pest_severity"] = rec.severity;
+    pestData["pest_lat"]    = rec.lat;
+    pestData["pest_lng"]    = rec.lng;
+    pestData["pest_total_count"] = PestStore::instance()->totalCount();
+    IotUploader::instance()->uploadPest(pestData);
+
     appendChatMessage("无人机", QString("检测到 %1 @ (%2, %3)")
         .arg(rec.pestType)
         .arg(rec.lat, 0, 'f', 6)
