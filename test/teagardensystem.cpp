@@ -167,7 +167,7 @@ void TeaGardenSystem::setupUI() {
     lampBtn = new QPushButton("🪲 驱虫灯");
     lampBtn->setCheckable(true);
     lampBtn->setStyleSheet(
-        "QPushButton { background: #2a1a1a; color: #EF9A9A; padding: 7px 10px; font-size: 11px; font-weight: bold;"
+        "QPushButton { background: #2a1a1a; color: #EF9A9A; padding: 9px 14px; font-size: 14px; font-weight: bold;"
         "border: 1px solid #4a2a2a; border-radius: 4px; }"
         "QPushButton:hover { background: #402020; }"
         "QPushButton:checked { background: #B71C1C; color: #fff; border-color: #F44336; }");
