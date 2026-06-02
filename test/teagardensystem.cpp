@@ -94,6 +94,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(weatherTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshWeatherAlert);
     weatherTimer->start(30 * 60 * 1000);
     refreshWeatherAlert();
+    QTimer::singleShot(2000, this, [this]() { injectMockPest(); });
 
 }
 
