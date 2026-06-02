@@ -151,6 +151,31 @@ void TeaGardenSystem::setupUI() {
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
+    // ── 设备控制按钮 ──
+    auto *devRow = new QHBoxLayout();
+
+    pumpBtn = new QPushButton("💧 灌溉泵");
+    pumpBtn->setCheckable(true);
+    pumpBtn->setStyleSheet(
+        "QPushButton { background: #1a3a50; color: #80DEEA; padding: 7px 10px; font-size: 11px; font-weight: bold;"
+        "border: 1px solid #2a4a60; border-radius: 4px; }"
+        "QPushButton:hover { background: #284868; }"
+        "QPushButton:checked { background: #0D47A1; color: #fff; border-color: #2196F3; }");
+    connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
+    devRow->addWidget(pumpBtn);
+
+    lampBtn = new QPushButton("🪲 驱虫灯");
+    lampBtn->setCheckable(true);
+    lampBtn->setStyleSheet(
+        "QPushButton { background: #2a1a1a; color: #EF9A9A; padding: 7px 10px; font-size: 11px; font-weight: bold;"
+        "border: 1px solid #4a2a2a; border-radius: 4px; }"
+        "QPushButton:hover { background: #402020; }"
+        "QPushButton:checked { background: #B71C1C; color: #fff; border-color: #F44336; }");
+    connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
+    devRow->addWidget(lampBtn);
+
+    leftPanel->addLayout(devRow);
+
     // ── 天气预警卡片（立体3D） ──
     weatherCard = new QFrame();
     weatherCard->setFixedHeight(155);
