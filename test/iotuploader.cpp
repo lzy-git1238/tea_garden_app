@@ -136,6 +136,22 @@ void IotUploader::upload(const QJsonObject &sensorData) {
     sendPayload(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
 }
 
+void IotUploader::uploadPest(const QJsonObject &pestData) {
+    if (deviceId.isEmpty() || hostname.isEmpty()) return;
+
+    QJsonObject root;
+    QJsonArray services;
+    QJsonObject svc;
+    svc["service_id"] = "tea_pest";
+    svc["properties"] = pestData;
+    svc["event_time"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    services.append(svc);
+    root["services"] = services;
+
+    QJsonDocument doc(root);
+    sendPayload(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+}
+
 void IotUploader::sendPayload(const QString &payload) {
     if (ready && proc && proc->state() == QProcess::Running) {
         // mosquitto_pub -l 从 stdin 逐行读取 JSON
