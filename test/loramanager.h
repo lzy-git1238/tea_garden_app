@@ -17,6 +17,7 @@ public:
     bool start();
     void stop();
     bool isRunning() const;
+    bool sendCommand(int value);
 
 signals:
     void sensorDataUpdated(double windSpeed,
