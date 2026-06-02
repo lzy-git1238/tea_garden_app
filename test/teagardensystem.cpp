@@ -157,7 +157,7 @@ void TeaGardenSystem::setupUI() {
     pumpBtn = new QPushButton("💧 灌溉泵");
     pumpBtn->setCheckable(true);
     pumpBtn->setStyleSheet(
-        "QPushButton { background: #1a3a50; color: #80DEEA; padding: 7px 10px; font-size: 11px; font-weight: bold;"
+        "QPushButton { background: #1a3a50; color: #80DEEA; padding: 9px 14px; font-size: 14px; font-weight: bold;"
         "border: 1px solid #2a4a60; border-radius: 4px; }"
         "QPushButton:hover { background: #284868; }"
         "QPushButton:checked { background: #0D47A1; color: #fff; border-color: #2196F3; }");
