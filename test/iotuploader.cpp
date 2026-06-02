@@ -139,13 +139,12 @@ void IotUploader::upload(const QJsonObject &sensorData) {
 void IotUploader::uploadPest(const QJsonObject &pestData) {
     if (deviceId.isEmpty() || hostname.isEmpty()) return;
 
-    // 用 QJsonDocument 安全编码字符串字段
+    // 华为云 decimal 类型需用字符串传经纬度
     QJsonObject props;
     props["pest_type"]   = pestData["pest_type"];
     props["pest_severity"] = pestData["pest_severity"];
-    // 先放占位符，之后替换为高精度数字
-    props["pest_lat"]    = "@@LAT@@";
-    props["pest_lng"]    = "@@LNG@@";
+    props["pest_lat"]    = QString::number(pestData["pest_lat"].toDouble(), 'f', 6);
+    props["pest_lng"]    = QString::number(pestData["pest_lng"].toDouble(), 'f', 6);
     props["pest_total_count"] = pestData["pest_total_count"];
 
     QJsonObject svc;
@@ -157,10 +156,6 @@ void IotUploader::uploadPest(const QJsonObject &pestData) {
 
     QString payload = QString::fromUtf8(
         QJsonDocument(root).toJson(QJsonDocument::Compact));
-
-    // 替换占位符为 6 位精度的经纬度数字
-    payload.replace("\"@@LAT@@\"", QString::number(pestData["pest_lat"].toDouble(), 'f', 6));
-    payload.replace("\"@@LNG@@\"", QString::number(pestData["pest_lng"].toDouble(), 'f', 6));
 
     sendPayload(payload);
 }
