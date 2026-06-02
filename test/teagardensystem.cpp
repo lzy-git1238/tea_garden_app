@@ -1335,3 +1335,57 @@ void TeaGardenSystem::refreshPestPie() {
 
     chart->addSeries(series);
 }
+
+// ── LoRa 下行控制 ──
+
+bool TeaGardenSystem::sendLoraCommand(const QString &deviceKey, int value) {
+    return loraManager->sendCommand(value);
+}
+
+void TeaGardenSystem::scheduleLoraCommand(const QString &deviceKey, int value) {
+    pendingCommands[deviceKey] = value;
+
+    QDateTime now = QDateTime::currentDateTime();
+    int msSinceLast = lastCommandTime.value(deviceKey, now.addSecs(-999))
+                          .msecsTo(now);
+
+    if (msSinceLast >= commandMinIntervalMs) {
+        flushPendingCommand(deviceKey);
+    } else {
+        // 排队延迟到间隔结束后执行
+        if (!commandTimers.contains(deviceKey)) {
+            auto *timer = new QTimer(this);
+            timer->setSingleShot(true);
+            connect(timer, &QTimer::timeout, this, [this, deviceKey]() {
+                flushPendingCommand(deviceKey);
+            });
+            commandTimers[deviceKey] = timer;
+        }
+        commandTimers[deviceKey]->start(commandMinIntervalMs - msSinceLast);
+    }
+}
+
+void TeaGardenSystem::flushPendingCommand(const QString &deviceKey) {
+    if (!pendingCommands.contains(deviceKey)) return;
+    int value = pendingCommands[deviceKey];
+    pendingCommands.remove(deviceKey);
+    if (commandTimers.contains(deviceKey)) {
+        commandTimers[deviceKey]->stop();
+    }
+    lastCommandTime[deviceKey] = QDateTime::currentDateTime();
+    sendLoraCommand(deviceKey, value);
+}
+
+// ── 按钮回调 ──
+
+void TeaGardenSystem::onPumpToggled(bool checked) {
+    // 3 = 开启灌溉泵, 4 = 关闭灌溉泵
+    scheduleLoraCommand("pump", checked ? 3 : 4);
+    appendChatMessage("系统", checked ? "💧 灌溉泵: 已开启" : "💧 灌溉泵: 已关闭");
+}
+
+void TeaGardenSystem::onLampToggled(bool checked) {
+    // 1 = 开启驱虫灯, 2 = 关闭驱虫灯
+    scheduleLoraCommand("lamp", checked ? 1 : 2);
+    appendChatMessage("系统", checked ? "🪲 驱虫灯: 已开启" : "🪲 驱虫灯: 已关闭");
+}
