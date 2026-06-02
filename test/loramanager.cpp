@@ -72,7 +72,7 @@ bool LoraManager::start() {
     serialPort->setStopBits(QSerialPort::OneStop);
     serialPort->setFlowControl(QSerialPort::NoFlowControl);
 
-    if (!serialPort->open(QIODevice::ReadOnly)) {
+    if (!serialPort->open(QIODevice::ReadWrite)) {
         emit statusChanged(QString("LoRa 串口打开失败: %1 (%2)").arg(serialPortName, serialPort->errorString()));
         return false;
     }
