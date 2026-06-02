@@ -86,6 +86,14 @@ private:
     QPushButton *sendBtn = nullptr;
     QLabel *aiTitleLabel = nullptr;
     QPushButton *chartBtn = nullptr;
+    QPushButton *pumpBtn = nullptr;
+    QPushButton *lampBtn = nullptr;
+
+    // LoRa 下行控制防抖
+    int commandMinIntervalMs = 800;
+    QMap<QString, QDateTime> lastCommandTime;
+    QMap<QString, int> pendingCommands;
+    QMap<QString, QTimer*> commandTimers;
     QProcess *recordProcess = nullptr;  // 当前录音进程，非空时表示正在录音
     QString  pendingWavPath;            // 录音目标文件路径
     QTimer *updateTimer;
