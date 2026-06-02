@@ -96,7 +96,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     refreshWeatherAlert();
 
     // 【临时验证】启动后自动触发一次病虫害上传，验证格式后删除
-    QTimer::singleShot(3000, this, &TeaGardenSystem::injectMockPest);
+    QTimer::singleShot(3000, this, [this]() { injectMockPest(); });
 }
 
 // 【修复报错】明确定义析构函数
