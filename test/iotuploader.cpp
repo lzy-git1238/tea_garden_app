@@ -139,17 +139,29 @@ void IotUploader::upload(const QJsonObject &sensorData) {
 void IotUploader::uploadPest(const QJsonObject &pestData) {
     if (deviceId.isEmpty() || hostname.isEmpty()) return;
 
-    QJsonObject root;
-    QJsonArray services;
-    QJsonObject svc;
-    svc["service_id"] = "tea_pest";
-    svc["properties"] = pestData;
-    svc["event_time"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
-    services.append(svc);
-    root["services"] = services;
+    // 手动构造 JSON：避免 QJsonDocument 把 double 截断为 4 位
+    QString latStr = QString::number(pestData["pest_lat"].toDouble(), 'f', 6);
+    QString lngStr = QString::number(pestData["pest_lng"].toDouble(), 'f', 6);
+    int severity   = pestData["pest_severity"].toInt();
+    int totalCount = pestData["pest_total_count"].toInt();
+    QString type   = pestData["pest_type"].toString().replace("'", "\\'");
 
-    QJsonDocument doc(root);
-    sendPayload(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    QString payload = QString(
+        "{\"services\":[{"
+          "\"service_id\":\"tea_pest\","
+          "\"properties\":{"
+            "\"pest_type\":\"%1\","
+            "\"pest_severity\":%2,"
+            "\"pest_lat\":%3,"
+            "\"pest_lng\":%4,"
+            "\"pest_total_count\":%5"
+          "},"
+          "\"event_time\":\"%6\""
+        "}]}"
+    ).arg(type).arg(severity).arg(latStr, lngStr).arg(totalCount)
+     .arg(QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+
+    sendPayload(payload);
 }
 
 void IotUploader::sendPayload(const QString &payload) {
