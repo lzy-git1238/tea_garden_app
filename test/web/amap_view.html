@@ -53,16 +53,6 @@
         title: "Tea Garden Center"
       }).addTo(map).bindPopup("茶园中心");
 
-      // 300m 缓冲区圈
-      L.circle([lat, lng], {
-        radius: 300,
-        color: "#00d4ff",
-        weight: 2,
-        opacity: 0.9,
-        fillColor: "#00d4ff",
-        fillOpacity: 0.12
-      }).addTo(map);
-
       banner.textContent = "星图云 · 茶园";
     })();
   </script>
