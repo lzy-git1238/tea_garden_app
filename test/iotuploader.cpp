@@ -137,16 +137,41 @@ void IotUploader::upload(const QJsonObject &sensorData) {
     sendPayload(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
 }
 
-void IotUploader::uploadPest(const QJsonObject &pestData) {
+void IotUploader::uploadPest() {
     if (deviceId.isEmpty() || hostname.isEmpty()) return;
 
-    // 华为云 decimal 类型需用字符串传经纬度
+    // 1. 种类统计 → JSON 字符串
+    QMap<QString, int> counts = PestStore::instance()->typeCounts();
+    QJsonObject countObj;
+    for (auto it = counts.begin(); it != counts.end(); ++it)
+        countObj[it.key()] = it.value();
+    QString pestCounts = QString::fromUtf8(
+        QJsonDocument(countObj).toJson(QJsonDocument::Compact));
+
+    // 2. 位置列表（最近 20 条）→ JSON 字符串
+    QVector<PestRecord> records = PestStore::instance()->queryAll();
+    QJsonArray locArray;
+    for (int i = 0; i < qMin(20, records.size()); ++i) {
+        const auto &r = records[i];
+        QJsonObject loc;
+        loc["lat"]  = QString::number(r.lat, 'f', 6);
+        loc["lng"]  = QString::number(r.lng, 'f', 6);
+        loc["type"] = r.pestType;
+        loc["sev"]  = r.severity;
+        loc["time"] = r.timestamp.toString("MM-dd HH:mm");
+        locArray.append(loc);
+    }
+    QString pestLocs = QString::fromUtf8(
+        QJsonDocument(locArray).toJson(QJsonDocument::Compact));
+
+    // 3. 总数
+    int total = PestStore::instance()->totalCount();
+
+    // 组装 JSON
     QJsonObject props;
-    props["pest_type"]   = pestData["pest_type"];
-    props["pest_severity"] = pestData["pest_severity"];
-    props["pest_lat"]    = QString::number(pestData["pest_lat"].toDouble(), 'f', 6);
-    props["pest_lng"]    = QString::number(pestData["pest_lng"].toDouble(), 'f', 6);
-    props["pest_total_count"] = pestData["pest_total_count"];
+    props["pest_counts"]    = pestCounts;
+    props["pest_locations"] = pestLocs;
+    props["pest_total"]     = total;
 
     QJsonObject svc;
     svc["service_id"] = "tea_pest";
@@ -159,7 +184,6 @@ void IotUploader::uploadPest(const QJsonObject &pestData) {
         QJsonDocument(root).toJson(QJsonDocument::Compact));
 
     sendPayload(payload);
-    qDebug() << "[IoT pest] payload:" << payload.left(300);
 }
 
 void IotUploader::sendPayload(const QString &payload) {
