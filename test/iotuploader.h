@@ -14,7 +14,7 @@ public:
 
     void init(const QString &configPath);
     void upload(const QJsonObject &sensorData);
-    void uploadPest(const QJsonObject &pestData);
+    void uploadPest();   // 从 PestStore 汇总并上传
 
 private:
     explicit IotUploader(QObject *parent = nullptr);
