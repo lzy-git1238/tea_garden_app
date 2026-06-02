@@ -158,6 +158,7 @@ void IotUploader::uploadPest(const QJsonObject &pestData) {
         QJsonDocument(root).toJson(QJsonDocument::Compact));
 
     sendPayload(payload);
+    qDebug() << "[IoT pest] payload:" << payload.left(300);
 }
 
 void IotUploader::sendPayload(const QString &payload) {
