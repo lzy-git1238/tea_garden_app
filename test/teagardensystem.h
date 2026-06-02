@@ -55,11 +55,16 @@ private slots:
     void openChartDashboard();
     void refreshWeatherAlert();  // 定时刷新天气预警
     void toggleTheme();          // 切换日间/夜间模式
+    void onPumpToggled(bool checked);
+    void onLampToggled(bool checked);
 
 private:
     void setupUI();
     void setupMapView(QVBoxLayout *midPanel);
     void setupMjpegStream();
+    bool sendLoraCommand(const QString &deviceKey, int value);
+    void scheduleLoraCommand(const QString &deviceKey, int value);
+    void flushPendingCommand(const QString &deviceKey);
     QWidget* createDataCard(QString title, int index, QString unit);
     bool eventFilter(QObject *obj, QEvent *event) override;
     void showWeatherDetail();   // 24h预报详情弹窗
