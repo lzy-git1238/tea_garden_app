@@ -162,6 +162,7 @@ void IotUploader::uploadPest(const QJsonObject &pestData) {
     payload.replace("\"@@LAT@@\"", QString::number(pestData["pest_lat"].toDouble(), 'f', 6));
     payload.replace("\"@@LNG@@\"", QString::number(pestData["pest_lng"].toDouble(), 'f', 6));
 
+    qDebug() << "[IoT pest] payload:" << payload.left(250);
     sendPayload(payload);
 }
 
