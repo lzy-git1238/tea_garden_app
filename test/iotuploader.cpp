@@ -139,27 +139,28 @@ void IotUploader::upload(const QJsonObject &sensorData) {
 void IotUploader::uploadPest(const QJsonObject &pestData) {
     if (deviceId.isEmpty() || hostname.isEmpty()) return;
 
-    // 手动构造 JSON：避免 QJsonDocument 把 double 截断为 4 位
-    QString latStr = QString::number(pestData["pest_lat"].toDouble(), 'f', 6);
-    QString lngStr = QString::number(pestData["pest_lng"].toDouble(), 'f', 6);
-    int severity   = pestData["pest_severity"].toInt();
-    int totalCount = pestData["pest_total_count"].toInt();
-    QString type   = pestData["pest_type"].toString().replace("'", "\\'");
+    // 用 QJsonDocument 安全编码字符串字段
+    QJsonObject props;
+    props["pest_type"]   = pestData["pest_type"];
+    props["pest_severity"] = pestData["pest_severity"];
+    // 先放占位符，之后替换为高精度数字
+    props["pest_lat"]    = "@@LAT@@";
+    props["pest_lng"]    = "@@LNG@@";
+    props["pest_total_count"] = pestData["pest_total_count"];
 
-    QString payload = QString(
-        "{\"services\":[{"
-          "\"service_id\":\"tea_pest\","
-          "\"properties\":{"
-            "\"pest_type\":\"%1\","
-            "\"pest_severity\":%2,"
-            "\"pest_lat\":%3,"
-            "\"pest_lng\":%4,"
-            "\"pest_total_count\":%5"
-          "},"
-          "\"event_time\":\"%6\""
-        "}]}"
-    ).arg(type).arg(severity).arg(latStr, lngStr).arg(totalCount)
-     .arg(QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+    QJsonObject svc;
+    svc["service_id"] = "tea_pest";
+    svc["properties"] = props;
+    svc["event_time"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    QJsonArray services; services.append(svc);
+    QJsonObject root; root["services"] = services;
+
+    QString payload = QString::fromUtf8(
+        QJsonDocument(root).toJson(QJsonDocument::Compact));
+
+    // 替换占位符为 6 位精度的经纬度数字
+    payload.replace("\"@@LAT@@\"", QString::number(pestData["pest_lat"].toDouble(), 'f', 6));
+    payload.replace("\"@@LNG@@\"", QString::number(pestData["pest_lng"].toDouble(), 'f', 6));
 
     sendPayload(payload);
 }
