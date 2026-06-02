@@ -1,4 +1,5 @@
 #include "iotuploader.h"
+#include "pestdata.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
