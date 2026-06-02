@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QFrame>
 #include <QList>
+#include <QMap>
 #include <QDateTime>
 #include <QImage>
 #include <QNetworkAccessManager>
