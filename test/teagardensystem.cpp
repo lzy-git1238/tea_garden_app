@@ -1046,7 +1046,7 @@ void TeaGardenSystem::applyTheme() {
 
     // ══════ 左侧面板 ══════
     if (leftPanelTitle)
-        leftPanelTitle->setStyleSheet(sectionStyle.arg(leftTitleClr));
+        leftPanelTitle->setStyleSheet(sectionTitleStyle(leftTitleClr));
     if (loraStateLabel)
         loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px; border: none;").arg(loraColor));
 
