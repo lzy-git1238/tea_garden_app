@@ -19,6 +19,8 @@ SOURCES += \
     main.cpp \
     pestdashboard.cpp \
     pestdata.cpp \
+    scheduledialog.cpp \
+    schedulestore.cpp \
     teagardensystem.cpp \
     thresholddialog.cpp \
     widget.cpp
