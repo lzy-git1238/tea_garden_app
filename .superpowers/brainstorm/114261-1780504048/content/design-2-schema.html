@@ -1,0 +1,110 @@
+<h2>设计 · 第2节：数据模型</h2>
+<p class="subtitle">ScheduleStore 管理的两张 SQLite 表</p>
+
+<h3>📋 schedule_config — 定时计划</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:13px; color:#ccc;">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#1e2a3a; text-align:left;">
+        <th style="padding:6px 10px;">字段</th><th style="padding:6px 10px;">类型</th><th style="padding:6px 10px;">说明</th><th style="padding:6px 10px;">示例</th>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">id</td>
+        <td style="padding:6px 10px;">INTEGER PK</td>
+        <td style="padding:6px 10px;">自增主键</td>
+        <td style="padding:6px 10px; color:#888;">1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">device_type</td>
+        <td style="padding:6px 10px;">TEXT</td>
+        <td style="padding:6px 10px;">"pump" 或 "lamp"</td>
+        <td style="padding:6px 10px; color:#888;">pump</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">days_of_week</td>
+        <td style="padding:6px 10px;">TEXT</td>
+        <td style="padding:6px 10px;">"1,2,3,4,5,6,7" (周一=1)</td>
+        <td style="padding:6px 10px; color:#888;">1,3,5</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">start_time</td>
+        <td style="padding:6px 10px;">TEXT</td>
+        <td style="padding:6px 10px;">HH:MM 格式</td>
+        <td style="padding:6px 10px; color:#888;">07:00</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">duration_min</td>
+        <td style="padding:6px 10px;">INTEGER</td>
+        <td style="padding:6px 10px;">持续时长（分钟）</td>
+        <td style="padding:6px 10px; color:#888;">30</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">enabled</td>
+        <td style="padding:6px 10px;">INTEGER</td>
+        <td style="padding:6px 10px;">1=启用 / 0=停用</td>
+        <td style="padding:6px 10px; color:#888;">1</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 10px; color:#81c784;">created_at</td>
+        <td style="padding:6px 10px;">TEXT</td>
+        <td style="padding:6px 10px;">创建时间 ISO 格式</td>
+        <td style="padding:6px 10px; color:#888;">2026-06-04T10:00:00</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<h3 style="margin-top: 20px;">📜 schedule_log — 执行日志</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:13px; color:#ccc;">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#1e2a3a; text-align:left;">
+        <th style="padding:6px 10px;">字段</th><th style="padding:6px 10px;">类型</th><th style="padding:6px 10px;">说明</th><th style="padding:6px 10px;">示例</th>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">id</td><td style="padding:6px 10px;">INTEGER PK</td><td style="padding:6px 10px;">自增主键</td><td style="padding:6px 10px; color:#888;">1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">device_type</td><td style="padding:6px 10px;">TEXT</td><td style="padding:6px 10px;">"pump" / "lamp"</td><td style="padding:6px 10px; color:#888;">pump</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">schedule_id</td><td style="padding:6px 10px;">INTEGER</td><td style="padding:6px 10px;">FK → schedule_config.id (手动则为NULL)</td><td style="padding:6px 10px; color:#888;">1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">action</td><td style="padding:6px 10px;">TEXT</td><td style="padding:6px 10px;">"on" / "off"</td><td style="padding:6px 10px; color:#888;">on</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">trigger</td><td style="padding:6px 10px;">TEXT</td><td style="padding:6px 10px;">"schedule" / "manual"</td><td style="padding:6px 10px; color:#888;">schedule</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">flow_rate</td><td style="padding:6px 10px;">REAL</td><td style="padding:6px 10px;">当时流速 (L/min)，lamp为0</td><td style="padding:6px 10px; color:#888;">2.5</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">volume_l</td><td style="padding:6px 10px;">REAL</td><td style="padding:6px 10px;">本次累计灌溉量(L)，lamp为0</td><td style="padding:6px 10px; color:#888;">37.5</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 10px; color:#81c784;">ts</td><td style="padding:6px 10px;">TEXT</td><td style="padding:6px 10px;">操作时间 ISO 格式</td><td style="padding:6px 10px; color:#888;">2026-06-04T07:00:00</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<h3 style="margin-top: 20px;">⚙️ 全局配置 — QSettings</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:13px; color:#ccc;">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#1e2a3a; text-align:left;">
+        <th style="padding:6px 10px;">键名</th><th style="padding:6px 10px;">类型</th><th style="padding:6px 10px;">默认值</th><th style="padding:6px 10px;">说明</th>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">pump/flow_rate</td><td style="padding:6px 10px;">double</td><td style="padding:6px 10px; color:#888;">2.5</td><td style="padding:6px 10px;">灌溉泵流速 (L/min)</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">schedule/check_interval</td><td style="padding:6px 10px;">int</td><td style="padding:6px 10px; color:#888;">60</td><td style="padding:6px 10px;">调度检查间隔 (秒)</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 10px; color:#81c784;">schedule/db_path</td><td style="padding:6px 10px;">string</td><td style="padding:6px 10px; color:#888;">./schedule.db</td><td style="padding:6px 10px;">SQLite 文件路径</td>
+      </tr>
+    </table>
+  </div>
+</div>
