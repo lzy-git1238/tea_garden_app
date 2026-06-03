@@ -1434,7 +1434,7 @@ void TeaGardenSystem::refreshPestPie() {
                 it.value());
 
             sl->setColor(colors.value(it.key(), QColor("#2196F3")));
-            sl->setBorderColor(QColor("#051623"));
+            sl->setBorderColor(QColor("#0a1628"));
             sl->setBorderWidth(2);
             sl->setLabelVisible(true);
             sl->setLabelColor(QColor("#E0E0E0"));
