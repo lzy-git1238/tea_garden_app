@@ -1,0 +1,48 @@
+<h2>3 种实现方案对比</h2>
+<p class="subtitle">基于现有代码架构（TeaGardenSystem + LoraManager + SQLite DataStore）</p>
+
+<div class="options">
+  <div class="option" data-choice="approach1" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>方案一：轻量内嵌（推荐）</h3>
+      <p><strong>新增 1 个存储类 + 1 个对话框</strong>，在 TeaGardenSystem 中内嵌定时调度逻辑。</p>
+      <ul>
+        <li>ScheduleStore — SQLite 存计划 + 操作日志</li>
+        <li>ScheduleDialog — 计划管理（CRUD）+ 历史图表标签页</li>
+        <li>TeaGardenSystem 新增 1 分钟粒度的检查定时器 + 流量卡片控件</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>改动最小，复用现有 SQLite 模式（datastore / pestdata）</li><li>teagardensystem.cpp 已 1604 行，增量可控</li><li>对话框 + 卡片都是 Qt 标准组件</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>TeaGardenSystem 职责继续膨胀</li><li>调度逻辑和 UI 耦合在一个类中</li></ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="approach2" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>方案二：独立调度引擎</h3>
+      <p><strong>新增 ScheduleEngine 类</strong>，独立于 TeaGardenSystem，通过信号/槽通信。</p>
+      <ul>
+        <li>ScheduleEngine — 独立的 QObject，管理所有计划 + 定时触发 + 记录日志</li>
+        <li>ScheduleDialog — UI 层</li>
+        <li>TeaGardenSystem 只做 UI 响应，调度逻辑全部在 Engine 中</li>
+      </ul>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>职责分离清晰，可独立测试</li><li>TeaGardenSystem 增量最小</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>新增文件多（engine .h/.cpp + dialog .h/.cpp + store .h/.cpp = 6 个文件）</li><li>信号/槽接线复杂</li></ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="approach3" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>方案三：最小改动</h3>
+      <p><strong>不新增类</strong>，全部写在 TeaGardenSystem 中，用 QSettings 存计划（不用 SQLite）。</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul><li>改动最少，上手最快</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>TeaGardenSystem 膨胀到 2500+ 行，难以维护</li><li>QSettings 不适合存大量历史日志</li><li>后续扩展困难</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
