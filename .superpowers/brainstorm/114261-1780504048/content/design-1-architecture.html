@@ -1,0 +1,66 @@
+<h2>设计 · 第1节：文件结构 & 架构</h2>
+<p class="subtitle">基于方案一（轻量内嵌），新增 3 个文件，修改 3 个文件</p>
+
+<h3>📁 新增文件</h3>
+<table style="width:100%; border-collapse:collapse; color: var(--text-primary); font-size:14px;">
+  <tr style="background:#1e2a3a;">
+    <th style="padding:8px 12px; text-align:left;">文件</th>
+    <th style="padding:8px 12px; text-align:left;">职责</th>
+    <th style="padding:8px 12px; text-align:left;">参照</th>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#81c784;">schedulestore.h / .cpp</td>
+    <td style="padding:8px 12px;">SQLite 存储：定时计划 CRUD + 操作执行日志</td>
+    <td style="padding:8px 12px; font-size:13px; color:#888;">参照 pestdata.h/cpp 的单例模式</td>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#81c784;">scheduledialog.h / .cpp</td>
+    <td style="padding:8px 12px;">定时计划管理对话框（含历史图表标签页）</td>
+    <td style="padding:8px 12px; font-size:13px; color:#888;">参照 thresholddialog.h/cpp</td>
+  </tr>
+</table>
+
+<h3 style="margin-top: 20px;">✏️ 修改文件</h3>
+<table style="width:100%; border-collapse:collapse; color: var(--text-primary); font-size:14px;">
+  <tr style="background:#1e2a3a;">
+    <th style="padding:8px 12px; text-align:left;">文件</th>
+    <th style="padding:8px 12px; text-align:left;">改动内容</th>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#ffcc80;">teagardensystem.h</td>
+    <td style="padding:8px 12px;">新增：调度定时器、流量卡片控件、槽函数、对话框指针</td>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#ffcc80;">teagardensystem.cpp</td>
+    <td style="padding:8px 12px;">新增：⏰按钮、定时检查逻辑、流量卡片更新、图表刷新</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; font-family:monospace; color:#ffcc80;">test.pro</td>
+    <td style="padding:8px 12px;">添加 schedulestore + scheduledialog 源文件</td>
+  </tr>
+</table>
+
+<h3 style="margin-top: 20px;">🔄 信号流</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:16px; font-size:13px; line-height:2;">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="background:#1565c0; color:#fff; padding:4px 10px; border-radius:4px;">1min 调度定时器</span>
+      <span>→</span>
+      <span style="background:#2e7d32; color:#fff; padding:4px 10px; border-radius:4px;">ScheduleStore 查询到期计划</span>
+      <span>→</span>
+      <span style="background:#e65100; color:#fff; padding:4px 10px; border-radius:4px;">sendLoraCommand()</span>
+    </div>
+    <div style="margin-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="background:#c62828; color:#fff; padding:4px 10px; border-radius:4px;">计划到期关闭</span>
+      <span>→</span>
+      <span style="background:#e65100; color:#fff; padding:4px 10px; border-radius:4px;">sendLoraCommand()</span>
+      <span>→</span>
+      <span style="background:#6a1b9a; color:#fff; padding:4px 10px; border-radius:4px;">记录日志 + 更新图表</span>
+    </div>
+    <div style="margin-top:8px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <span style="background:#00838f; color:#fff; padding:4px 10px; border-radius:4px;">流量卡片</span>
+      <span>→</span>
+      <span>每秒读取已运行时长 × 预设流速 → 刷新生效</span>
+    </div>
+  </div>
+</div>
