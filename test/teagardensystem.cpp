@@ -1210,28 +1210,11 @@ void TeaGardenSystem::applyTheme() {
             "border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
         ).arg(border, borderHi));
 
-    // ══════ 右栏：指标网格 + AI ══════
+    // ══════ 右栏：环境指标 + AI ══════
     if (metricsTitleLabel)
         metricsTitleLabel->setStyleSheet(sectionTitleStyle(metricsTitleClr));
     if (aiTitleLabel)
         aiTitleLabel->setStyleSheet(sectionTitleStyle(aiTitleClr));
-    if (pestPieTitle)
-        pestPieTitle->setStyleSheet(sectionTitleStyle(pestTitleClr));
-    if (pestDetailBtn)
-        pestDetailBtn->setStyleSheet(QString(
-            "QPushButton { background: transparent; color: %1; font-size: 11px; padding: 2px 8px;"
-            "  border: 1px solid %2; border-radius: 3px; }"
-            "QPushButton:hover { background: %3; color: #ffffff; }"
-        ).arg(pestTitleClr, border, isDarkMode ? "rgba(10,50,90,0.8)" : "rgba(187,222,251,0.8)"));
-    if (pestPieView) {
-        pestPieView->setStyleSheet(QString(
-            "background: transparent; border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
-        ).arg(border, borderHi));
-        if (pestPieView->chart()) {
-            pestPieView->chart()->setBackgroundBrush(QBrush(QColor(chartBg)));
-            pestPieView->chart()->legend()->setLabelColor(QColor(muted));
-        }
-    }
     if (chatDisplay)
         chatDisplay->setStyleSheet(QString(
             "background: %1; border: 1px solid %2; border-top: 1px solid %3;"
