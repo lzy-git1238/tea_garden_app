@@ -73,7 +73,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     }
     trayIcon->setToolTip("智慧茶园管理系统");
     auto *trayMenu = new QMenu(this);
-    trayMenu->setStyleSheet("background: #0d1f2d; color: #E0E0E0;");
+    trayMenu->setStyleSheet("background: #0a1628; color: #E8F4FF;");
     trayMenu->addAction("显示主窗口", this, [this]() { show(); raise(); });
     trayMenu->addAction("数据看板", this, &TeaGardenSystem::openChartDashboard);
     trayMenu->addSeparator();
