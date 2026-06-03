@@ -107,34 +107,59 @@ TeaGardenSystem::~TeaGardenSystem() {
 
 void TeaGardenSystem::setupUI() {
     this->setWindowTitle("智慧茶园综合管理系统 v2.0");
-    this->resize(1200, 800);
+    this->resize(1400, 900);
 
-    QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    mainLayout->setSpacing(12);
-    mainLayout->setContentsMargins(10, 10, 10, 10);
+    auto *rootLayout = new QVBoxLayout(this);
+    rootLayout->setSpacing(10);
+    rootLayout->setContentsMargins(10, 10, 10, 10);
 
-    // 主题切换按钮（放在窗口标题旁，右栏顶部）
     themeBtn = new QPushButton("☀️ 日间");
     themeBtn->setFixedSize(90, 28);
     themeBtn->setCursor(Qt::PointingHandCursor);
     connect(themeBtn, &QPushButton::clicked, this, &TeaGardenSystem::toggleTheme);
 
-    // --- A. 左侧：传感器看板 ---
+    // ── 顶部标题栏（参考大数据平台居中标题） ──
+    headerFrame = new QFrame();
+    headerFrame->setObjectName("headerBar");
+    headerFrame->setFixedHeight(52);
+    auto *headerRow = new QHBoxLayout(headerFrame);
+    headerRow->setContentsMargins(16, 4, 16, 4);
+    auto *headerDecoL = new QLabel("━━━");
+    headerDecoL->setObjectName("headerDeco");
+    headerTitleLabel = new QLabel("智慧茶园综合管理系统");
+    headerTitleLabel->setAlignment(Qt::AlignCenter);
+    auto *headerDecoR = new QLabel("━━━");
+    headerDecoR->setObjectName("headerDeco");
+    headerRow->addWidget(headerDecoL);
+    headerRow->addStretch(1);
+    headerRow->addWidget(headerTitleLabel, 0, Qt::AlignCenter);
+    headerRow->addStretch(1);
+    headerRow->addWidget(headerDecoR);
+    headerRow->addSpacing(12);
+    headerRow->addWidget(themeBtn);
+    rootLayout->addWidget(headerFrame);
+
+    auto *bodyLayout = new QHBoxLayout();
+    bodyLayout->setSpacing(12);
+
+    // ── 左栏：实时监控 + 设备控制（参考图左侧视频区） ──
     leftPanelFrame = new QFrame();
     leftPanelFrame->setObjectName("dashPanel");
-    QVBoxLayout *leftPanel = new QVBoxLayout(leftPanelFrame);
-    leftPanel->setContentsMargins(12, 10, 12, 10);
-    leftPanel->setSpacing(8);
-    leftPanelTitle = new QLabel("▎ 实时环境指标");
-    leftPanel->addWidget(leftPanelTitle);
+    auto *leftPanel = new QVBoxLayout(leftPanelFrame);
+    leftPanel->setContentsMargins(10, 8, 10, 8);
+    leftPanel->setSpacing(6);
+
+    videoTitleLabel = new QLabel("▎ 实时监控");
+    leftPanel->addWidget(videoTitleLabel);
+
+    videoLabel = new QLabel("【实时视频流：等待 MJPEG 连接...】");
+    videoLabel->setAlignment(Qt::AlignCenter);
+    videoLabel->setMinimumHeight(200);
+    leftPanel->addWidget(videoLabel, 3);
+
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
 
-    QStringList names = {"空气温度", "空气湿度", "光照强度", "土壤pH", "风速", "土壤温度", "土壤湿度", "土壤电导率"};
-    QStringList units = {"℃", "%", "Lux", "", "m/s", "℃", "%", "mS/cm"};
-    for(int i=0; i<names.size(); ++i) {
-        leftPanel->addWidget(createDataCard(names[i], i, units[i]));
-    }
     chartBtn = new QPushButton("📊 数据看板");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
@@ -147,30 +172,40 @@ void TeaGardenSystem::setupUI() {
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
-    // ── 设备控制按钮 ──
     auto *devRow = new QHBoxLayout();
-
     pumpBtn = new QPushButton("💧 灌溉泵");
     pumpBtn->setCheckable(true);
     connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
     devRow->addWidget(pumpBtn);
-
     lampBtn = new QPushButton("🪲 驱虫灯");
     lampBtn->setCheckable(true);
     connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
     devRow->addWidget(lampBtn);
-
     leftPanel->addLayout(devRow);
+    leftPanel->addStretch(1);
+    bodyLayout->addWidget(leftPanelFrame, 22);
 
-    // ── 天气预警卡片 ──
+    // ── 中栏：地图为主 + 底部气象（参考图中央大图） ──
+    midPanelFrame = new QFrame();
+    midPanelFrame->setObjectName("dashPanel");
+    auto *midPanel = new QVBoxLayout(midPanelFrame);
+    midPanel->setContentsMargins(10, 8, 10, 8);
+    midPanel->setSpacing(6);
+
+    mapTitleLabel = new QLabel("▎ 茶园空间分布");
+    midPanel->addWidget(mapTitleLabel);
+    setupMapView(midPanel);
+
+    weatherSectionLabel = new QLabel("▎ 气象预警");
+    midPanel->addWidget(weatherSectionLabel);
+
     weatherCard = new QFrame();
-    weatherCard->setFixedHeight(155);
+    weatherCard->setFixedHeight(130);
     weatherCard->setObjectName("weatherCard");
     auto *wcLayout = new QVBoxLayout(weatherCard);
-    wcLayout->setContentsMargins(10, 8, 10, 8);
-    wcLayout->setSpacing(4);
+    wcLayout->setContentsMargins(10, 6, 10, 6);
+    wcLayout->setSpacing(3);
 
-    // 标题行
     auto *wcTitleRow = new QHBoxLayout();
     weatherTitleLabel = new QLabel("🌤 24h预报");
     wcTitleRow->addWidget(weatherTitleLabel);
@@ -181,60 +216,37 @@ void TeaGardenSystem::setupUI() {
     wcTitleRow->addWidget(weatherRefreshBtn);
     wcLayout->addLayout(wcTitleRow);
 
-    // 级别 + 类型
     weatherLevelLabel = new QLabel("加载中...");
     wcLayout->addWidget(weatherLevelLabel);
-
-    // 详情
     weatherDetailLabel = new QLabel("");
     weatherDetailLabel->setWordWrap(true);
     wcLayout->addWidget(weatherDetailLabel);
-
-    // 生效时间
     weatherTimeLabel = new QLabel("");
     wcLayout->addWidget(weatherTimeLabel);
-
-    // 点击卡片打开24h详情弹窗
     weatherCard->setCursor(Qt::PointingHandCursor);
     weatherCard->installEventFilter(this);
+    midPanel->addWidget(weatherCard);
+    bodyLayout->addWidget(midPanelFrame, 48);
 
-    leftPanel->addWidget(weatherCard);
-    leftPanel->addStretch();
-    mainLayout->addWidget(leftPanelFrame, 2);
-
-    // --- B. 中间：空间可视化 ---
-    midPanelFrame = new QFrame();
-    midPanelFrame->setObjectName("dashPanel");
-    QVBoxLayout *midPanel = new QVBoxLayout(midPanelFrame);
-    midPanel->setContentsMargins(12, 10, 12, 10);
-    midPanel->setSpacing(8);
-    videoTitleLabel = new QLabel("▎ 茶园实景与空间分布");
-
-    videoLabel = new QLabel("【实时视频流：等待 MJPEG 连接...】");
-    videoLabel->setAlignment(Qt::AlignCenter);
-    videoLabel->setMinimumHeight(180);
-
-    midPanel->addWidget(videoTitleLabel);
-    midPanel->addWidget(videoLabel, 2);
-    setupMapView(midPanel);
-    mainLayout->addWidget(midPanelFrame, 6);
-
-    // --- C. 右侧：AI 管家聊天 ---
+    // ── 右栏：环境指标网格 + 病虫害 + AI（参考图右侧） ──
     rightPanelFrame = new QFrame();
     rightPanelFrame->setObjectName("dashPanel");
-    QVBoxLayout *rightPanel = new QVBoxLayout(rightPanelFrame);
-    rightPanel->setContentsMargins(12, 10, 12, 10);
-    rightPanel->setSpacing(8);
+    auto *rightPanel = new QVBoxLayout(rightPanelFrame);
+    rightPanel->setContentsMargins(10, 8, 10, 8);
+    rightPanel->setSpacing(6);
 
-    // 标题行
-    auto *rightTopRow = new QHBoxLayout();
-    aiTitleLabel = new QLabel("▎ AI 智慧管家分析");
-    rightTopRow->addWidget(aiTitleLabel);
-    rightTopRow->addStretch();
-    rightTopRow->addWidget(themeBtn);
-    rightPanel->addLayout(rightTopRow);
+    metricsTitleLabel = new QLabel("▎ 实时环境监控");
+    rightPanel->addWidget(metricsTitleLabel);
 
-    // ── 病虫害饼图（嵌入式） ──
+    auto *metricsGrid = new QGridLayout();
+    metricsGrid->setSpacing(6);
+    QStringList names = {"空气温度", "空气湿度", "光照强度", "土壤pH", "风速", "土壤温度", "土壤湿度", "土壤电导率"};
+    QStringList units = {"℃", "%", "Lux", "", "m/s", "℃", "%", "mS/cm"};
+    for (int i = 0; i < names.size(); ++i) {
+        metricsGrid->addWidget(createDataCard(names[i], i, units[i]), i / 2, i % 2);
+    }
+    rightPanel->addLayout(metricsGrid);
+
     auto *pestHeaderRow = new QHBoxLayout();
     pestPieTitle = new QLabel("▎ 病虫害统计");
     pestHeaderRow->addWidget(pestPieTitle);
@@ -251,35 +263,35 @@ void TeaGardenSystem::setupUI() {
     pestChart->setMargins(QMargins(0, 0, 0, 0));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(240);
+    pestPieView->setMinimumHeight(160);
+    pestPieView->setMaximumHeight(200);
     rightPanel->addWidget(pestPieView);
 
-    // 聊天区
+    aiTitleLabel = new QLabel("▎ AI 智慧管家");
+    rightPanel->addWidget(aiTitleLabel);
+
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
-    chatDisplay->setMinimumHeight(80);
+    chatDisplay->setMinimumHeight(100);
 
-    QHBoxLayout *inputBox = new QHBoxLayout();
+    auto *inputBox = new QHBoxLayout();
     chatInput = new QLineEdit();
     chatInput->setAttribute(Qt::WA_InputMethodEnabled, true);
     chatInput->setPlaceholderText("询问管理建议...");
-
     voiceBtn = new QPushButton("🎤 语音");
     connect(voiceBtn, &QPushButton::clicked, this, &TeaGardenSystem::startVoiceRecording);
-
     sendBtn = new QPushButton("发送");
-
     connect(sendBtn, &QPushButton::clicked, this, &TeaGardenSystem::handleChat);
     connect(chatInput, &QLineEdit::returnPressed, this, &TeaGardenSystem::handleChat);
-
     inputBox->addWidget(chatInput);
     inputBox->addWidget(voiceBtn);
     inputBox->addWidget(sendBtn);
 
     rightPanel->addWidget(chatDisplay, 1);
     rightPanel->addLayout(inputBox);
-    mainLayout->addWidget(rightPanelFrame, 3);
+    bodyLayout->addWidget(rightPanelFrame, 30);
 
+    rootLayout->addLayout(bodyLayout, 1);
     applyTheme();
 }
 
