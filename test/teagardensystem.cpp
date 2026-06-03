@@ -1095,7 +1095,7 @@ void TeaGardenSystem::applyTheme() {
 
     // ══════ 中间面板 ══════
     if (videoTitleLabel)
-        videoTitleLabel->setStyleSheet(sectionStyle.arg(videoTitleClr));
+        videoTitleLabel->setStyleSheet(sectionTitleStyle(videoTitleClr));
     if (videoLabel)
         videoLabel->setStyleSheet(QString(
             "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
