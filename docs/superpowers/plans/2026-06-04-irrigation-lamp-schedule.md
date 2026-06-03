@@ -701,6 +701,8 @@ void PlanEditDialog::setPlan(const SchedulePlan &plan) {
     mOriginal = plan;
     int idx = deviceCombo->findData(plan.deviceType);
     if (idx >= 0) deviceCombo->setCurrentIndex(idx);
+    // 先清除所有勾选，再按 plan 的数据设置
+    for (int i = 0; i < 7; ++i) dayChecks[i]->setChecked(false);
     QStringList days = plan.daysOfWeek.split(',', Qt::SkipEmptyParts);
     for (const QString &d : days) {
         int di = d.trimmed().toInt() - 1; // 1=周一 → index 0
