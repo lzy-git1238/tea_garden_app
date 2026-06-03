@@ -1231,7 +1231,7 @@ void TeaGardenSystem::showWeatherDetail() {
     }
     dlg->setWindowTitle(dialogTitle);
     dlg->resize(750, 520);
-    dlg->setStyleSheet("background-color: #051623;");
+    dlg->setStyleSheet(QString("background-color: %1;").arg(isDarkMode ? "#0a1628" : "#eef4fb"));
 
     auto *layout = new QVBoxLayout(dlg);
 
