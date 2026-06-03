@@ -350,7 +350,7 @@ void TeaGardenSystem::setupUI() {
     inputBox->addWidget(sendBtn);
     aiPanel->addLayout(inputBox);
 
-    rightPanel->addWidget(aiWrap, 1);
+    rightPanel->addWidget(aiWrap, aiStretch);
     bodyLayout->addWidget(rightPanelFrame, 28);
 
     rootLayout->addLayout(bodyLayout, 1);
