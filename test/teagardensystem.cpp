@@ -354,14 +354,10 @@ void TeaGardenSystem::setupMjpegStream() {
         if (frame.isNull()) return;
 
         if (videoLabel) {
-            QSize sz = videoLabel->size();
-            if (sz.width() < 10) {
-                sz = QSize(640, 640 * kDroneVideoHeight / kDroneVideoWidth);
-            } else {
-                sz.setHeight(sz.width() * kDroneVideoHeight / kDroneVideoWidth);
-            }
+            const int w = qMax(videoLabel->width(), 280);
+            const int h = w * kDroneVideoHeight / kDroneVideoWidth;
             const QPixmap pix = QPixmap::fromImage(frame);
-            videoLabel->setPixmap(pix.scaled(sz, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
             videoLabel->setText(QString());
         }
     });
