@@ -382,11 +382,13 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     Q_UNUSED(index);
 
     QFrame *card = new QFrame();
-    card->setFixedHeight(80);
+    card->setMinimumHeight(64);
+    card->setMaximumHeight(72);
     dataCards.append(card);
 
     QVBoxLayout *vbox = new QVBoxLayout(card);
-    vbox->setContentsMargins(10, 6, 10, 6);
+    vbox->setContentsMargins(8, 4, 8, 4);
+    vbox->setSpacing(2);
     QLabel *tLbl = new QLabel(title);
     dataCardTitles.append(tLbl);
 
