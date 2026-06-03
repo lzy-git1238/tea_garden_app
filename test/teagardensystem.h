@@ -81,10 +81,14 @@ private:
     QList<QLabel*> valueLabels;
     QList<QFrame*>  dataCards;      // 卡片 Frame
     QList<QLabel*>  dataCardTitles; // 卡片标题（空气温度等）
-    QLabel *leftPanelTitle = nullptr;
+    QFrame *headerFrame = nullptr;
+    QLabel *headerTitleLabel = nullptr;
     QFrame *leftPanelFrame = nullptr;
     QFrame *midPanelFrame = nullptr;
     QFrame *rightPanelFrame = nullptr;
+    QLabel *metricsTitleLabel = nullptr;
+    QLabel *mapTitleLabel = nullptr;
+    QLabel *weatherSectionLabel = nullptr;
     QLabel *loraStateLabel;
     QLabel *videoLabel = nullptr;
     QLabel *videoTitleLabel = nullptr;
