@@ -28,81 +28,67 @@
 
 using namespace QtCharts;
 
-// ── 立体 3D 按钮样式 ──
+// ── 大数据平台风格按钮 / 控件样式 ──
 static const char* k3dSmallBtnStyle = ""
     "QPushButton {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a5068, stop:0.5 #1e3448, stop:1 #0f1f30);"
-    "  color: #c0d8f0; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
-    "  border-top: 1px solid #5080b0; border-left: 1px solid #406890;"
-    "  border-right: 1px solid #102030; border-bottom: 2px solid #081018;"
-    "  border-radius: 5px;"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #124068, stop:0.5 #0c3050, stop:1 #081830);"
+    "  color: #90caf9; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
+    "  border: 1px solid #1a6fa8; border-top: 1px solid #2a9fd8;"
+    "  border-radius: 3px;"
     "}"
     "QPushButton:hover {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #4a7090, stop:0.5 #2e5070, stop:1 #1a3048);"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #1a5080, stop:0.5 #124068, stop:1 #0c3050);"
     "  color: #ffffff;"
-    "  border-top: 1px solid #70b0e0; border-left: 1px solid #5090c0;"
     "}"
-    "QPushButton:pressed {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #0f1f30, stop:0.5 #1e3448, stop:1 #3a5068);"
-    "  border-top: 1px solid #102030; border-bottom: 1px solid #5080b0;"
-    "  padding-top: 2px;"
-    "}";
+    "QPushButton:pressed { padding-top: 1px; }";
+
+static const char* k3dSmallBtnStyleLight = ""
+    "QPushButton {"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #e3f2fd, stop:0.5 #bbdefb, stop:1 #90caf9);"
+    "  color: #0277bd; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
+    "  border: 1px solid #64b5f6; border-radius: 3px;"
+    "}"
+    "QPushButton:hover { color: #01579b; }"
+    "QPushButton:pressed { padding-top: 1px; }";
 
 static const char* k3dZoomGreenStyle = ""
     "QPushButton {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a6850, stop:0.5 #1e4830, stop:1 #0f3018);"
-    "  color: #c0f0d0; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
-    "  border-top: 1px solid #50b070; border-left: 1px solid #409060;"
-    "  border-right: 1px solid #103020; border-bottom: 2px solid #081810;"
-    "  border-radius: 5px;"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #0088cc, stop:0.5 #006699, stop:1 #004466);"
+    "  color: #e3f2fd; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
+    "  border: 1px solid #2a9fd8; border-radius: 3px;"
     "}"
-    "QPushButton:hover {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #4a9070, stop:0.5 #2e7050, stop:1 #1a4830);"
-    "  color: #ffffff;"
-    "  border-top: 1px solid #70e0b0; border-left: 1px solid #50c090;"
-    "}"
-    "QPushButton:pressed {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #0f3018, stop:0.5 #1e4830, stop:1 #3a6850);"
-    "  border-top: 1px solid #103020; border-bottom: 1px solid #50b070;"
-    "  padding-top: 2px;"
-    "}";
+    "QPushButton:hover { color: #ffffff; }"
+    "QPushButton:pressed { padding-top: 1px; }";
 
 static const char* k3dZoomOrangeStyle = ""
     "QPushButton {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #684830, stop:0.5 #482818, stop:1 #301810);"
-    "  color: #f0d8c0; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
-    "  border-top: 1px solid #b08050; border-left: 1px solid #906040;"
-    "  border-right: 1px solid #302010; border-bottom: 2px solid #181008;"
-    "  border-radius: 5px;"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #e65100, stop:0.5 #bf360c, stop:1 #8d2a00);"
+    "  color: #ffe0b2; font-size: 14px; font-weight: bold; min-width: 38px; min-height: 32px; padding: 0 6px;"
+    "  border: 1px solid #ff8f00; border-radius: 3px;"
     "}"
-    "QPushButton:hover {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #907050, stop:0.5 #705030, stop:1 #483020);"
-    "  color: #ffffff;"
-    "  border-top: 1px solid #e0b070; border-left: 1px solid #c09050;"
-    "}"
-    "QPushButton:pressed {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #301810, stop:0.5 #482818, stop:1 #684830);"
-    "  border-top: 1px solid #302010; border-bottom: 1px solid #b08050;"
-    "  padding-top: 2px;"
-    "}";
+    "QPushButton:hover { color: #ffffff; }"
+    "QPushButton:pressed { padding-top: 1px; }";
 
 static const char* k3dSliderStyle = ""
     "QScrollBar:horizontal {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #0a1620, stop:0.5 #111d28, stop:1 #0a1620);"
-    "  height: 10px; border-radius: 3px;"
-    "  border-top: 1px solid #1a3040; border-bottom: 1px solid #051018;"
+    "  background: #081830; height: 10px; border-radius: 3px;"
+    "  border: 1px solid #1a4a78;"
     "}"
     "QScrollBar::handle:horizontal {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #28c8e8, stop:0.4 #18a0c0, stop:0.6 #108090, stop:1 #0a5060);"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #2a9fd8, stop:0.5 #0088cc, stop:1 #005588);"
     "  min-width: 24px; border-radius: 3px; margin: 1px 0;"
-    "  border-top: 1px solid #60e0f8; border-left: 1px solid #38c8e0;"
-    "  border-right: 1px solid #085060; border-bottom: 2px solid #043040;"
+    "  border-top: 1px solid #64b5f6;"
     "}"
     "QScrollBar::handle:horizontal:hover {"
-    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #38e0ff, stop:0.4 #20c8e8, stop:0.6 #10a0b8, stop:1 #0a7088);"
+    "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #42a5f5, stop:0.5 #1e88e5, stop:1 #0277bd);"
     "}"
     "QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }"
-    "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal { background: #0a1620; }";
+    "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal { background: #081830; }";
+
+static const char* kChartLineColors[] = {
+    "#00d4ff", "#ffb74d", "#ce93d8", "#81c784",
+    "#4fc3f7", "#ff8a65", "#aed581", "#ba68c8"
+};
 
 // ── 构造 ──
 
