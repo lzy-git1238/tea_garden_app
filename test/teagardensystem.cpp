@@ -239,15 +239,139 @@ void TeaGardenSystem::setupUI() {
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
+    // ── 流量状态卡片（灌溉进行中才显示） ──
+    flowCard = new QFrame();
+    flowCard->setObjectName("flowCard");
+    flowCard->setVisible(false);
+    auto *fcLayout = new QVBoxLayout(flowCard);
+    fcLayout->setContentsMargins(8, 8, 8, 8);
+    fcLayout->setSpacing(4);
+
+    auto *fcTitleRow = new QHBoxLayout();
+    auto *fcIconLabel = new QLabel("💧 灌溉进行中");
+    fcIconLabel->setStyleSheet("font-weight: bold; font-size: 13px; color: #a5d6a7;");
+    fcTitleRow->addWidget(fcIconLabel);
+    fcTitleRow->addStretch();
+    flowPlanIdLabel = new QLabel("");
+    flowPlanIdLabel->setStyleSheet("font-size: 11px; color: #ffcc80;");
+    fcTitleRow->addWidget(flowPlanIdLabel);
+    fcLayout->addLayout(fcTitleRow);
+
+    auto *fcMetricsRow = new QHBoxLayout();
+    fcMetricsRow->setSpacing(8);
+    // 已灌溉
+    auto *fcCurCol = new QVBoxLayout();
+    flowCurrentLabel = new QLabel("0.0");
+    flowCurrentLabel->setAlignment(Qt::AlignCenter);
+    flowCurrentLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #ffffff;");
+    fcCurCol->addWidget(flowCurrentLabel);
+    auto *fcCurUnit = new QLabel("已灌溉 (L)");
+    fcCurUnit->setAlignment(Qt::AlignCenter);
+    fcCurUnit->setStyleSheet("font-size: 10px; color: #888;");
+    fcCurCol->addWidget(fcCurUnit);
+    fcMetricsRow->addLayout(fcCurCol);
+    // 预计
+    auto *fcExpCol = new QVBoxLayout();
+    flowExpectedLabel = new QLabel("0.0");
+    flowExpectedLabel->setAlignment(Qt::AlignCenter);
+    flowExpectedLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #4fc3f7;");
+    fcExpCol->addWidget(flowExpectedLabel);
+    auto *fcExpUnit = new QLabel("预计总量 (L)");
+    fcExpUnit->setAlignment(Qt::AlignCenter);
+    fcExpUnit->setStyleSheet("font-size: 10px; color: #888;");
+    fcExpCol->addWidget(fcExpUnit);
+    fcMetricsRow->addLayout(fcExpCol);
+    // 剩余时间
+    auto *fcRemCol = new QVBoxLayout();
+    flowRemainingLabel = new QLabel("--:--");
+    flowRemainingLabel->setAlignment(Qt::AlignCenter);
+    flowRemainingLabel->setStyleSheet("font-size: 20px; font-weight: bold; color: #ffcc80;");
+    fcRemCol->addWidget(flowRemainingLabel);
+    auto *fcRemUnit = new QLabel("剩余时间");
+    fcRemUnit->setAlignment(Qt::AlignCenter);
+    fcRemUnit->setStyleSheet("font-size: 10px; color: #888;");
+    fcRemCol->addWidget(fcRemUnit);
+    fcMetricsRow->addLayout(fcRemCol);
+    fcLayout->addLayout(fcMetricsRow);
+
+    // 进度条
+    auto *fcProgressRow = new QHBoxLayout();
+    flowProgressLabel = new QLabel("0/0 min");
+    flowProgressLabel->setStyleSheet("font-size: 10px; color: #888;");
+    fcProgressRow->addWidget(flowProgressLabel);
+    flowProgressBar = new QFrame();
+    flowProgressBar->setFixedHeight(5);
+    flowProgressBar->setStyleSheet("background: #333; border-radius: 3px;");
+    auto *fpBarLayout = new QHBoxLayout(flowProgressBar);
+    fpBarLayout->setContentsMargins(0, 0, 0, 0);
+    flowProgressFill = new QFrame();
+    flowProgressFill->setFixedHeight(5);
+    flowProgressFill->setStyleSheet("background: #4caf50; border-radius: 3px;");
+    flowProgressFill->setMinimumWidth(0);
+    fpBarLayout->addWidget(flowProgressFill);
+    fpBarLayout->addStretch();
+    fcProgressRow->addWidget(flowProgressBar, 1);
+    fcLayout->addLayout(fcProgressRow);
+
+    // 按钮行
+    auto *fcBtnRow = new QHBoxLayout();
+    flowStopBtn = new QPushButton("⏹ 停止灌溉");
+    flowStopBtn->setStyleSheet("background: #c62828; color: #fff; padding: 4px 12px; font-size: 12px; border-radius: 3px;");
+    connect(flowStopBtn, &QPushButton::clicked, this, [this]() {
+        scheduleLoraCommand("pump", 4);
+        if (activeJobs.contains("pump")) {
+            ActiveJob &job = activeJobs["pump"];
+            ScheduleLogEntry log;
+            log.deviceType = "pump";
+            log.scheduleId = job.scheduleId;
+            log.action = "off";
+            log.trigger = "manual";
+            log.flowRate = job.flowRate;
+            double elapsedMin = job.startTime.secsTo(QDateTime::currentDateTime()) / 60.0;
+            log.volumeL = job.flowRate * qMax(0.0, elapsedMin);
+            log.ts = QDateTime::currentDateTime();
+            ScheduleStore::instance()->appendLog(log);
+            activeJobs.remove("pump");
+        }
+        pumpBtn->blockSignals(true);
+        pumpBtn->setChecked(false);
+        pumpBtn->blockSignals(false);
+        flowCard->setVisible(false);
+        appendChatMessage("系统", "💧 灌溉泵: 已手动停止");
+    });
+    fcBtnRow->addWidget(flowStopBtn);
+    flowSettingsBtn = new QPushButton("⚙ 设置流速");
+    flowSettingsBtn->setStyleSheet("background: #333; color: #ccc; padding: 4px 12px; font-size: 12px; border-radius: 3px;");
+    fcBtnRow->addWidget(flowSettingsBtn);
+    fcLayout->addLayout(fcBtnRow);
+
+    leftPanel->addWidget(flowCard);
+
+    // ── 设备控制按钮行 ──
     auto *devRow = new QHBoxLayout();
+    devRow->setSpacing(4);
     pumpBtn = new QPushButton("💧 灌溉泵");
     pumpBtn->setCheckable(true);
     connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
     devRow->addWidget(pumpBtn);
+    scheduleBtnPump = new QPushButton("⏰");
+    scheduleBtnPump->setFixedSize(30, 30);
+    scheduleBtnPump->setToolTip("灌溉定时计划");
+    scheduleBtnPump->setCursor(Qt::PointingHandCursor);
+    connect(scheduleBtnPump, &QPushButton::clicked, this, [this]() { openScheduleDialog("pump"); });
+    devRow->addWidget(scheduleBtnPump);
+
     lampBtn = new QPushButton("🪲 驱虫灯");
     lampBtn->setCheckable(true);
     connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
     devRow->addWidget(lampBtn);
+    scheduleBtnLamp = new QPushButton("⏰");
+    scheduleBtnLamp->setFixedSize(30, 30);
+    scheduleBtnLamp->setToolTip("驱虫灯定时计划");
+    scheduleBtnLamp->setCursor(Qt::PointingHandCursor);
+    connect(scheduleBtnLamp, &QPushButton::clicked, this, [this]() { openScheduleDialog("lamp"); });
+    devRow->addWidget(scheduleBtnLamp);
+
     leftPanel->addLayout(devRow);
     leftPanel->addStretch(1);
     bodyLayout->addWidget(leftPanelFrame, 28);
