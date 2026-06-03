@@ -1063,9 +1063,26 @@ void TeaGardenSystem::applyTheme() {
         if (panel) panel->setStyleSheet(panelStyle);
     }
 
-    // ══════ 左侧面板 ══════
-    if (leftPanelTitle)
-        leftPanelTitle->setStyleSheet(sectionTitleStyle(leftTitleClr));
+    if (headerFrame)
+        headerFrame->setStyleSheet(QString(
+            "QFrame#headerBar {"
+            "  background: qlineargradient(x1:0,y1:0,x2:1,y2:0,"
+            "    stop:0 rgba(10,35,70,0.2), stop:0.5 rgba(10,50,90,0.5), stop:1 rgba(10,35,70,0.2));"
+            "  border: 1px solid %1; border-top: 2px solid %2;"
+            "  border-radius: 4px;"
+            "}"
+        ).arg(border, borderHi));
+    if (headerTitleLabel)
+        headerTitleLabel->setStyleSheet(QString(
+            "color: %1; font-size: 22px; font-weight: bold; letter-spacing: 3px; border: none;"
+        ).arg(headerTitleClr));
+    for (auto *deco : headerFrame ? headerFrame->findChildren<QLabel*>("headerDeco") : QList<QLabel*>()) {
+        deco->setStyleSheet(QString("color: %1; font-size: 14px; border: none;").arg(headerDecoClr));
+    }
+
+    // ══════ 左栏：监控 ══════
+    if (videoTitleLabel)
+        videoTitleLabel->setStyleSheet(sectionTitleStyle(videoTitleClr));
     if (loraStateLabel)
         loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px; border: none;").arg(loraColor));
 
