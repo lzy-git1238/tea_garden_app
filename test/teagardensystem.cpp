@@ -1686,6 +1686,138 @@ void TeaGardenSystem::refreshPestPie() {
     chart->addSeries(series);
 }
 
+// ── 定时调度 ──
+
+void TeaGardenSystem::checkSchedules() {
+    QDateTime now = QDateTime::currentDateTime();
+    int dayOfWeek = now.date().dayOfWeek();  // Qt: 1=Monday
+    QString timeStr = now.toString("HH:mm");
+
+    // 1) 检查该关闭的任务
+    QStringList devices = {"pump", "lamp"};
+    for (const QString &dev : devices) {
+        if (activeJobs.contains(dev) && now >= activeJobs[dev].endTime) {
+            ActiveJob &job = activeJobs[dev];
+            int offCmd = (dev == "pump") ? 4 : 2;
+            scheduleLoraCommand(dev, offCmd);
+
+            ScheduleLogEntry log;
+            log.deviceType = dev;
+            log.scheduleId = job.scheduleId;
+            log.action = "off";
+            log.trigger = "schedule";
+            log.flowRate = job.flowRate;
+            log.volumeL = job.flowRate * job.durationMin;  // 满时长完成
+            log.ts = now;
+            ScheduleStore::instance()->appendLog(log);
+
+            if (dev == "pump") {
+                flowCard->setVisible(false);
+                pumpBtn->blockSignals(true);
+                pumpBtn->setChecked(false);
+                pumpBtn->blockSignals(false);
+                appendChatMessage("系统",
+                    QString("💧 定时灌溉结束 · 计划#%1 · 累计 %2 L")
+                        .arg(job.scheduleId).arg(log.volumeL, 0, 'f', 1));
+            } else {
+                lampBtn->blockSignals(true);
+                lampBtn->setChecked(false);
+                lampBtn->blockSignals(false);
+                appendChatMessage("系统",
+                    QString("🪲 定时驱虫结束 · 计划#%1").arg(job.scheduleId));
+            }
+            activeJobs.remove(dev);
+        }
+    }
+
+    // 2) 检查该开启的任务
+    for (const QString &dev : devices) {
+        if (activeJobs.contains(dev)) continue;  // 已在运行
+        QVector<SchedulePlan> plans = ScheduleStore::instance()->queryEnabledPlans(dev, dayOfWeek, timeStr);
+        if (plans.isEmpty()) continue;
+
+        // 取第一个匹配的计划（多个同时间的也只执行一个）
+        const SchedulePlan &plan = plans.first();
+        int onCmd = (dev == "pump") ? 3 : 1;
+        scheduleLoraCommand(dev, onCmd);
+
+        ScheduleLogEntry log;
+        log.deviceType = dev;
+        log.scheduleId = plan.id;
+        log.action = "on";
+        log.trigger = "schedule";
+        double flowRate = (dev == "pump") ? QSettings().value("pump/flow_rate", 2.5).toDouble() : 0;
+        log.flowRate = flowRate;
+        log.volumeL = 0;
+        log.ts = now;
+        ScheduleStore::instance()->appendLog(log);
+
+        ActiveJob job;
+        job.deviceType = dev;
+        job.scheduleId = plan.id;
+        job.startTime = now;
+        job.endTime = now.addSecs(plan.durationMin * 60);
+        job.flowRate = flowRate;
+        job.durationMin = plan.durationMin;
+        activeJobs[dev] = job;
+
+        if (dev == "pump") {
+            pumpBtn->blockSignals(true);
+            pumpBtn->setChecked(true);
+            pumpBtn->blockSignals(false);
+            flowPlanIdLabel->setText(QString("计划 #%1").arg(plan.id));
+            flowCard->setVisible(true);
+            refreshFlowCard();
+            double expectedVol = flowRate * plan.durationMin;
+            appendChatMessage("系统",
+                QString("💧 定时灌溉开始 · 计划#%1 · 预计 %2 L · %3 分钟")
+                    .arg(plan.id).arg(expectedVol, 0, 'f', 1).arg(plan.durationMin));
+        } else {
+            lampBtn->blockSignals(true);
+            lampBtn->setChecked(true);
+            lampBtn->blockSignals(false);
+            appendChatMessage("系统",
+                QString("🪲 定时驱虫开始 · 计划#%1 · %2 分钟")
+                    .arg(plan.id).arg(plan.durationMin));
+        }
+    }
+}
+
+void TeaGardenSystem::refreshFlowCard() {
+    if (!activeJobs.contains("pump") || !flowCard->isVisible()) return;
+
+    ActiveJob &job = activeJobs["pump"];
+    QDateTime now = QDateTime::currentDateTime();
+    double elapsedMin = job.startTime.secsTo(now) / 60.0;
+    if (elapsedMin < 0) elapsedMin = 0;
+    double currentVol = job.flowRate * elapsedMin;
+    double expectedVol = job.flowRate * job.durationMin;
+    double remainingSec = now.secsTo(job.endTime);
+    if (remainingSec < 0) remainingSec = 0;
+
+    flowCurrentLabel->setText(QString("%1").arg(currentVol, 0, 'f', 1));
+    flowExpectedLabel->setText(QString("%1").arg(expectedVol, 0, 'f', 1));
+    int remMin = (int)remainingSec / 60;
+    int remSec = (int)remainingSec % 60;
+    flowRemainingLabel->setText(QString("%1:%2")
+        .arg(remMin, 2, 10, QChar('0')).arg(remSec, 2, 10, QChar('0')));
+    flowProgressLabel->setText(QString("%1/%2 min")
+        .arg((int)elapsedMin).arg(job.durationMin));
+
+    // 更新进度条
+    double ratio = (job.durationMin > 0) ? qMin(elapsedMin / job.durationMin, 1.0) : 0;
+    int barWidth = flowProgressBar->width();
+    flowProgressFill->setFixedWidth((int)(barWidth * ratio));
+}
+
+void TeaGardenSystem::openScheduleDialog(const QString &deviceType) {
+    auto *dlg = new ScheduleDialog(this);
+    dlg->setAttribute(Qt::WA_DeleteOnClose);
+    dlg->setDeviceFilter(deviceType);
+    dlg->refresh();
+    dlg->show();
+}
+
 // ── LoRa 下行控制 ──
 
 bool TeaGardenSystem::sendLoraCommand(const QString &deviceKey, int value) {
