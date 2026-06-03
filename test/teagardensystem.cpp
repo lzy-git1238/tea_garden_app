@@ -108,10 +108,10 @@ TeaGardenSystem::~TeaGardenSystem() {
 void TeaGardenSystem::setupUI() {
     this->setWindowTitle("智慧茶园综合管理系统 v2.0");
     this->resize(1200, 800);
-    this->setStyleSheet("background-color: #051623; color: #E0E0E0; font-family: 'Microsoft YaHei';");
 
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    mainLayout->setSpacing(20);
+    mainLayout->setSpacing(12);
+    mainLayout->setContentsMargins(10, 10, 10, 10);
 
     // 主题切换按钮（放在窗口标题旁，右栏顶部）
     themeBtn = new QPushButton("☀️ 日间");
@@ -120,11 +120,14 @@ void TeaGardenSystem::setupUI() {
     connect(themeBtn, &QPushButton::clicked, this, &TeaGardenSystem::toggleTheme);
 
     // --- A. 左侧：传感器看板 ---
-    QVBoxLayout *leftPanel = new QVBoxLayout();
-    leftPanelTitle = new QLabel("实时环境指标");
+    leftPanelFrame = new QFrame();
+    leftPanelFrame->setObjectName("dashPanel");
+    QVBoxLayout *leftPanel = new QVBoxLayout(leftPanelFrame);
+    leftPanel->setContentsMargins(12, 10, 12, 10);
+    leftPanel->setSpacing(8);
+    leftPanelTitle = new QLabel("▎ 实时环境指标");
     leftPanel->addWidget(leftPanelTitle);
     loraStateLabel = new QLabel("LoRa: 初始化中...");
-    loraStateLabel->setStyleSheet("color: #80CBC4; font-size: 12px;");
     leftPanel->addWidget(loraStateLabel);
 
     QStringList names = {"空气温度", "空气湿度", "光照强度", "土壤pH", "风速", "土壤温度", "土壤湿度", "土壤电导率"};
@@ -133,21 +136,14 @@ void TeaGardenSystem::setupUI() {
         leftPanel->addWidget(createDataCard(names[i], i, units[i]));
     }
     chartBtn = new QPushButton("📊 数据看板");
-    chartBtn->setStyleSheet("background: #00897B; color: white; padding: 8px; "
-                            "font-weight: bold; border-radius: 4px;");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
     leftPanel->addWidget(chartBtn);
 
-    auto *pestBtn = new QPushButton("🐛 病虫害面板");
-    pestBtn->setStyleSheet("background: #5D4037; color: white; padding: 8px; "
-                            "font-weight: bold; border-radius: 4px;");
+    pestBtn = new QPushButton("🐛 病虫害面板");
     connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     leftPanel->addWidget(pestBtn);
 
-    auto *mockPestBtn = new QPushButton("🐛 模拟检测");
-    mockPestBtn->setStyleSheet("background: #3E2723; color: #FF8A65; padding: 6px; "
-                               "font-size: 11px; font-weight: bold; border-radius: 4px;"
-                               "border-top: 1px solid #5D4037; border-bottom: 1px solid #1a0a08;");
+    mockPestBtn = new QPushButton("🐛 模拟检测");
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
@@ -156,36 +152,19 @@ void TeaGardenSystem::setupUI() {
 
     pumpBtn = new QPushButton("💧 灌溉泵");
     pumpBtn->setCheckable(true);
-    pumpBtn->setStyleSheet(
-        "QPushButton { background: #1a3a50; color: #80DEEA; padding: 9px 14px; font-size: 14px; font-weight: bold;"
-        "border: 1px solid #2a4a60; border-radius: 4px; }"
-        "QPushButton:hover { background: #284868; }"
-        "QPushButton:checked { background: #0D47A1; color: #fff; border-color: #2196F3; }");
     connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
     devRow->addWidget(pumpBtn);
 
     lampBtn = new QPushButton("🪲 驱虫灯");
     lampBtn->setCheckable(true);
-    lampBtn->setStyleSheet(
-        "QPushButton { background: #2a1a1a; color: #EF9A9A; padding: 9px 14px; font-size: 14px; font-weight: bold;"
-        "border: 1px solid #4a2a2a; border-radius: 4px; }"
-        "QPushButton:hover { background: #402020; }"
-        "QPushButton:checked { background: #B71C1C; color: #fff; border-color: #F44336; }");
     connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
     devRow->addWidget(lampBtn);
 
     leftPanel->addLayout(devRow);
 
-    // ── 天气预警卡片（立体3D） ──
+    // ── 天气预警卡片 ──
     weatherCard = new QFrame();
     weatherCard->setFixedHeight(155);
-    weatherCard->setStyleSheet(
-        "QFrame#weatherCard {"
-        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #2a1a18, stop:0.4 #1e1018, stop:1 #100810);"
-        "  border-top: 1px solid #603030; border-left: 1px solid #502828;"
-        "  border-right: 1px solid #100808; border-bottom: 2px solid #080408;"
-        "  border-radius: 8px;"
-        "}");
     weatherCard->setObjectName("weatherCard");
     auto *wcLayout = new QVBoxLayout(weatherCard);
     wcLayout->setContentsMargins(10, 8, 10, 8);
@@ -194,37 +173,25 @@ void TeaGardenSystem::setupUI() {
     // 标题行
     auto *wcTitleRow = new QHBoxLayout();
     weatherTitleLabel = new QLabel("🌤 24h预报");
-    weatherTitleLabel->setStyleSheet("color: #f0c0a0; font-size: 13px; font-weight: bold; border: none; background: transparent;");
     wcTitleRow->addWidget(weatherTitleLabel);
     wcTitleRow->addStretch();
-    auto *wcRefreshBtn = new QPushButton("↻");
-    wcRefreshBtn->setFixedSize(26, 26);
-    wcRefreshBtn->setStyleSheet(
-        "QPushButton {"
-        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #503828, stop:0.5 #382018, stop:1 #201008);"
-        "  color: #f0c8a0; font-size: 14px; font-weight: bold; border-radius: 4px;"
-        "  border-top: 1px solid #806040; border-bottom: 1px solid #100808;"
-        "}"
-        "QPushButton:hover { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #705040, stop:0.5 #503828, stop:1 #302018); color: #fff; }"
-        "QPushButton:pressed { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #201008, stop:0.5 #382018, stop:1 #503828); padding-top: 1px; }");
-    connect(wcRefreshBtn, &QPushButton::clicked, this, &TeaGardenSystem::refreshWeatherAlert);
-    wcTitleRow->addWidget(wcRefreshBtn);
+    weatherRefreshBtn = new QPushButton("↻");
+    weatherRefreshBtn->setFixedSize(26, 26);
+    connect(weatherRefreshBtn, &QPushButton::clicked, this, &TeaGardenSystem::refreshWeatherAlert);
+    wcTitleRow->addWidget(weatherRefreshBtn);
     wcLayout->addLayout(wcTitleRow);
 
     // 级别 + 类型
     weatherLevelLabel = new QLabel("加载中...");
-    weatherLevelLabel->setStyleSheet("color: #FFC107; font-size: 18px; font-weight: bold; border: none; background: transparent;");
     wcLayout->addWidget(weatherLevelLabel);
 
     // 详情
     weatherDetailLabel = new QLabel("");
     weatherDetailLabel->setWordWrap(true);
-    weatherDetailLabel->setStyleSheet("color: #c0a090; font-size: 13px; border: none; background: transparent; padding: 3px 0;");
     wcLayout->addWidget(weatherDetailLabel);
 
     // 生效时间
     weatherTimeLabel = new QLabel("");
-    weatherTimeLabel->setStyleSheet("color: #806860; font-size: 11px; border: none; background: transparent;");
     wcLayout->addWidget(weatherTimeLabel);
 
     // 点击卡片打开24h详情弹窗
@@ -233,29 +200,35 @@ void TeaGardenSystem::setupUI() {
 
     leftPanel->addWidget(weatherCard);
     leftPanel->addStretch();
-    mainLayout->addLayout(leftPanel, 2);
+    mainLayout->addWidget(leftPanelFrame, 2);
 
     // --- B. 中间：空间可视化 ---
-    QVBoxLayout *midPanel = new QVBoxLayout();
-    videoTitleLabel = new QLabel("茶园实景与空间分布");
-    videoTitleLabel->setStyleSheet("font-weight: bold; color: #00E5FF;");
+    midPanelFrame = new QFrame();
+    midPanelFrame->setObjectName("dashPanel");
+    QVBoxLayout *midPanel = new QVBoxLayout(midPanelFrame);
+    midPanel->setContentsMargins(12, 10, 12, 10);
+    midPanel->setSpacing(8);
+    videoTitleLabel = new QLabel("▎ 茶园实景与空间分布");
 
     videoLabel = new QLabel("【实时视频流：等待 MJPEG 连接...】");
     videoLabel->setAlignment(Qt::AlignCenter);
-    videoLabel->setStyleSheet("background: black; border: 2px solid #1a2a3a; min-height: 180px; color: #4CAF50;");
+    videoLabel->setMinimumHeight(180);
 
     midPanel->addWidget(videoTitleLabel);
     midPanel->addWidget(videoLabel, 2);
     setupMapView(midPanel);
-    mainLayout->addLayout(midPanel, 6);
+    mainLayout->addWidget(midPanelFrame, 6);
 
     // --- C. 右侧：AI 管家聊天 ---
-    QVBoxLayout *rightPanel = new QVBoxLayout();
+    rightPanelFrame = new QFrame();
+    rightPanelFrame->setObjectName("dashPanel");
+    QVBoxLayout *rightPanel = new QVBoxLayout(rightPanelFrame);
+    rightPanel->setContentsMargins(12, 10, 12, 10);
+    rightPanel->setSpacing(8);
 
     // 标题行
     auto *rightTopRow = new QHBoxLayout();
-    aiTitleLabel = new QLabel("AI 智慧管家分析");
-    aiTitleLabel->setStyleSheet("font-size: 16px; color: #00E5FF; font-weight: bold;");
+    aiTitleLabel = new QLabel("▎ AI 智慧管家分析");
     rightTopRow->addWidget(aiTitleLabel);
     rightTopRow->addStretch();
     rightTopRow->addWidget(themeBtn);
@@ -263,48 +236,38 @@ void TeaGardenSystem::setupUI() {
 
     // ── 病虫害饼图（嵌入式） ──
     auto *pestHeaderRow = new QHBoxLayout();
-    auto *pestPieTitle = new QLabel("🐛 病虫害统计");
-    pestPieTitle->setStyleSheet("font-size: 13px; color: #FF8A65; font-weight: bold;");
+    pestPieTitle = new QLabel("▎ 病虫害统计");
     pestHeaderRow->addWidget(pestPieTitle);
     pestHeaderRow->addStretch();
-    auto *pestDetailBtn = new QPushButton("详情 ▶");
-    pestDetailBtn->setStyleSheet(
-        "QPushButton { background: #3E2723; color: #FF8A65; font-size: 11px; padding: 2px 8px; "
-        "border: 1px solid #5D4037; border-radius: 4px; }"
-        "QPushButton:hover { background: #4E332E; }");
+    pestDetailBtn = new QPushButton("详情 ▶");
     connect(pestDetailBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     pestHeaderRow->addWidget(pestDetailBtn);
     rightPanel->addLayout(pestHeaderRow);
 
     auto *pestChart = new QChart();
-    pestChart->setBackgroundBrush(QBrush(QColor("#051623")));
-    pestChart->legend()->setLabelColor(QColor("#90A4AE"));
+    pestChart->setBackgroundBrush(QBrush(QColor("#0a1628")));
+    pestChart->legend()->setLabelColor(QColor("#7eb8d4"));
     pestChart->legend()->setAlignment(Qt::AlignBottom);
     pestChart->setMargins(QMargins(0, 0, 0, 0));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
     pestPieView->setMinimumHeight(240);
-    pestPieView->setStyleSheet("background: transparent; border: 1px solid #2a1a1a; border-radius: 4px;");
     rightPanel->addWidget(pestPieView);
 
-    // 聊天区（缩小）
+    // 聊天区
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
     chatDisplay->setMinimumHeight(80);
-    chatDisplay->setStyleSheet("background: rgba(0,0,0,0.4); border: 1px solid #334455; border-radius: 4px; padding: 10px;");
 
     QHBoxLayout *inputBox = new QHBoxLayout();
     chatInput = new QLineEdit();
     chatInput->setAttribute(Qt::WA_InputMethodEnabled, true);
     chatInput->setPlaceholderText("询问管理建议...");
-    chatInput->setStyleSheet("padding: 8px; background: #1a2a3a; color: white; border: 1px solid #334455;");
 
     voiceBtn = new QPushButton("🎤 语音");
-    voiceBtn->setStyleSheet("background: #FF9800; padding: 8px 15px; font-weight: bold; color: white;");
     connect(voiceBtn, &QPushButton::clicked, this, &TeaGardenSystem::startVoiceRecording);
 
     sendBtn = new QPushButton("发送");
-    sendBtn->setStyleSheet("background: #00897B; padding: 8px 15px; font-weight: bold;");
 
     connect(sendBtn, &QPushButton::clicked, this, &TeaGardenSystem::handleChat);
     connect(chatInput, &QLineEdit::returnPressed, this, &TeaGardenSystem::handleChat);
@@ -316,6 +279,9 @@ void TeaGardenSystem::setupUI() {
     rightPanel->addWidget(chatDisplay, 1);
     rightPanel->addLayout(inputBox);
     mainLayout->addLayout(rightPanel, 3);
+    mainLayout->addWidget(rightPanelFrame, 3);
+
+    applyTheme();
 }
 
 void TeaGardenSystem::setupMjpegStream() {
