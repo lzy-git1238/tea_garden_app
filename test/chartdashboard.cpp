@@ -242,7 +242,7 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
 
     // X 轴缩放按钮
     auto *xLabel = new QLabel("X");
-    xLabel->setStyleSheet("color: #7890a8; font-size: 11px; font-weight: bold; border: none;");
+    xLabel->setStyleSheet("color: #64b5f6; font-size: 11px; font-weight: bold; border: none;");
     titleRow->addWidget(xLabel);
 
     auto *xOut = new QPushButton("−");
