@@ -1182,6 +1182,7 @@ void TeaGardenSystem::applyTheme() {
     QString pumpBg, pumpText, pumpBorder, pumpChecked;
     QString lampBg, lampText, lampBorder, lampChecked;
     QString voiceBtnBg, videoStatusClr, chartBg;
+    QString schedBtnBg1, schedBtnBg2, schedBtnBorder, schedBtnText;
 
     if (isDarkMode) {
         bg          = "#0a1628";  fg          = "#E8F4FF";
