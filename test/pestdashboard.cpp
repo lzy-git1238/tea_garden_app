@@ -66,8 +66,8 @@ void PestDashboard::setupUI() {
 
     // 饼图
     auto *chart = new QChart();
-    chart->setBackgroundBrush(QBrush(QColor("#051623")));
-    chart->legend()->setLabelColor(QColor("#90A4AE"));
+    chart->setBackgroundBrush(QBrush(QColor("#0a1628")));
+    chart->legend()->setLabelColor(QColor("#7eb8d4"));
     chart->setTitle("病虫害种类分布");
     QFont titleFont;
     titleFont.setPixelSize(14);
