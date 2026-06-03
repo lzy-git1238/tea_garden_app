@@ -199,6 +199,26 @@ void TeaGardenSystem::setupUI() {
     videoLabel->setAlignment(Qt::AlignCenter);
     leftPanel->addWidget(videoLabel, 0, Qt::AlignTop);
 
+    auto *pestHeaderRow = new QHBoxLayout();
+    pestPieTitle = new QLabel("▎ 病虫害统计");
+    pestHeaderRow->addWidget(pestPieTitle);
+    pestHeaderRow->addStretch();
+    pestDetailBtn = new QPushButton("详情 ▶");
+    connect(pestDetailBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
+    pestHeaderRow->addWidget(pestDetailBtn);
+    leftPanel->addLayout(pestHeaderRow);
+
+    auto *pestChart = new QChart();
+    pestChart->setBackgroundBrush(QBrush(QColor("#0a1628")));
+    pestChart->legend()->setLabelColor(QColor("#7eb8d4"));
+    pestChart->legend()->setAlignment(Qt::AlignBottom);
+    pestChart->setMargins(QMargins(2, 2, 2, 2));
+    pestPieView = new QChartView(pestChart);
+    pestPieView->setRenderHint(QPainter::Antialiasing);
+    pestPieView->setMinimumHeight(240);
+    pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    leftPanel->addWidget(pestPieView, 1);
+
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
 
