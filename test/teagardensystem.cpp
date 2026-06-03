@@ -1351,6 +1351,30 @@ void TeaGardenSystem::applyTheme() {
               isDarkMode ? "#402030" : "#ffcdd2",
               lampChecked, isDarkMode ? "#ef5350" : "#c62828"));
 
+    // 定时按钮
+    QString schedBtnStyle = QString(
+        "QPushButton { background: %1; color: %2; font-size: 14px;"
+        "border: 1px solid %3; border-radius: 3px; }"
+        "QPushButton:hover { background: %4; }"
+    ).arg(schedBtnBg1, schedBtnText, schedBtnBorder,
+          isDarkMode ? "#124068" : "#bbdefb");
+    if (scheduleBtnPump) scheduleBtnPump->setStyleSheet(schedBtnStyle);
+    if (scheduleBtnLamp) scheduleBtnLamp->setStyleSheet(schedBtnStyle);
+
+    // 流量卡片
+    if (flowCard) {
+        flowCard->setStyleSheet(QString(
+            "QFrame#flowCard {"
+            "  background: qlineargradient(x1:0,y1:0,x2:1,y2:1,"
+            "    stop:0 %1, stop:1 %2);"
+            "  border: 1px solid %3; border-left: 3px solid #4caf50;"
+            "  border-radius: 6px;"
+            "}"
+        ).arg(isDarkMode ? "#1a3a2c" : "#e8f5e9",
+              isDarkMode ? "#1e2a3a" : "#c8e6c9",
+              border));
+    }
+
     // ══════ 中栏：地图 + 气象 ══════
     if (mapTitleLabel)
         mapTitleLabel->setStyleSheet(sectionTitleStyle(mapTitleClr));
