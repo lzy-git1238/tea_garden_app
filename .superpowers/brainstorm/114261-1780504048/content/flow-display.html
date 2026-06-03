@@ -1,0 +1,68 @@
+<h2>实时灌溉量显示 — 灌溉进行中时在哪里看流量？</h2>
+<p class="subtitle">当定时计划触发了灌溉泵，系统需要实时显示"已灌溉了多少升水"（计算方式：预设流速 × 已运行时长）</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">A: 按钮内联显示</div>
+    <div class="mockup-body" style="padding:16px; display:flex; flex-direction:column; gap:8px;">
+      <div style="background:#1a5c2e; padding:12px; border:1px solid #4caf50; border-radius:5px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-weight:bold; color:#a5d6a7; font-size:14px;">💧 灌溉泵 · 运行中</span>
+          <span style="color:#ffcc80; font-size:11px;">⏱ 12/30 min</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:8px;">
+          <span style="color:#ccc;">已灌溉</span>
+          <span style="font-weight:bold; color:#fff; font-size:18px;">30.0 L</span>
+          <span style="color:#888; font-size:12px;">预计 75.0 L</span>
+        </div>
+        <div style="height:4px; background:#333; border-radius:2px; margin-top:6px;">
+          <div style="width:40%; height:100%; background:#4caf50; border-radius:2px;"></div>
+        </div>
+        <button class="mock-button" style="margin-top:8px; padding:4px 12px; font-size:12px; background:#c62828; width:100%;">停止</button>
+      </div>
+      <p style="font-size:11px; color:var(--text-secondary);">按钮展开显示进度条 + 流量，紧凑直观</p>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">B: 独立状态卡片</div>
+    <div class="mockup-body" style="padding:12px;">
+      <div style="background:#1e2a3a; border-radius:6px; padding:12px; border-left:3px solid #4caf50;">
+        <div style="font-weight:bold; font-size:14px; color:#a5d6a7;">💧 灌溉进行中</div>
+        <div style="display:flex; gap:16px; margin-top:10px; justify-content:space-around;">
+          <div style="text-align:center;">
+            <div style="font-size:22px; font-weight:bold; color:#fff;">30.0</div>
+            <div style="font-size:11px; color:#888;">已灌溉 (L)</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:22px; font-weight:bold; color:#4fc3f7;">75.0</div>
+            <div style="font-size:11px; color:#888;">预计总量 (L)</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:22px; font-weight:bold; color:#ffcc80;">12:00</div>
+            <div style="font-size:11px; color:#888;">剩余时间</div>
+          </div>
+        </div>
+        <div style="height:4px; background:#333; border-radius:2px; margin-top:10px;">
+          <div style="width:40%; height:100%; background:linear-gradient(to right, #4caf50, #81c784); border-radius:2px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top:24px;">
+  <div class="option" data-choice="inline" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>按钮内联</h3>
+      <p>灌溉泵按钮在运行时展开为进度卡片，显示流量 + 进度条。和现有控制栏融合，不占额外空间。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="card" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>独立状态卡片</h3>
+      <p>灌溉进行时在控制区上方插入一张醒目的状态卡片，大字号显示流量数字。更显眼，但多占一行。</p>
+    </div>
+  </div>
+</div>
