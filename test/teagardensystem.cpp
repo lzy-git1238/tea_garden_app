@@ -36,25 +36,38 @@ namespace {
 constexpr int kDroneVideoWidth  = 1920;
 constexpr int kDroneVideoHeight = 1080;
 
-// 按无人机画面宽高比（1920×1080）约束显示区域
+// 按无人机画面宽高比（1920×1080）约束显示区域，禁止被布局纵向拉高
 class AspectRatioLabel : public QLabel {
 public:
     explicit AspectRatioLabel(int aspectW, int aspectH, QWidget *parent = nullptr)
         : QLabel(parent), mAspectW(aspectW), mAspectH(aspectH) {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-        const int minW = 240;
-        setMinimumSize(minW, minW * mAspectH / mAspectW);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        setScaledContents(false);
+        const int minW = 280;
+        setMinimumWidth(minW);
+        syncHeightToWidth(minW);
     }
     bool hasHeightForWidth() const override { return true; }
-    int heightForWidth(int w) const override {
-        if (w <= 0) return minimumHeight();
-        return qMax(1, w * mAspectH / mAspectW);
-    }
+    int heightForWidth(int w) const override { return heightForAspect(w); }
     QSize sizeHint() const override {
-        const int w = 320;
-        return QSize(w, heightForWidth(w));
+        const int w = qMax(width(), minimumWidth());
+        return QSize(w, heightForAspect(w));
+    }
+protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QLabel::resizeEvent(event);
+        syncHeightToWidth(width());
     }
 private:
+    int heightForAspect(int w) const {
+        if (w <= 0) return 1;
+        return qMax(1, w * mAspectH / mAspectW);
+    }
+    void syncHeightToWidth(int w) {
+        const int h = heightForAspect(w);
+        setMinimumHeight(h);
+        setMaximumHeight(h);
+    }
     int mAspectW;
     int mAspectH;
 };
