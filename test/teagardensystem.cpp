@@ -1169,7 +1169,7 @@ void TeaGardenSystem::applyTheme() {
     if (videoLabel)
         videoLabel->setStyleSheet(QString(
             "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
-            "min-height: 200px; color: %3; border-radius: 3px;"
+            "color: %3; border-radius: 3px;"
         ).arg(border, borderHi, videoStatusClr));
     if (mapView)
         mapView->setStyleSheet(QString(
