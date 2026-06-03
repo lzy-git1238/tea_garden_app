@@ -277,8 +277,8 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
 
     auto *axisX = new QDateTimeAxis();
     axisX->setFormat("HH:mm");
-    axisX->setLabelsColor(QColor("#90A4AE"));
-    axisX->setGridLineColor(QColor("#1a2a3a"));
+    axisX->setLabelsColor(QColor("#7eb8d4"));
+    axisX->setGridLineColor(QColor("#1a4a78"));
     chart->addAxis(axisX, Qt::AlignBottom);
 
     auto *axisY = new QValueAxis();
