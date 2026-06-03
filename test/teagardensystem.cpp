@@ -24,6 +24,8 @@
 #include <QPixmap>
 #include <QResizeEvent>
 #include <QFont>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QWebSocket>
 #include <QDebug>
 #include <QStyle>
