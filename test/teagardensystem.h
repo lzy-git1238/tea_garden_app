@@ -72,6 +72,9 @@ private:
     void appendChatMessage(QString role, QString message);
     void requestAIAnalysis(const QString &userMessage);
     void applyTheme();  // 根据 isDarkMode 刷新整体样式
+    static QString sectionTitleStyle(const QString &accent);
+    static QString dashPanelStyle(const QString &panelBg, const QString &border, const QString &borderHi);
+    static QString techBtnStyle(const QString &bg1, const QString &bg2, const QString &border, const QString &text);
 
     // 成员变量
     QList<QLabel*> valueLabels;
