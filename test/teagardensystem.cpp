@@ -1863,11 +1863,95 @@ void TeaGardenSystem::flushPendingCommand(const QString &deviceKey) {
 void TeaGardenSystem::onPumpToggled(bool checked) {
     // 3 = 开启灌溉泵, 4 = 关闭灌溉泵
     scheduleLoraCommand("pump", checked ? 3 : 4);
-    appendChatMessage("系统", checked ? "💧 灌溉泵: 已开启" : "💧 灌溉泵: 已关闭");
+
+    if (checked) {
+        // 手动开启 — 如果定时也在运行则覆盖为手动模式
+        if (activeJobs.contains("pump")) {
+            // 定时运行中被手动切换 → 取消定时任务
+            activeJobs.remove("pump");
+            flowCard->setVisible(false);
+        }
+        ScheduleLogEntry log;
+        log.deviceType = "pump";
+        log.scheduleId = 0;
+        log.action = "on";
+        log.trigger = "manual";
+        log.flowRate = QSettings().value("pump/flow_rate", 2.5).toDouble();
+        log.volumeL = 0;
+        log.ts = QDateTime::currentDateTime();
+        ScheduleStore::instance()->appendLog(log);
+        appendChatMessage("系统", "💧 灌溉泵: 已手动开启");
+    } else {
+        // 手动关闭
+        if (activeJobs.contains("pump")) {
+            ActiveJob &job = activeJobs["pump"];
+            ScheduleLogEntry log;
+            log.deviceType = "pump";
+            log.scheduleId = job.scheduleId;
+            log.action = "off";
+            log.trigger = "manual";
+            log.flowRate = job.flowRate;
+            double elapsedMin = job.startTime.secsTo(QDateTime::currentDateTime()) / 60.0;
+            log.volumeL = job.flowRate * qMax(0.0, elapsedMin);
+            log.ts = QDateTime::currentDateTime();
+            ScheduleStore::instance()->appendLog(log);
+            activeJobs.remove("pump");
+            flowCard->setVisible(false);
+            appendChatMessage("系统",
+                QString("💧 灌溉泵: 已手动关闭 · 本次 %1 L").arg(log.volumeL, 0, 'f', 1));
+        } else {
+            ScheduleLogEntry log;
+            log.deviceType = "pump";
+            log.scheduleId = 0;
+            log.action = "off";
+            log.trigger = "manual";
+            log.flowRate = 0;
+            log.volumeL = 0;
+            log.ts = QDateTime::currentDateTime();
+            ScheduleStore::instance()->appendLog(log);
+            appendChatMessage("系统", "💧 灌溉泵: 已关闭");
+        }
+    }
 }
 
 void TeaGardenSystem::onLampToggled(bool checked) {
     // 1 = 开启驱虫灯, 2 = 关闭驱虫灯
     scheduleLoraCommand("lamp", checked ? 1 : 2);
-    appendChatMessage("系统", checked ? "🪲 驱虫灯: 已开启" : "🪲 驱虫灯: 已关闭");
+
+    if (checked) {
+        if (activeJobs.contains("lamp")) {
+            activeJobs.remove("lamp");
+        }
+        ScheduleLogEntry log;
+        log.deviceType = "lamp";
+        log.scheduleId = 0;
+        log.action = "on";
+        log.trigger = "manual";
+        log.ts = QDateTime::currentDateTime();
+        ScheduleStore::instance()->appendLog(log);
+        appendChatMessage("系统", "🪲 驱虫灯: 已手动开启");
+    } else {
+        if (activeJobs.contains("lamp")) {
+            ActiveJob &job = activeJobs["lamp"];
+            ScheduleLogEntry log;
+            log.deviceType = "lamp";
+            log.scheduleId = job.scheduleId;
+            log.action = "off";
+            log.trigger = "manual";
+            log.ts = QDateTime::currentDateTime();
+            ScheduleStore::instance()->appendLog(log);
+            activeJobs.remove("lamp");
+            appendChatMessage("系统",
+                QString("🪲 驱虫灯: 已手动关闭 · 计划#%1 被中断").arg(job.scheduleId));
+        } else {
+            ScheduleLogEntry log;
+            log.deviceType = "lamp";
+            log.scheduleId = 0;
+            log.action = "off";
+            log.trigger = "manual";
+            log.ts = QDateTime::currentDateTime();
+            ScheduleStore::instance()->appendLog(log);
+            appendChatMessage("系统", "🪲 驱虫灯: 已关闭");
+        }
+    }
 }
