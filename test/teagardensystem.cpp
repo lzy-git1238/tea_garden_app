@@ -903,7 +903,7 @@ void TeaGardenSystem::onLoraParseError(const QString &errorText) {
 }
 
 void TeaGardenSystem::appendChatMessage(QString role, QString message) {
-    QString color = (role == "管家") ? "#00E5FF" : "#FFA000";
+    QString color = (role == "管家") ? "#00d4ff" : "#ffb74d";
     QString time = QDateTime::currentDateTime().toString("hh:mm:ss");
     chatDisplay->append(QString("<b style='color:%1;'>%2 [%3]:</b><br>%4<br>").arg(color, role, time, message));
 }
