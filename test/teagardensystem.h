@@ -93,6 +93,11 @@ private:
     QPushButton *sendBtn = nullptr;
     QLabel *aiTitleLabel = nullptr;
     QPushButton *chartBtn = nullptr;
+    QPushButton *pestBtn = nullptr;
+    QPushButton *mockPestBtn = nullptr;
+    QPushButton *pestDetailBtn = nullptr;
+    QPushButton *weatherRefreshBtn = nullptr;
+    QLabel *pestPieTitle = nullptr;
     QPushButton *pumpBtn = nullptr;
     QPushButton *lampBtn = nullptr;
 
