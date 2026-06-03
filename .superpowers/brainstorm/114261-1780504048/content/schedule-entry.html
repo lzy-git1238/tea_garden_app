@@ -1,0 +1,59 @@
+<h2>定时计划的设置入口 — 从哪里进入管理界面？</h2>
+<p class="subtitle">灌溉泵和驱虫灯各有一套定时计划，用户需要能查看、添加、编辑、删除计划</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">A: 按钮右侧加 ⏰ 图标</div>
+    <div class="mockup-body" style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+      <div style="display:flex; align-items:center; gap:8px; background:#1a3a5c; padding:9px 14px; border:1px solid #29b6f6; border-radius:3px;">
+        <span style="flex:1; color:#4fc3f7; font-weight:bold;">💧 灌溉泵</span>
+        <span style="background:#1565c0; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">⏰ 定时</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; background:#3a1a2c; padding:9px 14px; border:1px solid #ef5350; border-radius:3px;">
+        <span style="flex:1; color:#ef9a9a; font-weight:bold;">🪲 驱虫灯</span>
+        <span style="background:#c62828; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">⏰ 定时</span>
+      </div>
+      <p style="font-size:12px; color:var(--text-secondary);">点击 ⏰ 按钮弹出管理对话框</p>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">B: 弹窗对话框管理</div>
+    <div class="mockup-body" style="padding:12px; font-size:12px;">
+      <div style="background:#1e2a3a; border-radius:6px; overflow:hidden;">
+        <div style="background:#0d2137; padding:8px 12px; font-weight:bold; color:#4fc3f7;">💧 灌溉泵 定时计划</div>
+        <table style="width:100%; border-collapse:collapse; color:#ccc;">
+          <tr style="border-bottom:1px solid #2a3a4a;">
+            <td style="padding:6px 10px;">1</td><td style="padding:6px 10px;">周一三五</td><td style="padding:6px 10px;">07:00</td><td style="padding:6px 10px;">30min</td>
+            <td style="padding:6px 10px;"><span style="color:#81c784;">进行中</span></td>
+            <td style="padding:6px 10px;">🗑</td>
+          </tr>
+          <tr style="border-bottom:1px solid #2a3a4a;">
+            <td style="padding:6px 10px;">2</td><td style="padding:6px 10px;">每天</td><td style="padding:6px 10px;">17:00</td><td style="padding:6px 10px;">20min</td>
+            <td style="padding:6px 10px;"><span style="color:#666;">待触发</span></td>
+            <td style="padding:6px 10px;">🗑</td>
+          </tr>
+        </table>
+        <div style="padding:8px 12px; border-top:1px solid #2a3a4a;">
+          <button class="mock-button" style="padding:4px 12px; font-size:12px;">+ 新增计划</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options" style="margin-top:24px;">
+  <div class="option" data-choice="btn" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>按钮内置 ⏰ 图标</h3>
+      <p>在灌溉泵/驱虫灯按钮右侧加一个小定时图标，点击弹出管理对话框。紧凑、不占额外空间。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="section" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>独立面板区域</h3>
+      <p>在左侧栏新增一个"定时计划"区域，直接内嵌计划列表（不用弹窗），始终可见所有计划状态。</p>
+    </div>
+  </div>
+</div>
