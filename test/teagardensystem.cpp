@@ -22,6 +22,7 @@
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
 #include <QPixmap>
+#include <QResizeEvent>
 #include <QWebSocket>
 #include <QDebug>
 #include <QStyle>
