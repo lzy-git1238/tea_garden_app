@@ -224,7 +224,7 @@ void TeaGardenSystem::setupUI() {
     devRow->addWidget(lampBtn);
     leftPanel->addLayout(devRow);
     leftPanel->addStretch(1);
-    bodyLayout->addWidget(leftPanelFrame, 22);
+    bodyLayout->addWidget(leftPanelFrame, 28);
 
     // ── 中栏：地图为主 + 底部气象（参考图中央大图） ──
     midPanelFrame = new QFrame();
