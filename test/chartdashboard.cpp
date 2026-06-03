@@ -256,7 +256,7 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
 
     // Y 轴缩放按钮
     auto *yLabel = new QLabel("Y");
-    yLabel->setStyleSheet("color: #a08860; font-size: 11px; font-weight: bold; border: none;");
+    yLabel->setStyleSheet("color: #ffb74d; font-size: 11px; font-weight: bold; border: none;");
     titleRow->addWidget(yLabel);
 
     auto *yOut = new QPushButton("−");
