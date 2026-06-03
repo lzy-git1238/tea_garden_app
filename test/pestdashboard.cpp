@@ -72,7 +72,7 @@ void PestDashboard::setupUI() {
     QFont titleFont;
     titleFont.setPixelSize(14);
     chart->setTitleFont(titleFont);
-    chart->setTitleBrush(QBrush(QColor("#00E5FF")));
+    chart->setTitleBrush(QBrush(QColor("#00d4ff")));
 
     chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
