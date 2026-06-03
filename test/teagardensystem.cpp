@@ -1021,7 +1021,6 @@ void TeaGardenSystem::applyTheme() {
     }
 
     const QString panelStyle = dashPanelStyle(panelBg, border, borderHi);
-    const QString sectionStyle = sectionTitleStyle(accent);
 
     // ══════ 托盘菜单 ══════
     if (trayIcon && trayIcon->contextMenu()) {
