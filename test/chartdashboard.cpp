@@ -394,7 +394,7 @@ void ChartDashboard::loadData(QDateTime from, QDateTime to) {
         chart->addAxis(axisY, Qt::AlignLeft);
 
         auto *lineSeries = new QLineSeries();
-        lineSeries->setPen(QPen(QColor("#00E5FF"), 1.5));
+        lineSeries->setPen(QPen(QColor(kChartLineColors[i % 8]), 1.5));
 
         auto *alertScatter = new QScatterSeries();
         alertScatter->setMarkerSize(10);
