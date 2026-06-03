@@ -32,6 +32,8 @@ HEADERS += \
     loramanager.h \
     pestdashboard.h \
     pestdata.h \
+    scheduledialog.h \
+    schedulestore.h \
     teagardensystem.h \
     thresholddialog.h \
     widget.h
