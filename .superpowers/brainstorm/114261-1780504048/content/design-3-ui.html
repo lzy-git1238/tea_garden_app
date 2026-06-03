@@ -1,0 +1,107 @@
+<h2>设计 · 第3节：UI 组件 — 定时计划对话框</h2>
+<p class="subtitle">ScheduleDialog：点击 ⏰ 按钮弹出，两个标签页</p>
+
+<div class="mockup" style="margin-bottom:20px;">
+  <div class="mockup-header">标签页 1：定时计划管理</div>
+  <div class="mockup-body" style="padding:0;">
+    <div style="background:#0d2137; padding:8px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #2a3a4a;">
+      <span style="background:#1565c0; color:#fff; padding:2px 8px; border-radius:3px;">定时计划</span>
+      <span style="color:#888;">|</span>
+      <span style="color:#666; font-size:13px;">📊 历史图表</span>
+    </div>
+    <div style="padding:12px;">
+      <!-- 筛选栏 -->
+      <div style="display:flex; gap:8px; margin-bottom:10px; align-items:center;">
+        <select class="mock-input" style="padding:4px 8px; font-size:12px; background:#1a2a3a; color:#ccc; border:1px solid #333; border-radius:3px;">
+          <option>💧 灌溉泵</option>
+          <option>🪲 驱虫灯</option>
+        </select>
+        <div style="flex:1;"></div>
+        <button class="mock-button" style="padding:4px 12px; font-size:12px; background:#2e7d32;">+ 新增计划</button>
+      </div>
+      <!-- 计划列表 -->
+      <div style="background:#1e2a3a; border-radius:4px; overflow:hidden;">
+        <table style="width:100%; border-collapse:collapse; color:#ccc; font-size:13px;">
+          <tr style="background:#162230; text-align:left;">
+            <th style="padding:6px 10px;">#</th>
+            <th style="padding:6px 10px;">星期</th>
+            <th style="padding:6px 10px;">时间</th>
+            <th style="padding:6px 10px;">时长</th>
+            <th style="padding:6px 10px;">预计流量</th>
+            <th style="padding:6px 10px;">状态</th>
+            <th style="padding:6px 10px;"></th>
+          </tr>
+          <tr style="border-bottom:1px solid #2a3a4a;">
+            <td style="padding:6px 10px;">1</td>
+            <td style="padding:6px 10px;"><span style="background:#1a3a5c; padding:1px 5px; border-radius:2px; margin:0 1px;">一</span><span style="background:#1a3a5c; padding:1px 5px; border-radius:2px; margin:0 1px;">三</span><span style="background:#1a3a5c; padding:1px 5px; border-radius:2px; margin:0 1px;">五</span></td>
+            <td style="padding:6px 10px;">07:00</td>
+            <td style="padding:6px 10px;">30 分钟</td>
+            <td style="padding:6px 10px; color:#4fc3f7;">75.0 L</td>
+            <td style="padding:6px 10px;"><span style="color:#81c784;">✓ 启用</span></td>
+            <td style="padding:6px 10px;">
+              <span style="color:#ffcc80; cursor:pointer;">✎</span>
+              <span style="color:#ef5350; cursor:pointer; margin-left:8px;">✕</span>
+            </td>
+          </tr>
+          <tr style="border-bottom:1px solid #2a3a4a;">
+            <td style="padding:6px 10px;">2</td>
+            <td style="padding:6px 10px;"><span style="background:#1a3a5c; padding:1px 5px; border-radius:2px; margin:0 1px;">每天</span></td>
+            <td style="padding:6px 10px;">17:00</td>
+            <td style="padding:6px 10px;">20 分钟</td>
+            <td style="padding:6px 10px; color:#4fc3f7;">50.0 L</td>
+            <td style="padding:6px 10px;"><span style="color:#666;">✗ 停用</span></td>
+            <td style="padding:6px 10px;">
+              <span style="color:#ffcc80; cursor:pointer;">✎</span>
+              <span style="color:#ef5350; cursor:pointer; margin-left:8px;">✕</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mockup">
+  <div class="mockup-header">标签页 2：历史图表（QChart 柱状图 + 折线图）</div>
+  <div class="mockup-body" style="padding:0;">
+    <div style="background:#0d2137; padding:8px 12px; display:flex; align-items:center; gap:8px; border-bottom:1px solid #2a3a4a;">
+      <span style="color:#666; font-size:13px;">定时计划</span>
+      <span style="color:#888;">|</span>
+      <span style="background:#1565c0; color:#fff; padding:2px 8px; border-radius:3px;">📊 历史图表</span>
+    </div>
+    <div style="padding:12px;">
+      <!-- 筛选 -->
+      <div style="display:flex; gap:8px; margin-bottom:10px; align-items:center;">
+        <select class="mock-input" style="padding:4px 8px; font-size:12px; background:#1a2a3a; color:#ccc; border:1px solid #333; border-radius:3px;">
+          <option>💧 灌溉泵</option>
+          <option>🪲 驱虫灯</option>
+        </select>
+        <select class="mock-input" style="padding:4px 8px; font-size:12px; background:#1a2a3a; color:#ccc; border:1px solid #333; border-radius:3px;">
+          <option>近7天</option>
+          <option>近30天</option>
+        </select>
+        <span style="font-size:12px; color:#888;">总计灌溉: <b style="color:#4fc3f7;">187.5 L</b></span>
+      </div>
+      <!-- 图表占位 -->
+      <div style="background:#162230; border-radius:4px; height:200px; display:flex; align-items:center; justify-content:center; color:#555; font-size:14px;">
+        📊 QChart: 柱状图(每日灌溉量 L) + 折线图(驱虫灯时长 min)
+      </div>
+      <!-- 简要日志列表 -->
+      <div style="margin-top:10px; background:#1e2a3a; border-radius:4px; padding:8px 12px; font-size:12px; color:#888; max-height:120px; overflow-y:auto;">
+        <div style="color:#ccc; margin-bottom:6px; font-weight:bold;">最近操作记录</div>
+        <div style="padding:3px 0; border-bottom:1px solid #2a3a4a;">
+          <span style="color:#81c784;">06-04 07:00</span> · 💧 灌溉泵开启 · 定时计划#1 · 流速 2.5 L/min
+        </div>
+        <div style="padding:3px 0; border-bottom:1px solid #2a3a4a;">
+          <span style="color:#81c784;">06-04 07:30</span> · 💧 灌溉泵关闭 · 累计 75.0 L
+        </div>
+        <div style="padding:3px 0; border-bottom:1px solid #2a3a4a;">
+          <span style="color:#ffcc80;">06-03 19:00</span> · 🪲 驱虫灯开启 · 定时计划#3
+        </div>
+        <div style="padding:3px 0;">
+          <span style="color:#ffcc80;">06-04 05:00</span> · 🪲 驱虫灯关闭 · 定时计划#3 · 运行 10h
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
