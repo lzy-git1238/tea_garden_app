@@ -143,6 +143,17 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     weatherTimer->start(30 * 60 * 1000);
     refreshWeatherAlert();
 
+    // 定时调度检查（每分钟）
+    scheduleTimer = new QTimer(this);
+    connect(scheduleTimer, &QTimer::timeout, this, &TeaGardenSystem::checkSchedules);
+    scheduleTimer->start(60000);
+    checkSchedules();  // 启动时立刻检查一次
+
+    // 流量卡片刷新（每秒）
+    flowCardTimer = new QTimer(this);
+    connect(flowCardTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshFlowCard);
+    flowCardTimer->start(1000);
+
 }
 
 // 【修复报错】明确定义析构函数
