@@ -265,7 +265,7 @@ void TeaGardenSystem::setupUI() {
     midPanel->addWidget(weatherSectionLabel);
 
     weatherCard = new QFrame();
-    weatherCard->setFixedHeight(130);
+    weatherCard->setFixedHeight(205);
     weatherCard->setObjectName("weatherCard");
     auto *wcLayout = new QVBoxLayout(weatherCard);
     wcLayout->setContentsMargins(10, 6, 10, 6);
