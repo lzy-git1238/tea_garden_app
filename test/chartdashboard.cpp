@@ -282,8 +282,8 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     chart->addAxis(axisX, Qt::AlignBottom);
 
     auto *axisY = new QValueAxis();
-    axisY->setLabelsColor(QColor("#90A4AE"));
-    axisY->setGridLineColor(QColor("#1a2a3a"));
+    axisY->setLabelsColor(QColor("#7eb8d4"));
+    axisY->setGridLineColor(QColor("#1a4a78"));
     chart->addAxis(axisY, Qt::AlignLeft);
 
     auto *chartView = new QChartView(chart);
