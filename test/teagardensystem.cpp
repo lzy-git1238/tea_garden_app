@@ -1129,13 +1129,15 @@ void TeaGardenSystem::applyTheme() {
               isDarkMode ? "#402030" : "#ffcdd2",
               lampChecked, isDarkMode ? "#ef5350" : "#c62828"));
 
-    // ══════ 中间面板 ══════
-    if (videoTitleLabel)
-        videoTitleLabel->setStyleSheet(sectionTitleStyle(videoTitleClr));
+    // ══════ 中栏：地图 + 气象 ══════
+    if (mapTitleLabel)
+        mapTitleLabel->setStyleSheet(sectionTitleStyle(mapTitleClr));
+    if (weatherSectionLabel)
+        weatherSectionLabel->setStyleSheet(sectionTitleStyle(weatherSecClr));
     if (videoLabel)
         videoLabel->setStyleSheet(QString(
             "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
-            "min-height: 180px; color: %3; border-radius: 3px;"
+            "min-height: 200px; color: %3; border-radius: 3px;"
         ).arg(border, borderHi, videoStatusClr));
     if (mapView)
         mapView->setStyleSheet(QString(
