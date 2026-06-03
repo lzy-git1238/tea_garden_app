@@ -59,6 +59,9 @@ private slots:
     void toggleTheme();          // 切换日间/夜间模式
     void onPumpToggled(bool checked);
     void onLampToggled(bool checked);
+    void checkSchedules();          // 调度检查（每分钟）
+    void refreshFlowCard();         // 刷新流量卡片（每秒）
+    void openScheduleDialog(const QString &deviceType);  // 打开定时对话框
 
 private:
     void setupUI();
