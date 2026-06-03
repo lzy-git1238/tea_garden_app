@@ -116,6 +116,32 @@ private:
     QMap<QString, QDateTime> lastCommandTime;
     QMap<QString, int> pendingCommands;
     QMap<QString, QTimer*> commandTimers;
+
+    // ── 定时调度 ──
+    struct ActiveJob {
+        QString deviceType;
+        int scheduleId = 0;
+        QDateTime startTime;
+        QDateTime endTime;
+        double flowRate = 2.5;
+        int durationMin = 0;
+    };
+    QMap<QString, ActiveJob> activeJobs;  // key: deviceType ("pump"/"lamp")
+    QTimer *scheduleTimer = nullptr;       // 60s 调度检查
+    QTimer *flowCardTimer = nullptr;       // 1s 流量刷新
+
+    // 流量状态卡片
+    QFrame *flowCard = nullptr;
+    QLabel *flowCurrentLabel = nullptr;    // 已灌溉量
+    QLabel *flowExpectedLabel = nullptr;   // 预计总量
+    QLabel *flowRemainingLabel = nullptr;  // 剩余时间
+    QLabel *flowProgressLabel = nullptr;   // 进度文字 (e.g. "12/30 min")
+    QFrame *flowProgressBar = nullptr;     // 进度条 track
+    QFrame *flowProgressFill = nullptr;    // 进度条 fill
+    QPushButton *flowStopBtn = nullptr;    // 停止灌溉
+    QPushButton *flowSettingsBtn = nullptr;// 设置流速
+    QLabel *flowPlanIdLabel = nullptr;     // 计划编号显示
+
     QProcess *recordProcess = nullptr;  // 当前录音进程，非空时表示正在录音
     QString  pendingWavPath;            // 录音目标文件路径
     QTimer *updateTimer;
