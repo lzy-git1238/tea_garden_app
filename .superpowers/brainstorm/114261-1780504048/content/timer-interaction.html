@@ -1,0 +1,41 @@
+<h2>定时功能的触发方式 — 哪种更符合你的使用场景？</h2>
+<p class="subtitle">灌溉泵和驱虫灯目前都是即时开关按钮。加上定时后，用户如何设置定时？</p>
+
+<div class="options" data-multiselect>
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>倒计时模式</h3>
+      <p>点击按钮后弹出一个对话框，设置"开启 N 分钟后自动关闭"。适合<strong>即时操作 + 自动关</strong>的场景：比如"浇30分钟水"、"开灯2小时"。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>定时计划模式</h3>
+      <p>设置每日/每周的固定时间表。比如"每天早上7:00开启灌溉30分钟"、"每晚19:00开启驱虫灯，次日5:00关闭"。适合<strong>自动化无人值守</strong>。</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>两者都要</h3>
+      <p>既有<strong>倒计时</strong>（临时操作时用），又有<strong>定时计划</strong>（日常自动化）。界面需要同时容纳两种设置入口。</p>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top: 32px;">📐 当前控制栏布局参考</h3>
+<div class="mockup">
+  <div class="mockup-header">现有：左侧设备控制栏</div>
+  <div class="mockup-body" style="padding: 16px; display: flex; gap: 12px; flex-direction: column;">
+    <div style="display: flex; gap: 8px;">
+      <div class="mock-button" style="flex:1; background: #1a3a5c; color: #4fc3f7; padding: 9px 14px; border: 1px solid #29b6f6; border-radius: 3px; text-align: center;">💧 灌溉泵</div>
+      <div class="mock-button" style="flex:1; background: #3a1a2c; color: #ef9a9a; padding: 9px 14px; border: 1px solid #ef5350; border-radius: 3px; text-align: center;">🪲 驱虫灯</div>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);">
+  💡 <strong>提示：</strong>当前只有两个扁平按钮，定时功能需要额外的交互入口（如小图标、右键菜单、或弹窗）。
+</p>
