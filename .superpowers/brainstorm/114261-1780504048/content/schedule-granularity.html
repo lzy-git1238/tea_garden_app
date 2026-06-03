@@ -1,0 +1,85 @@
+<h2>灌溉定时计划的粒度 — 需要多细的控制？</h2>
+<p class="subtitle">每条定时计划需要设定：几点开始 + 持续多久。问题在于：一周内不同天是否需要不同计划？</p>
+
+<div class="options">
+  <div class="option" data-choice="simple" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>简单模式：每天相同</h3>
+      <p>设置一个时间 + 持续时长，每天到点就执行。比如"每天早上 7:00 灌溉 30 分钟"。</p>
+      <p style="color: #81c784; font-size: 13px;">✅ 简单直观，够用就行</p>
+    </div>
+  </div>
+  <div class="option" data-choice="weekday" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>按星期选择</h3>
+      <p>可以为每周的不同天设置不同计划。比如"周一三五 7:00 浇 20 分钟，周六日 6:30 浇 40 分钟，周二四不浇"。</p>
+      <p style="color: #81c784; font-size: 13px;">✅ 灵活适配茶园实际需求</p>
+    </div>
+  </div>
+  <div class="option" data-choice="multi" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>多时段模式</h3>
+      <p>每天可以有多个灌溉时段。比如"早上 6:00 浇 15 分钟 + 傍晚 17:00 浇 20 分钟"。</p>
+      <p style="color: #ffcc80; font-size: 13px;">⚠️ 功能强但界面复杂度增加</p>
+    </div>
+  </div>
+</div>
+
+<div class="mockup" style="margin-top: 24px;">
+  <div class="mockup-header">方案 B 示意：按星期选择的定时计划表格</div>
+  <div class="mockup-body" style="padding: 12px; font-size: 13px;">
+    <table style="width:100%; border-collapse:collapse; color: var(--text-primary);">
+      <tr style="background:#1e2a3a;">
+        <th style="padding:6px 10px; text-align:left;">星期</th>
+        <th style="padding:6px 10px; text-align:left;">开启时间</th>
+        <th style="padding:6px 10px; text-align:left;">持续时长</th>
+        <th style="padding:6px 10px; text-align:left;">状态</th>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px;">周一</td>
+        <td style="padding:6px 10px;">07:00</td>
+        <td style="padding:6px 10px;">30 分钟</td>
+        <td style="padding:6px 10px; color:#81c784;">✓ 启用</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px;">周二</td>
+        <td style="padding:6px 10px;">—</td>
+        <td style="padding:6px 10px;">—</td>
+        <td style="padding:6px 10px; color:#666;">✗ 关闭</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px;">周三</td>
+        <td style="padding:6px 10px;">07:00</td>
+        <td style="padding:6px 10px;">20 分钟</td>
+        <td style="padding:6px 10px; color:#81c784;">✓ 启用</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px;">周四</td>
+        <td style="padding:6px 10px;">—</td>
+        <td style="padding:6px 10px;">—</td>
+        <td style="padding:6px 10px; color:#666;">✗ 关闭</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px;">周五</td>
+        <td style="padding:6px 10px;">07:00</td>
+        <td style="padding:6px 10px;">30 分钟</td>
+        <td style="padding:6px 10px; color:#81c784;">✓ 启用</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px;">周六</td>
+        <td style="padding:6px 10px;">06:30</td>
+        <td style="padding:6px 10px;">40 分钟</td>
+        <td style="padding:6px 10px; color:#81c784;">✓ 启用</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 10px;">周日</td>
+        <td style="padding:6px 10px;">06:30</td>
+        <td style="padding:6px 10px;">40 分钟</td>
+        <td style="padding:6px 10px; color:#81c784;">✓ 启用</td>
+      </tr>
+    </table>
+  </div>
+</div>
