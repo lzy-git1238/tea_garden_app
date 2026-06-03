@@ -267,7 +267,7 @@ void TeaGardenSystem::setupUI() {
     weatherCard->setCursor(Qt::PointingHandCursor);
     weatherCard->installEventFilter(this);
     midPanel->addWidget(weatherCard);
-    bodyLayout->addWidget(midPanelFrame, 48);
+    bodyLayout->addWidget(midPanelFrame, 44);
 
     // ── 右栏：环境指标网格 + 病虫害 + AI（参考图右侧） ──
     rightPanelFrame = new QFrame();
