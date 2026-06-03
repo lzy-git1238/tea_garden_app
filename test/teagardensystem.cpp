@@ -196,7 +196,7 @@ void TeaGardenSystem::setupUI() {
     videoLabel = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
     videoLabel->setText("【实时视频流：等待 MJPEG 连接...】");
     videoLabel->setAlignment(Qt::AlignCenter);
-    leftPanel->addWidget(videoLabel, 3);
+    leftPanel->addWidget(videoLabel, 0, Qt::AlignTop);
 
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
