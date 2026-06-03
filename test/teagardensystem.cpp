@@ -1093,7 +1093,9 @@ void TeaGardenSystem::applyTheme() {
     for (auto *tlbl : dataCardTitles)
         tlbl->setStyleSheet(QString("color: %1; font-size: 12px; border: none;").arg(muted));
     for (auto *vlbl : valueLabels)
-        vlbl->setStyleSheet(QString("color: %1; font-size: 22px; font-weight: bold; border: none;").arg(accent));
+        vlbl->setStyleSheet(QString("color: %1; font-size: 18px; font-weight: bold; border: none;").arg(accent));
+    for (auto *tlbl : dataCardTitles)
+        tlbl->setStyleSheet(QString("color: %1; font-size: 11px; border: none;").arg(muted));
 
     if (chartBtn)
         chartBtn->setStyleSheet(techBtnStyle(
