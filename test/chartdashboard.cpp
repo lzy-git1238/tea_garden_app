@@ -143,18 +143,16 @@ void ChartDashboard::setupUI() {
     toolbar->addWidget(btn30d);
     toolbar->addSpacing(8);
 
-    auto *fromLbl = new QLabel("自"); fromLbl->setStyleSheet("color:#90A4AE; font-size:12px; border:none;");
+    auto *fromLbl = new QLabel("自");
     toolbar->addWidget(fromLbl);
     fromTime = new QDateTimeEdit(QDateTime::currentDateTime().addSecs(-3600));
     fromTime->setDisplayFormat("MM-dd HH:mm");
-    fromTime->setStyleSheet("background: #1a2a3a; color: white; border: 1px solid #334455; padding: 2px 4px; font-size:12px;");
     toolbar->addWidget(fromTime);
 
-    auto *toLbl = new QLabel("至"); toLbl->setStyleSheet("color:#90A4AE; font-size:12px; border:none;");
+    auto *toLbl = new QLabel("至");
     toolbar->addWidget(toLbl);
     toTime = new QDateTimeEdit(QDateTime::currentDateTime());
     toTime->setDisplayFormat("MM-dd HH:mm");
-    toTime->setStyleSheet("background: #1a2a3a; color: white; border: 1px solid #334455; padding: 2px 4px; font-size:12px;");
     toolbar->addWidget(toTime);
 
     auto *queryBtn = new QPushButton("查询");
