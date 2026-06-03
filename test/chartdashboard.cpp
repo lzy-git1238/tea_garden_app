@@ -271,7 +271,7 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     // ── 图表 ──
     auto *chart = new QChart();
     chart->setTitle("");
-    chart->setBackgroundBrush(QBrush(QColor("#051623")));
+    chart->setBackgroundBrush(QBrush(QColor("#0a1628")));
     chart->legend()->hide();
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
