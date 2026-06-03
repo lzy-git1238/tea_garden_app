@@ -108,6 +108,8 @@ private:
     QLabel *pestPieTitle = nullptr;
     QPushButton *pumpBtn = nullptr;
     QPushButton *lampBtn = nullptr;
+    QPushButton *scheduleBtnPump = nullptr;  // 灌溉泵 ⏰ 按钮
+    QPushButton *scheduleBtnLamp = nullptr;  // 驱虫灯 ⏰ 按钮
 
     // LoRa 下行控制防抖
     int commandMinIntervalMs = 800;
