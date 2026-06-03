@@ -1,0 +1,65 @@
+<h2>设计 · 第5节：错误处理 & 边界情况</h2>
+<p class="subtitle">定时计划和流量卡片的所有需要处理的异常场景</p>
+
+<h3>⚠️ 边界情况清单</h3>
+
+<div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #ffcc80;">
+    <h3 style="margin:0 0 6px 0; color:#ffcc80;">1. 跨天灌溉</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">计划设置在 23:45，持续 30 分钟 → 结束时间是次日 00:15。<br>
+    <span style="color:#81c784;">处理：</span>activeJob 存完整的 QDateTime 结束时间，不是 HH:MM。</p>
+  </div>
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #ef5350;">
+    <h3 style="margin:0 0 6px 0; color:#ef5350;">2. 计划冲突</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">同一设备已有计划在运行，又到了另一个计划的触发时间。<br>
+    <span style="color:#81c784;">处理：</span>正在运行时不触发新计划，新计划等待下一轮。</p>
+  </div>
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #4fc3f7;">
+    <h3 style="margin:0 0 6px 0; color:#4fc3f7;">3. LoRa 发送失败</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">串口未连接或发送失败时，命令未到达设备。<br>
+    <span style="color:#81c784;">处理：</span>仍然记录日志（标记发送失败），流量卡片显示"发送失败"提示。</p>
+  </div>
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #ce93d8;">
+    <h3 style="margin:0 0 6px 0; color:#ce93d8;">4. 手动干预</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">用户在定时计划运行期间手动点了按钮切换状态。<br>
+    <span style="color:#81c784;">处理：</span>手动覆盖定时状态 — 取消当前 activeJob，日志标记 trigger="manual"。</p>
+  </div>
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #81c784;">
+    <h3 style="margin:0 0 6px 0; color:#81c784;">5. 程序重启恢复</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">程序关闭期间如果有定时计划该执行，重启后是否补执行？<br>
+    <span style="color:#81c784;">处理：</span>不补执行。activeJobs 存内存，重启后清空。到下一周期正常检查。</p>
+  </div>
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #ffab40;">
+    <h3 style="margin:0 0 6px 0; color:#ffab40;">6. 流速设为0</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">用户把流速设置成了 0 或负数。<br>
+    <span style="color:#81c784;">处理：</span>输入校验，流速必须 > 0，否则弹提示并阻止保存。</p>
+  </div>
+
+  <div class="card" style="background:#1e2a3a; border-radius:6px; padding:14px; border-left:3px solid #b0bec5;">
+    <h3 style="margin:0 0 6px 0; color:#b0bec5;">7. 计划名称为空</h3>
+    <p style="margin:0; font-size:13px; color:#ccc;">新增计划时没选星期或时长为0。<br>
+    <span style="color:#81c784;">处理：</span>保存时校验 — 至少选一天、时长 > 0、时间格式正确。</p>
+  </div>
+
+</div>
+
+<h3 style="margin-top: 20px;">🧪 测试要点</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-size:13px; color:#ccc;">
+    <ul style="line-height:2;">
+      <li>✅ 创建计划 → SQLite 写入 → 重启程序 → 计划仍在</li>
+      <li>✅ 编辑计划 → 下次触发按新参数执行</li>
+      <li>✅ 删除计划 → 不再触发</li>
+      <li>✅ 启用/停用切换 → 停用的计划不触发</li>
+      <li>✅ 手动停止灌溉 → 流量卡片消失，日志正确</li>
+      <li>✅ 日志查询 → 7天/30天筛选正确，图表数值正确</li>
+      <li>✅ 流量卡片每秒更新 → 数值单调递增，接近真实计算值</li>
+    </ul>
+  </div>
+</div>
