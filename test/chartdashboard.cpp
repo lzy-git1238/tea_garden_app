@@ -198,6 +198,80 @@ void ChartDashboard::setupUI() {
 
     scrollArea->setWidget(scrollContent);
     mainLayout->addWidget(scrollArea, 1);
+
+    applyTheme(true);
+}
+
+void ChartDashboard::applyTheme(bool dark) {
+    isDarkMode = dark;
+    const QString bg = dark ? "#0a1628" : "#eef4fb";
+    const QString fg = dark ? "#E8F4FF" : "#1a3050";
+    const QString muted = dark ? "#7eb8d4" : "#546e7a";
+    const QString border = dark ? "#1a4a78" : "#90caf9";
+    const QString borderHi = dark ? "#2a9fd8" : "#42a5f5";
+    const QString inputBg = dark ? "#0c2040" : "#ffffff";
+    const QString cardBg = dark ? "rgba(10, 35, 70, 0.55)" : "rgba(255, 255, 255, 0.9)";
+    const QString chartBg = dark ? "#0a1628" : "#eef4fb";
+    const QString gridClr = dark ? "#1a4a78" : "#bbdefb";
+    const QString accent = dark ? "#00d4ff" : "#0277bd";
+
+    setStyleSheet(QString(
+        "background-color: %1; color: %2; font-family: 'Microsoft YaHei';"
+    ).arg(bg, fg));
+
+    const char *btnStyle = dark ? k3dSmallBtnStyle : k3dSmallBtnStyleLight;
+    const char *queryStyle = dark ? k3dZoomGreenStyle : k3dSmallBtnStyleLight;
+    const char *exportStyle = dark ? k3dZoomGreenStyle : k3dSmallBtnStyleLight;
+
+    for (auto *lbl : findChildren<QLabel*>("chartMutedLbl")) {
+        lbl->setStyleSheet(QString("color:%1; font-size:12px; border:none;").arg(muted));
+    }
+    const QString dtStyle = QString(
+        "background: %1; color: %2; border: 1px solid %3; padding: 2px 4px; font-size:12px;"
+    ).arg(inputBg, fg, border);
+    if (fromTime) fromTime->setStyleSheet(dtStyle);
+    if (toTime) toTime->setStyleSheet(dtStyle);
+    if (thresholdBtn) thresholdBtn->setStyleSheet(btnStyle);
+    if (exportBtn) exportBtn->setStyleSheet(exportStyle);
+    for (auto *btn : findChildren<QPushButton*>()) {
+        const QString t = btn->text();
+        if (t == "1h" || t == "6h" || t == "24h" || t == "7d" || t == "30d")
+            btn->setStyleSheet(btnStyle);
+        if (t == "查询")
+            btn->setStyleSheet(queryStyle);
+    }
+
+    for (auto it = chartCards.constBegin(); it != chartCards.constEnd(); ++it) {
+        if (it.value())
+            it.value()->setStyleSheet(QString(
+                "background: %1; border: 1px solid %2; border-top: 2px solid %3; border-radius: 4px;"
+            ).arg(cardBg, border, borderHi));
+    }
+
+    for (auto it = charts.constBegin(); it != charts.constEnd(); ++it) {
+        auto *cv = it.value();
+        if (!cv || !cv->chart()) continue;
+        auto *chart = cv->chart();
+        chart->setBackgroundBrush(QBrush(QColor(chartBg)));
+        for (auto *ax : chart->axes()) {
+            ax->setLabelsColor(QColor(muted));
+            ax->setGridLineColor(QColor(gridClr));
+        }
+        int idx = it.key();
+        for (auto *series : chart->series()) {
+            if (auto *line = qobject_cast<QLineSeries*>(series)) {
+                if (line->pen().style() == Qt::SolidLine && line->count() > 0)
+                    line->setPen(QPen(QColor(kChartLineColors[idx % 8]), 1.5));
+            }
+        }
+        auto *header = chartCards.value(idx)->findChild<QPushButton*>();
+        if (header) {
+            header->setStyleSheet(QString(
+                "QPushButton { background: transparent; color: %1; font-size: 13px; font-weight: bold;"
+                "text-align: left; border: none; padding: 4px 0 4px 8px; border-left: 3px solid %1; }"
+            ).arg(accent));
+        }
+    }
 }
 
 // ── createChartCard：每张图带缩放按钮 + 滑块 ──
