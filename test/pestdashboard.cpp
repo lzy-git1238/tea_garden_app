@@ -23,7 +23,7 @@ PestDashboard::PestDashboard(QWidget *parent)
 {
     setWindowTitle("茶树病虫害监测");
     resize(650, 560);
-    setStyleSheet("background-color: #051623; color: #E0E0E0; font-family: 'Microsoft YaHei';");
+    setStyleSheet("background-color: #0a1628; color: #E8F4FF; font-family: 'Microsoft YaHei';");
     setupUI();
     refresh();
 }

@@ -439,14 +439,14 @@ void ChartDashboard::loadData(QDateTime from, QDateTime to) {
         else if (rangeMs <= 86'400'000)     axisX->setFormat("HH:mm");
         else if (rangeMs <= 604'800'000)    axisX->setFormat("MM-dd HH:mm");
         else                                axisX->setFormat("MM-dd");
-        axisX->setLabelsColor(QColor("#90A4AE"));
-        axisX->setGridLineColor(QColor("#1a2a3a"));
+        axisX->setLabelsColor(QColor("#7eb8d4"));
+        axisX->setGridLineColor(QColor("#1a4a78"));
         axisX->setRange(from, to);
         chart->addAxis(axisX, Qt::AlignBottom);
 
         auto *axisY = new QValueAxis();
-        axisY->setLabelsColor(QColor("#90A4AE"));
-        axisY->setGridLineColor(QColor("#1a2a3a"));
+        axisY->setLabelsColor(QColor("#7eb8d4"));
+        axisY->setGridLineColor(QColor("#1a4a78"));
         chart->addAxis(axisY, Qt::AlignLeft);
 
         auto *lineSeries = new QLineSeries();
