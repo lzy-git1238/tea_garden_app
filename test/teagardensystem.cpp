@@ -922,123 +922,269 @@ void TeaGardenSystem::toggleTheme() {
     applyTheme();
 }
 
+QString TeaGardenSystem::sectionTitleStyle(const QString &accent) {
+    return QString(
+        "color: %1; font-size: 14px; font-weight: bold;"
+        "padding: 2px 0 6px 8px; border-left: 3px solid %1;"
+        "background: transparent;"
+    ).arg(accent);
+}
+
+QString TeaGardenSystem::dashPanelStyle(const QString &panelBg, const QString &border, const QString &borderHi) {
+    return QString(
+        "QFrame#dashPanel {"
+        "  background: %1;"
+        "  border: 1px solid %2;"
+        "  border-top: 2px solid %3;"
+        "  border-radius: 4px;"
+        "}"
+    ).arg(panelBg, border, borderHi);
+}
+
+QString TeaGardenSystem::techBtnStyle(const QString &bg1, const QString &bg2, const QString &border, const QString &text) {
+    return QString(
+        "QPushButton {"
+        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 %1, stop:1 %2);"
+        "  color: %4; padding: 8px 12px; font-weight: bold; border-radius: 3px;"
+        "  border: 1px solid %3; border-top: 1px solid %1;"
+        "}"
+        "QPushButton:hover { color: #ffffff; }"
+        "QPushButton:pressed { padding-top: 1px; }"
+    ).arg(bg1, bg2, border, text);
+}
+
 void TeaGardenSystem::applyTheme() {
     // ══════ 颜色色板 ══════
-    QString bg, fg, cardBg, border, muted, accent, accent2;
-    QString inputBg, chatBg, loraColor, chartBtnBg, sendBtnBg;
+    QString bg, fg, cardBg, border, borderHi, muted, accent, accent2;
+    QString panelBg, inputBg, chatBg, loraColor, chartBtnBg, sendBtnBg;
     QString wcBg1, wcBg2, wcBg3, wcBorder1, wcBorder2;
-    QString wcTitle, wcLevel, wcDetail, wcTime, wcRefreshBg1, wcRefreshBg2, wcRefreshBorder;
+    QString wcTitle, wcLevel, wcDetail, wcTime;
     QString tbBg, tbColor, tbBorder, tbHoverBg, tbHoverColor;
-    QString leftTitleClr, videoTitleClr, aiTitleClr;
+    QString leftTitleClr, videoTitleClr, aiTitleClr, pestTitleClr;
+    QString pestBtnBg1, pestBtnBg2, pestBtnBorder, pestBtnText;
+    QString mockBtnBg1, mockBtnBg2, mockBtnBorder, mockBtnText;
+    QString pumpBg, pumpText, pumpBorder, pumpChecked;
+    QString lampBg, lampText, lampBorder, lampChecked;
+    QString voiceBtnBg, videoStatusClr, chartBg;
 
     if (isDarkMode) {
-        bg          = "#051623";  fg          = "#E0E0E0";
-        cardBg      = "rgba(255,255,255,0.05)";  border = "#1a2a3a";
-        muted       = "#90A4AE";  accent      = "#00E5FF";  accent2   = "#00897B";
-        inputBg     = "#1a2a3a";  chatBg      = "rgba(0,0,0,0.4)";
-        loraColor   = "#80CBC4";  chartBtnBg  = "#00897B";  sendBtnBg = "#00897B";
-        // 天气卡片
-        wcBg1 = "#2a1a18";  wcBg2 = "#1e1018";  wcBg3 = "#100810";
-        wcBorder1 = "#603030";  wcBorder2 = "#100808";
-        wcTitle = "#f0c0a0";  wcLevel = "#4FC3F7";  wcDetail = "#c0a090";  wcTime = "#806860";
-        wcRefreshBg1 = "#503828";  wcRefreshBg2 = "#201008";  wcRefreshBorder = "#806040";
+        bg          = "#0a1628";  fg          = "#E8F4FF";
+        panelBg     = "rgba(10, 35, 70, 0.55)";
+        cardBg      = "rgba(10, 50, 90, 0.45)";
+        border      = "#1a4a78";  borderHi    = "#2a9fd8";
+        muted       = "#7eb8d4";  accent      = "#00d4ff";  accent2   = "#0088cc";
+        inputBg     = "#0c2040";  chatBg      = "rgba(5, 20, 45, 0.65)";
+        loraColor   = "#64b5f6";  chartBtnBg  = "#0077aa";  sendBtnBg = "#0077aa";
+        chartBg     = "#0a1628";
+        videoStatusClr = "#64b5f6";
+        voiceBtnBg  = "#e65100";
+        // 天气卡片 — 科技蓝
+        wcBg1 = "#0c2540";  wcBg2 = "#0a1e38";  wcBg3 = "#081830";
+        wcBorder1 = "#1a6fa8";  wcBorder2 = "#0a1628";
+        wcTitle = "#00d4ff";  wcLevel = "#ffb74d";  wcDetail = "#90caf9";  wcTime = "#5a8fb4";
         // 主题按钮
-        tbBg = "#3a5068";  tbColor = "#c0d8f0";  tbBorder = "#506880";
-        tbHoverBg = "#4a6080";  tbHoverColor = "#fff";
+        tbBg = "#0c3050";  tbColor = "#90caf9";  tbBorder = "#1a6fa8";
+        tbHoverBg = "#124068";  tbHoverColor = "#ffffff";
         // 标题
-        leftTitleClr = "#E0E0E0";  videoTitleClr = "#00E5FF";  aiTitleClr = "#00E5FF";
+        leftTitleClr = "#00d4ff";  videoTitleClr = "#00d4ff";  aiTitleClr = "#00d4ff";
+        pestTitleClr = "#ffb74d";
+        pestBtnBg1 = "#0c3050"; pestBtnBg2 = "#081830"; pestBtnBorder = "#1a6fa8"; pestBtnText = "#90caf9";
+        mockBtnBg1 = "#102840"; mockBtnBg2 = "#081828"; mockBtnBorder = "#1a5088"; mockBtnText = "#64b5f6";
+        pumpBg = "#0c3050"; pumpText = "#80deea"; pumpBorder = "#1a6fa8";
+        pumpChecked = "#1565c0";
+        lampBg = "#281828"; lampText = "#ef9a9a"; lampBorder = "#6a3050";
+        lampChecked = "#c62828";
     } else {
-        bg          = "#Faf6f0";  fg          = "#3e3028";
-        cardBg      = "rgba(0,0,0,0.04)";  border = "#c8b898";
-        muted       = "#8c7a6a";  accent      = "#2e7d32";  accent2   = "#43a047";
-        inputBg     = "#ffffff";  chatBg      = "rgba(0,0,0,0.04)";
-        loraColor   = "#558b2f";  chartBtnBg  = "#43a047";  sendBtnBg = "#43a047";
-        // 天气卡片 — 暖金色纸质卡片
-        wcBg1 = "#f5ecd7";  wcBg2 = "#ede0c0";  wcBg3 = "#e0d0a8";
-        wcBorder1 = "#c8b878";  wcBorder2 = "#a09060";
-        wcTitle = "#5a4020";  wcLevel = "#2e7d32";  wcDetail = "#6a5040";  wcTime = "#8c7a6a";
-        wcRefreshBg1 = "#e0c898";  wcRefreshBg2 = "#c0a878";  wcRefreshBorder = "#a08860";
-        // 主题按钮 — 深棕木质
-        tbBg = "#8c7a5a";  tbColor = "#fffdf0";  tbBorder = "#6a5840";
-        tbHoverBg = "#a09070";  tbHoverColor = "#ffffff";
-        // 标题
-        leftTitleClr = "#3e3028";  videoTitleClr = "#2e7d32";  aiTitleClr = "#2e7d32";
+        bg          = "#eef4fb";  fg          = "#1a3050";
+        panelBg     = "rgba(255, 255, 255, 0.85)";
+        cardBg      = "rgba(255, 255, 255, 0.95)";
+        border      = "#90caf9";  borderHi    = "#42a5f5";
+        muted       = "#546e7a";  accent      = "#0277bd";  accent2   = "#0288d1";
+        inputBg     = "#ffffff";  chatBg      = "rgba(255, 255, 255, 0.9)";
+        loraColor   = "#1565c0";  chartBtnBg  = "#0288d1";  sendBtnBg = "#0288d1";
+        chartBg     = "#eef4fb";
+        videoStatusClr = "#2e7d32";
+        voiceBtnBg  = "#ef6c00";
+        wcBg1 = "#e3f2fd";  wcBg2 = "#bbdefb";  wcBg3 = "#90caf9";
+        wcBorder1 = "#64b5f6";  wcBorder2 = "#42a5f5";
+        wcTitle = "#0277bd";  wcLevel = "#e65100";  wcDetail = "#37474f";  wcTime = "#78909c";
+        tbBg = "#42a5f5";  tbColor = "#ffffff";  tbBorder = "#1e88e5";
+        tbHoverBg = "#1e88e5";  tbHoverColor = "#ffffff";
+        leftTitleClr = "#0277bd";  videoTitleClr = "#0277bd";  aiTitleClr = "#0277bd";
+        pestTitleClr = "#e65100";
+        pestBtnBg1 = "#e3f2fd"; pestBtnBg2 = "#bbdefb"; pestBtnBorder = "#64b5f6"; pestBtnText = "#0277bd";
+        mockBtnBg1 = "#fff3e0"; mockBtnBg2 = "#ffe0b2"; mockBtnBorder = "#ffb74d"; mockBtnText = "#e65100";
+        pumpBg = "#e3f2fd"; pumpText = "#0277bd"; pumpBorder = "#64b5f6";
+        pumpChecked = "#1565c0";
+        lampBg = "#fce4ec"; lampText = "#c62828"; lampBorder = "#ef9a9a";
+        lampChecked = "#b71c1c";
     }
+
+    const QString panelStyle = dashPanelStyle(panelBg, border, borderHi);
+    const QString sectionStyle = sectionTitleStyle(accent);
 
     // ══════ 托盘菜单 ══════
     if (trayIcon && trayIcon->contextMenu()) {
         trayIcon->contextMenu()->setStyleSheet(
-            QString("background: %1; color: %2;").arg(isDarkMode ? "#0d1f2d" : bg, fg));
+            QString("background: %1; color: %2;").arg(isDarkMode ? "#0a1628" : bg, fg));
     }
 
     // ══════ 主窗口背景 ══════
-    this->setStyleSheet(QString(
-        "QWidget { background-color: %1; color: %2; font-family: 'Microsoft YaHei'; }").arg(bg, fg));
+    if (isDarkMode) {
+        this->setStyleSheet(QString(
+            "QWidget { background-color: %1; color: %2; font-family: 'Microsoft YaHei'; }"
+            "QWidget#dashPanel { background: %3; }"
+        ).arg(bg, fg, panelBg));
+    } else {
+        this->setStyleSheet(QString(
+            "QWidget { background-color: %1; color: %2; font-family: 'Microsoft YaHei'; }"
+        ).arg(bg, fg));
+    }
+
+    for (QFrame *panel : {leftPanelFrame, midPanelFrame, rightPanelFrame}) {
+        if (panel) panel->setStyleSheet(panelStyle);
+    }
 
     // ══════ 左侧面板 ══════
     if (leftPanelTitle)
-        leftPanelTitle->setStyleSheet(QString("color: %1; font-size: 14px; font-weight: bold;").arg(leftTitleClr));
+        leftPanelTitle->setStyleSheet(sectionStyle.arg(leftTitleClr));
     if (loraStateLabel)
-        loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px;").arg(loraColor));
+        loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px; border: none;").arg(loraColor));
 
     for (auto *card : dataCards)
-        card->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 8px;").arg(cardBg, border));
+        card->setStyleSheet(QString(
+            "background: %1; border: 1px solid %2; border-top: 1px solid %3; border-radius: 4px;"
+        ).arg(cardBg, border, borderHi));
     for (auto *tlbl : dataCardTitles)
-        tlbl->setStyleSheet(QString("color: %1; font-size: 12px;").arg(muted));
+        tlbl->setStyleSheet(QString("color: %1; font-size: 12px; border: none;").arg(muted));
     for (auto *vlbl : valueLabels)
-        vlbl->setStyleSheet(QString("color: %1; font-size: 22px; font-weight: bold;").arg(accent));
+        vlbl->setStyleSheet(QString("color: %1; font-size: 22px; font-weight: bold; border: none;").arg(accent));
 
-    // 数据看板按钮
     if (chartBtn)
-        chartBtn->setStyleSheet(QString("background: %1; color: white; padding: 8px; "
-            "font-weight: bold; border-radius: 4px;").arg(chartBtnBg));
+        chartBtn->setStyleSheet(techBtnStyle(
+            isDarkMode ? "#0088cc" : "#42a5f5",
+            isDarkMode ? "#005588" : "#1e88e5",
+            borderHi, "#ffffff"));
+    if (pestBtn)
+        pestBtn->setStyleSheet(techBtnStyle(pestBtnBg1, pestBtnBg2, pestBtnBorder, pestBtnText));
+    if (mockPestBtn)
+        mockPestBtn->setStyleSheet(QString(
+            "QPushButton { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 %1, stop:1 %2);"
+            "  color: %5; font-size: 11px; font-weight: bold; padding: 6px;"
+            "  border: 1px solid %3; border-radius: 3px; }"
+            "QPushButton:hover { color: #ffffff; }"
+        ).arg(mockBtnBg1, mockBtnBg2, mockBtnBorder, borderHi, mockBtnText));
+
+    if (pumpBtn)
+        pumpBtn->setStyleSheet(QString(
+            "QPushButton { background: %1; color: %2; padding: 9px 14px; font-size: 14px; font-weight: bold;"
+            "border: 1px solid %3; border-radius: 3px; }"
+            "QPushButton:hover { background: %4; }"
+            "QPushButton:checked { background: %5; color: #fff; border-color: %6; }"
+        ).arg(pumpBg, pumpText, pumpBorder,
+              isDarkMode ? "#124068" : "#bbdefb",
+              pumpChecked, isDarkMode ? "#42a5f5" : "#1565c0"));
+    if (lampBtn)
+        lampBtn->setStyleSheet(QString(
+            "QPushButton { background: %1; color: %2; padding: 9px 14px; font-size: 14px; font-weight: bold;"
+            "border: 1px solid %3; border-radius: 3px; }"
+            "QPushButton:hover { background: %4; }"
+            "QPushButton:checked { background: %5; color: #fff; border-color: %6; }"
+        ).arg(lampBg, lampText, lampBorder,
+              isDarkMode ? "#402030" : "#ffcdd2",
+              lampChecked, isDarkMode ? "#ef5350" : "#c62828"));
 
     // ══════ 中间面板 ══════
     if (videoTitleLabel)
-        videoTitleLabel->setStyleSheet(QString("font-weight: bold; color: %1;").arg(videoTitleClr));
+        videoTitleLabel->setStyleSheet(sectionStyle.arg(videoTitleClr));
     if (videoLabel)
-        videoLabel->setStyleSheet(QString("background: black; border: 2px solid %1; min-height: 180px; color: #4CAF50;").arg(border));
+        videoLabel->setStyleSheet(QString(
+            "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
+            "min-height: 180px; color: %3; border-radius: 3px;"
+        ).arg(border, borderHi, videoStatusClr));
     if (mapView)
-        mapView->setStyleSheet(QString("border: 1px solid %1; border-radius: 8px;").arg(border));
+        mapView->setStyleSheet(QString(
+            "border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
+        ).arg(border, borderHi));
 
     // ══════ 右侧面板 ══════
     if (aiTitleLabel)
-        aiTitleLabel->setStyleSheet(QString("font-size: 16px; color: %1; font-weight: bold;").arg(aiTitleClr));
+        aiTitleLabel->setStyleSheet(sectionStyle.arg(aiTitleClr));
+    if (pestPieTitle)
+        pestPieTitle->setStyleSheet(sectionStyle.arg(pestTitleClr));
+    if (pestDetailBtn)
+        pestDetailBtn->setStyleSheet(QString(
+            "QPushButton { background: transparent; color: %1; font-size: 11px; padding: 2px 8px;"
+            "  border: 1px solid %2; border-radius: 3px; }"
+            "QPushButton:hover { background: %3; color: #ffffff; }"
+        ).arg(pestTitleClr, border, isDarkMode ? "rgba(10,50,90,0.8)" : "rgba(187,222,251,0.8)"));
+    if (pestPieView) {
+        pestPieView->setStyleSheet(QString(
+            "background: transparent; border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
+        ).arg(border, borderHi));
+        if (pestPieView->chart()) {
+            pestPieView->chart()->setBackgroundBrush(QBrush(QColor(chartBg)));
+            pestPieView->chart()->legend()->setLabelColor(QColor(muted));
+        }
+    }
     if (chatDisplay)
-        chatDisplay->setStyleSheet(QString("background: %1; border: 1px solid %2; border-radius: 4px; padding: 10px;").arg(chatBg, border));
+        chatDisplay->setStyleSheet(QString(
+            "background: %1; border: 1px solid %2; border-top: 1px solid %3;"
+            "border-radius: 4px; padding: 10px;"
+        ).arg(chatBg, border, borderHi));
     if (chatInput)
-        chatInput->setStyleSheet(QString("padding: 8px; background: %1; color: %2; border: 1px solid %3;").arg(inputBg, fg, border));
+        chatInput->setStyleSheet(QString(
+            "padding: 8px; background: %1; color: %2; border: 1px solid %3; border-radius: 3px;"
+        ).arg(inputBg, fg, border));
+    if (voiceBtn && !recordProcess)
+        voiceBtn->setStyleSheet(techBtnStyle(
+            isDarkMode ? "#e65100" : "#ef6c00",
+            isDarkMode ? "#bf360c" : "#e65100",
+            isDarkMode ? "#ff8f00" : "#ffb74d", "#ffffff"));
     if (sendBtn)
-        sendBtn->setStyleSheet(QString("background: %1; padding: 8px 15px; font-weight: bold; color: white;").arg(sendBtnBg));
+        sendBtn->setStyleSheet(techBtnStyle(
+            isDarkMode ? "#0088cc" : "#42a5f5",
+            isDarkMode ? "#005588" : "#1e88e5",
+            borderHi, "#ffffff"));
 
     // ══════ 天气卡片 ══════
     if (weatherCard)
         weatherCard->setStyleSheet(QString(
             "QFrame#weatherCard {"
             "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 %1, stop:0.4 %2, stop:1 %3);"
-            "  border-top: 1px solid %4; border-left: 1px solid %5;"
-            "  border-right: 1px solid %6; border-bottom: 2px solid %7;"
-            "  border-radius: 8px;"
-            "}").arg(wcBg1, wcBg2, wcBg3, wcBorder1, wcBorder2, wcBorder2, isDarkMode ? "#080408" : "#a09060"));
+            "  border: 1px solid %4; border-top: 2px solid %5;"
+            "  border-radius: 4px;"
+            "}"
+        ).arg(wcBg1, wcBg2, wcBg3, wcBorder1, isDarkMode ? "#2a9fd8" : wcBorder2));
     if (weatherTitleLabel)
-        weatherTitleLabel->setStyleSheet(QString("color: %1; font-size: 13px; font-weight: bold; border: none; background: transparent;").arg(wcTitle));
+        weatherTitleLabel->setStyleSheet(QString(
+            "color: %1; font-size: 13px; font-weight: bold; border: none; background: transparent;"
+        ).arg(wcTitle));
     if (weatherDetailLabel)
-        weatherDetailLabel->setStyleSheet(QString("color: %1; font-size: 13px; border: none; background: transparent; padding: 3px 0;").arg(wcDetail));
+        weatherDetailLabel->setStyleSheet(QString(
+            "color: %1; font-size: 13px; border: none; background: transparent; padding: 3px 0;"
+        ).arg(wcDetail));
     if (weatherTimeLabel)
-        weatherTimeLabel->setStyleSheet(QString("color: %1; font-size: 11px; border: none; background: transparent;").arg(wcTime));
+        weatherTimeLabel->setStyleSheet(QString(
+            "color: %1; font-size: 11px; border: none; background: transparent;"
+        ).arg(wcTime));
+    if (weatherRefreshBtn)
+        weatherRefreshBtn->setStyleSheet(techBtnStyle(
+            isDarkMode ? "#124068" : "#bbdefb",
+            isDarkMode ? "#0c3050" : "#90caf9",
+            wcBorder1, wcTitle));
 
     // ══════ 主题按钮 ══════
     if (themeBtn)
         themeBtn->setStyleSheet(QString(
             "QPushButton { background: %1; color: %2; font-size: 12px; font-weight: bold;"
-            "  border: 1px solid %3; border-radius: 4px; padding: 2px 8px; }"
-            "QPushButton:hover { background: %4; color: %5; }")
-            .arg(tbBg, tbColor, tbBorder, tbHoverBg, tbHoverColor));
+            "  border: 1px solid %3; border-radius: 3px; padding: 2px 8px; }"
+            "QPushButton:hover { background: %4; color: %5; }"
+        ).arg(tbBg, tbColor, tbBorder, tbHoverBg, tbHoverColor));
 
     // ══════ 看板窗口（同步主题） ══════
     if (chartDashboard) {
-        chartDashboard->setStyleSheet(QString(
-            "background-color: %1; color: %2; font-family: 'Microsoft YaHei';").arg(bg, fg));
+        chartDashboard->applyTheme(isDarkMode);
     }
 }
 
