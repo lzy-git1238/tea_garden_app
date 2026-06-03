@@ -1,0 +1,96 @@
+<h2>设计 · 第4节：流量状态卡片 & 调度引擎</h2>
+<p class="subtitle">灌溉进行中时左侧栏显示的独立卡片 + 1分钟调度检查流程</p>
+
+<h3>💧 灌溉进行中 — 流量状态卡片</h3>
+<div class="mockup">
+  <div class="mockup-header">卡片仅在灌溉泵运行时出现（左侧栏，控制区上方）</div>
+  <div class="mockup-body" style="padding:12px;">
+    <div style="background:linear-gradient(135deg, #1a3a2c, #1e2a3a); border-radius:6px; padding:12px; border-left:3px solid #4caf50;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-weight:bold; font-size:14px; color:#a5d6a7;">💧 灌溉进行中</span>
+        <span style="font-size:11px; color:#ffcc80;">⏱ 计划 #1</span>
+      </div>
+      <div style="display:flex; gap:12px; margin-top:10px; justify-content:space-around;">
+        <div style="text-align:center;">
+          <div style="font-size:24px; font-weight:bold; color:#fff;">30.0</div>
+          <div style="font-size:11px; color:#888;">已灌溉 (L)</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:24px; font-weight:bold; color:#4fc3f7;">75.0</div>
+          <div style="font-size:11px; color:#888;">预计总量 (L)</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:24px; font-weight:bold; color:#ffcc80;">18:00</div>
+          <div style="font-size:11px; color:#888;">剩余时间</div>
+        </div>
+      </div>
+      <!-- 进度条 -->
+      <div style="display:flex; align-items:center; gap:8px; margin-top:10px;">
+        <span style="font-size:11px; color:#888;">12/30 min</span>
+        <div style="flex:1; height:5px; background:#333; border-radius:3px; overflow:hidden;">
+          <div style="width:40%; height:100%; background:linear-gradient(to right, #4caf50, #81c784); border-radius:3px;"></div>
+        </div>
+        <span style="font-size:11px; color:#888;">40%</span>
+      </div>
+      <!-- 停止按钮 -->
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button class="mock-button" style="padding:5px 16px; font-size:12px; background:#c62828; color:#fff; flex:1;">⏹ 停止灌溉</button>
+        <button class="mock-button" style="padding:5px 16px; font-size:12px; background:#333; color:#ccc;">⚙ 设置流速</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top: 24px;">⏰ 调度引擎 — 核心流程</h3>
+<div class="mockup">
+  <div class="mockup-header">每分钟触发一次 checkSchedules()</div>
+  <div class="mockup-body" style="padding:12px; font-size:13px; color:#ccc; line-height:1.8;">
+    <div style="background:#1e2a3a; border-radius:6px; padding:16px;">
+      <div style="font-family:monospace; line-height:2;">
+        <span style="color:#81c784;">checkSchedules()</span> {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;now = QDateTime::currentDateTime()<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;today_dow = now.dayOfWeek()  <span style="color:#888;">// 1=周一</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;today_time = now.toString("HH:mm")<br><br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ffcc80;">// 1. 检查到期的关闭任务</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">for each</span> (active_job in <span style="color:#a5d6a7;">activeJobs</span>) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">if</span> (now >= active_job.end_time) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sendLoraCommand(device, off_cmd)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logToDb(action="off", volume=cumulative)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hideFlowCard()<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a5d6a7;">activeJobs</span>.remove(device)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#ffcc80;">// 2. 检查到期的开启任务</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;plans = ScheduleStore::queryEnabled(device, today_dow, today_time)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">for each</span> (plan in plans) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">if</span> (!<span style="color:#a5d6a7;">activeJobs</span>.contains(device)) {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sendLoraCommand(device, on_cmd)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;logToDb(action="on")<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a5d6a7;">activeJobs</span>[device] = {end: now+plan.duration}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;showFlowCard(plan)  <span style="color:#888;">// 仅 pump</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+        }<br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top: 20px;">🔄 流量卡片刷新 — 每秒更新</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-size:13px; color:#ccc; line-height:1.8;">
+    <div style="background:#1e2a3a; border-radius:6px; padding:12px;">
+      <span style="color:#81c784;">refreshFlowCard()</span> {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;flow_rate = QSettings("pump/flow_rate", 2.5)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;elapsed_sec = activeJob.start_time.secsTo(now)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;current_volume = flow_rate * elapsed_sec / 60.0<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;expected_volume = flow_rate * plan.duration_min<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#888;">// 更新卡片：已灌溉量、进度条、剩余时间</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;flowCard->update(current_volume, expected_volume, remaining_sec)<br>
+      }
+    </div>
+  </div>
+</div>
