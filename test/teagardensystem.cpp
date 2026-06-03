@@ -342,7 +342,11 @@ void TeaGardenSystem::setupMjpegStream() {
 
         if (videoLabel) {
             QSize sz = videoLabel->size();
-            if (sz.width() < 10) sz = QSize(640, 360);
+            if (sz.width() < 10) {
+                sz = QSize(640, 640 * kDroneVideoHeight / kDroneVideoWidth);
+            } else {
+                sz.setHeight(sz.width() * kDroneVideoHeight / kDroneVideoWidth);
+            }
             const QPixmap pix = QPixmap::fromImage(frame);
             videoLabel->setPixmap(pix.scaled(sz, Qt::KeepAspectRatio, Qt::SmoothTransformation));
             videoLabel->setText(QString());
