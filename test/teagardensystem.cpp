@@ -1213,6 +1213,7 @@ void TeaGardenSystem::applyTheme() {
         pumpChecked = "#1565c0";
         lampBg = "#281828"; lampText = "#ef9a9a"; lampBorder = "#6a3050";
         lampChecked = "#c62828";
+        schedBtnBg1 = "#0c3050"; schedBtnBg2 = "#081830"; schedBtnBorder = "#1a6fa8"; schedBtnText = "#90caf9";
     } else {
         bg          = "#eef4fb";  fg          = "#1a3050";
         panelBg     = "rgba(255, 255, 255, 0.85)";
