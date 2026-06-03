@@ -1001,7 +1001,9 @@ void TeaGardenSystem::applyTheme() {
         tbBg = "#0c3050";  tbColor = "#90caf9";  tbBorder = "#1a6fa8";
         tbHoverBg = "#124068";  tbHoverColor = "#ffffff";
         // 标题
-        leftTitleClr = "#00d4ff";  videoTitleClr = "#00d4ff";  aiTitleClr = "#00d4ff";
+        videoTitleClr = "#00d4ff";  mapTitleClr = "#00d4ff";
+        metricsTitleClr = "#00d4ff";  weatherSecClr = "#00d4ff";  aiTitleClr = "#00d4ff";
+        headerTitleClr = "#ffffff";  headerDecoClr = "#1a6fa8";
         pestTitleClr = "#ffb74d";
         pestBtnBg1 = "#0c3050"; pestBtnBg2 = "#081830"; pestBtnBorder = "#1a6fa8"; pestBtnText = "#90caf9";
         mockBtnBg1 = "#102840"; mockBtnBg2 = "#081828"; mockBtnBorder = "#1a5088"; mockBtnText = "#64b5f6";
