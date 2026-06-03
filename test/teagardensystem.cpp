@@ -23,6 +23,7 @@
 #include <QtCharts/QPieSlice>
 #include <QPixmap>
 #include <QResizeEvent>
+#include <QFont>
 #include <QWebSocket>
 #include <QDebug>
 #include <QStyle>
