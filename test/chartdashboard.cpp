@@ -170,29 +170,13 @@ void ChartDashboard::setupUI() {
     toolbar->addWidget(thresholdBtn);
 
     exportBtn = new QPushButton("📤 导出");
-    exportBtn->setStyleSheet(
-        "QPushButton {"
-        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #3a6840, stop:0.5 #1e4820, stop:1 #0f3010);"
-        "  color: #d0f0d0; font-size: 13px; font-weight: bold; padding: 6px 14px;"
-        "  border-top: 1px solid #50b060; border-left: 1px solid #409050;"
-        "  border-right: 1px solid #103018; border-bottom: 2px solid #081808;"
-        "  border-radius: 5px;"
-        "}"
-        "QPushButton:hover {"
-        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #4a9050, stop:0.5 #2e7030, stop:1 #1a4818);"
-        "  color: #ffffff;"
-        "}"
-        "QPushButton:pressed {"
-        "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 #0f3010, stop:0.5 #1e4820, stop:1 #3a6840);"
-        "  border-top: 1px solid #103018; border-bottom: 1px solid #50b060;"
-        "  padding-top: 2px;"
-        "}"
-    );
     connect(exportBtn, &QPushButton::clicked, this, &ChartDashboard::onExportExcel);
     exportBtn->setFixedWidth(90);
     toolbar->addWidget(exportBtn);
 
     mainLayout->addLayout(toolbar);
+    fromLbl->setObjectName("chartMutedLbl");
+    toLbl->setObjectName("chartMutedLbl");
 
     // ===== 图表滚动区 =====
     scrollArea = new QScrollArea();
