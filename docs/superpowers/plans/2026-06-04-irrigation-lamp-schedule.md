@@ -485,6 +485,9 @@ class QComboBox;
 class QTableWidget;
 class QPushButton;
 class QLabel;
+class QCheckBox;
+class QTimeEdit;
+class QSpinBox;
 class QChartView;
 class QTextEdit;
 
