@@ -300,34 +300,20 @@ void TeaGardenSystem::setupUI() {
     metricsTitleLabel = new QLabel("▎ 实时环境监控");
     rightPanel->addWidget(metricsTitleLabel);
 
-    auto *metricsGrid = new QGridLayout();
-    metricsGrid->setSpacing(6);
+    auto *metricsWrap = new QWidget();
+    metricsWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto *metricsGrid = new QGridLayout(metricsWrap);
+    metricsGrid->setSpacing(8);
+    metricsGrid->setContentsMargins(0, 0, 0, 0);
     QStringList names = {"空气温度", "空气湿度", "光照强度", "土壤pH", "风速", "土壤温度", "土壤湿度", "土壤电导率"};
     QStringList units = {"℃", "%", "Lux", "", "m/s", "℃", "%", "mS/cm"};
     for (int i = 0; i < names.size(); ++i) {
         metricsGrid->addWidget(createDataCard(names[i], i, units[i]), i / 2, i % 2);
     }
-    rightPanel->addLayout(metricsGrid);
-
-    auto *pestHeaderRow = new QHBoxLayout();
-    pestPieTitle = new QLabel("▎ 病虫害统计");
-    pestHeaderRow->addWidget(pestPieTitle);
-    pestHeaderRow->addStretch();
-    pestDetailBtn = new QPushButton("详情 ▶");
-    connect(pestDetailBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
-    pestHeaderRow->addWidget(pestDetailBtn);
-    rightPanel->addLayout(pestHeaderRow);
-
-    auto *pestChart = new QChart();
-    pestChart->setBackgroundBrush(QBrush(QColor("#0a1628")));
-    pestChart->legend()->setLabelColor(QColor("#7eb8d4"));
-    pestChart->legend()->setAlignment(Qt::AlignBottom);
-    pestChart->setMargins(QMargins(0, 0, 0, 0));
-    pestPieView = new QChartView(pestChart);
-    pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(160);
-    pestPieView->setMaximumHeight(200);
-    rightPanel->addWidget(pestPieView);
+    for (int r = 0; r < 4; ++r) metricsGrid->setRowStretch(r, 1);
+    metricsGrid->setColumnStretch(0, 1);
+    metricsGrid->setColumnStretch(1, 1);
+    rightPanel->addWidget(metricsWrap, 2);
 
     aiTitleLabel = new QLabel("▎ AI 智慧管家");
     rightPanel->addWidget(aiTitleLabel);
