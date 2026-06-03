@@ -108,6 +108,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     // 初始化 SQLite 数据存储
     DataStore::instance()->init(QCoreApplication::applicationDirPath() + "/sensor_data.db");
     PestStore::instance()->init(QCoreApplication::applicationDirPath() + "/pest_data.db");
+    ScheduleStore::instance()->init(QCoreApplication::applicationDirPath() + "/schedule.db");
     IotUploader::instance()->init(QCoreApplication::applicationDirPath() + "/../IOT_DATA");
 
     // 初始化系统托盘
