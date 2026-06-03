@@ -224,7 +224,7 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     Q_UNUSED(unit);
 
     auto *card = new QWidget();
-    card->setStyleSheet("background: rgba(0,0,0,0.3); border: 1px solid #1a2a3a; border-radius: 6px;");
+    card->setStyleSheet("background: rgba(10, 35, 70, 0.55); border: 1px solid #1a4a78; border-top: 2px solid #2a9fd8; border-radius: 4px;");
     auto *cardLayout = new QVBoxLayout(card);
     cardLayout->setContentsMargins(8, 4, 8, 4);
     cardLayout->setSpacing(4);
