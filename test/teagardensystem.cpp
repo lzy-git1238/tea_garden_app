@@ -974,7 +974,8 @@ void TeaGardenSystem::applyTheme() {
     QString wcBg1, wcBg2, wcBg3, wcBorder1, wcBorder2;
     QString wcTitle, wcLevel, wcDetail, wcTime;
     QString tbBg, tbColor, tbBorder, tbHoverBg, tbHoverColor;
-    QString leftTitleClr, videoTitleClr, aiTitleClr, pestTitleClr;
+    QString videoTitleClr, mapTitleClr, metricsTitleClr, weatherSecClr, aiTitleClr, pestTitleClr;
+    QString headerTitleClr, headerDecoClr;
     QString pestBtnBg1, pestBtnBg2, pestBtnBorder, pestBtnText;
     QString mockBtnBg1, mockBtnBg2, mockBtnBorder, mockBtnText;
     QString pumpBg, pumpText, pumpBorder, pumpChecked;
