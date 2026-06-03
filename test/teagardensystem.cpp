@@ -321,7 +321,7 @@ void TeaGardenSystem::setupUI() {
     if (QGuiApplication::primaryScreen())
         oneCmPx = qRound(QGuiApplication::primaryScreen()->logicalDotsPerInchY() / 2.54);
     const int metricsStretch = 10;
-    const int aiStretch = metricsStretch + qMax(1, oneCmPx / 35);
+    const int aiStretch = metricsStretch + qMax(2, oneCmPx / 25);
     rightPanel->addWidget(metricsWrap, metricsStretch);
 
     auto *aiWrap = new QWidget();
