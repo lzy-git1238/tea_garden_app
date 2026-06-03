@@ -444,13 +444,13 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     Q_UNUSED(index);
 
     QFrame *card = new QFrame();
-    card->setMinimumHeight(72);
+    card->setMinimumHeight(78);
     card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     dataCards.append(card);
 
     QVBoxLayout *vbox = new QVBoxLayout(card);
-    vbox->setContentsMargins(10, 6, 10, 6);
-    vbox->setSpacing(4);
+    vbox->setContentsMargins(10, 8, 10, 8);
+    vbox->setSpacing(5);
     QLabel *tLbl = new QLabel(title);
     dataCardTitles.append(tLbl);
 
