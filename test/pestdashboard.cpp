@@ -34,7 +34,7 @@ void PestDashboard::setupUI() {
     // 标题行
     auto *topRow = new QHBoxLayout();
     countLabel = new QLabel("共检测到 0 处异常");
-    countLabel->setStyleSheet("color: #00E5FF; font-size: 16px; font-weight: bold;");
+    countLabel->setStyleSheet("color: #00d4ff; font-size: 16px; font-weight: bold;");
     topRow->addWidget(countLabel);
     topRow->addStretch();
 
