@@ -1245,7 +1245,8 @@ void TeaGardenSystem::showWeatherDetail() {
             innerTitle += " · " + parts[1];
     }
     auto *title = new QLabel(innerTitle);
-    title->setStyleSheet("color: #4FC3F7; font-size: 18px; font-weight: bold; padding: 8px 0;");
+    title->setStyleSheet(QString("color: %1; font-size: 18px; font-weight: bold; padding: 8px 0;")
+        .arg(isDarkMode ? "#00d4ff" : "#0277bd"));
     layout->addWidget(title);
 
     // 表格
