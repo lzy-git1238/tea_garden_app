@@ -367,21 +367,18 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
 }
 
 QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit) {
-    // 【修复警告】使用 Q_UNUSED 忽略暂时不用的 index 参数
     Q_UNUSED(index);
 
     QFrame *card = new QFrame();
-    card->setStyleSheet("background: rgba(255,255,255,0.05); border: 1px solid #1a2a3a; border-radius: 8px;");
     card->setFixedHeight(80);
     dataCards.append(card);
 
     QVBoxLayout *vbox = new QVBoxLayout(card);
+    vbox->setContentsMargins(10, 6, 10, 6);
     QLabel *tLbl = new QLabel(title);
-    tLbl->setStyleSheet("color: #909399; font-size: 12px;");
     dataCardTitles.append(tLbl);
 
     QLabel *vLbl = new QLabel("-- " + unit);
-    vLbl->setStyleSheet("color: #00E5FF; font-size: 22px; font-weight: bold;");
 
     valueLabels.append(vLbl);
     vbox->addWidget(tLbl);
