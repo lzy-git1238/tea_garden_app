@@ -233,9 +233,9 @@ QWidget* ChartDashboard::createChartCard(const QString &title, const QString &un
     auto *titleRow = new QHBoxLayout();
 
     auto *header = new QPushButton("📈 " + title + "  ▼");
-    header->setStyleSheet("QPushButton { background: transparent; color: #00E5FF; "
+    header->setStyleSheet("QPushButton { background: transparent; color: #00d4ff; "
                           "font-size: 13px; font-weight: bold; text-align: left; "
-                          "border: none; padding: 4px 0; }");
+                          "border: none; padding: 4px 0 4px 8px; border-left: 3px solid #00d4ff; }");
     header->setCursor(Qt::PointingHandCursor);
     titleRow->addWidget(header);
     titleRow->addStretch();
