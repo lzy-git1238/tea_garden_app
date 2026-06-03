@@ -5,6 +5,8 @@
 #include "pestdata.h"
 #include "pestdashboard.h"
 #include "iotuploader.h"
+#include "schedulestore.h"
+#include "scheduledialog.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
