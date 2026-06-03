@@ -316,7 +316,12 @@ void TeaGardenSystem::setupUI() {
     for (int r = 0; r < 4; ++r) metricsGrid->setRowStretch(r, 1);
     metricsGrid->setColumnStretch(0, 1);
     metricsGrid->setColumnStretch(1, 1);
-    rightPanel->addWidget(metricsWrap, 1);
+    int oneCmPx = 38;
+    if (QGuiApplication::primaryScreen())
+        oneCmPx = qRound(QGuiApplication::primaryScreen()->logicalDotsPerInchY() / 2.54);
+    const int metricsStretch = 10;
+    const int aiStretch = metricsStretch + qMax(1, oneCmPx / 4);
+    rightPanel->addWidget(metricsWrap, metricsStretch);
 
     auto *aiWrap = new QWidget();
     aiWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
