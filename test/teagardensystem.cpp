@@ -1108,9 +1108,9 @@ void TeaGardenSystem::applyTheme() {
 
     // ══════ 右侧面板 ══════
     if (aiTitleLabel)
-        aiTitleLabel->setStyleSheet(sectionStyle.arg(aiTitleClr));
+        aiTitleLabel->setStyleSheet(sectionTitleStyle(aiTitleClr));
     if (pestPieTitle)
-        pestPieTitle->setStyleSheet(sectionStyle.arg(pestTitleClr));
+        pestPieTitle->setStyleSheet(sectionTitleStyle(pestTitleClr));
     if (pestDetailBtn)
         pestDetailBtn->setStyleSheet(QString(
             "QPushButton { background: transparent; color: %1; font-size: 11px; padding: 2px 8px;"
