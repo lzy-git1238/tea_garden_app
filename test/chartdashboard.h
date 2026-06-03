@@ -54,6 +54,7 @@ private:
     double dbEarliestSec = 0;
     double dbLatestSec   = 0;
     static constexpr int sliderSteps = 720;
+    bool isDarkMode = true;
 };
 
 #endif // CHARTDASHBOARD_H
