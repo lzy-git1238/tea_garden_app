@@ -330,7 +330,7 @@ void TeaGardenSystem::setupUI() {
 
     rightPanel->addWidget(chatDisplay, 1);
     rightPanel->addLayout(inputBox);
-    bodyLayout->addWidget(rightPanelFrame, 30);
+    bodyLayout->addWidget(rightPanelFrame, 28);
 
     rootLayout->addLayout(bodyLayout, 1);
     applyTheme();
