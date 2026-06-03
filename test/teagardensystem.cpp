@@ -314,14 +314,20 @@ void TeaGardenSystem::setupUI() {
     for (int r = 0; r < 4; ++r) metricsGrid->setRowStretch(r, 1);
     metricsGrid->setColumnStretch(0, 1);
     metricsGrid->setColumnStretch(1, 1);
-    rightPanel->addWidget(metricsWrap, 2);
+    rightPanel->addWidget(metricsWrap, 1);
+
+    auto *aiWrap = new QWidget();
+    aiWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto *aiPanel = new QVBoxLayout(aiWrap);
+    aiPanel->setContentsMargins(0, 0, 0, 0);
+    aiPanel->setSpacing(6);
 
     aiTitleLabel = new QLabel("▎ AI 智慧管家");
-    rightPanel->addWidget(aiTitleLabel);
+    aiPanel->addWidget(aiTitleLabel);
 
     chatDisplay = new QTextEdit();
     chatDisplay->setReadOnly(true);
-    chatDisplay->setMinimumHeight(100);
+    aiPanel->addWidget(chatDisplay, 1);
 
     auto *inputBox = new QHBoxLayout();
     chatInput = new QLineEdit();
@@ -335,9 +341,9 @@ void TeaGardenSystem::setupUI() {
     inputBox->addWidget(chatInput);
     inputBox->addWidget(voiceBtn);
     inputBox->addWidget(sendBtn);
+    aiPanel->addLayout(inputBox);
 
-    rightPanel->addWidget(chatDisplay, 1);
-    rightPanel->addLayout(inputBox);
+    rightPanel->addWidget(aiWrap, 1);
     bodyLayout->addWidget(rightPanelFrame, 28);
 
     rootLayout->addLayout(bodyLayout, 1);
