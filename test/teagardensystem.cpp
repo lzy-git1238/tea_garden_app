@@ -1144,7 +1144,9 @@ void TeaGardenSystem::applyTheme() {
             "border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
         ).arg(border, borderHi));
 
-    // ══════ 右侧面板 ══════
+    // ══════ 右栏：指标网格 + AI ══════
+    if (metricsTitleLabel)
+        metricsTitleLabel->setStyleSheet(sectionTitleStyle(metricsTitleClr));
     if (aiTitleLabel)
         aiTitleLabel->setStyleSheet(sectionTitleStyle(aiTitleClr));
     if (pestPieTitle)
