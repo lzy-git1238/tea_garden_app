@@ -97,7 +97,7 @@ ChartDashboard::ChartDashboard(QWidget *parent)
 {
     setWindowTitle("数据折线看板");
     resize(1050, 780);
-    setStyleSheet("background-color: #051623; color: #E0E0E0; font-family: 'Microsoft YaHei';");
+    setStyleSheet("background-color: #0a1628; color: #E8F4FF; font-family: 'Microsoft YaHei';");
 
     auto tr = DataStore::instance()->fullTimeRange();
     if (tr.valid) {
