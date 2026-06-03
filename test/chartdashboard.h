@@ -17,6 +17,7 @@ class ChartDashboard : public QWidget {
 public:
     explicit ChartDashboard(QWidget *parent = nullptr);
     void reapplyThresholds();
+    void applyTheme(bool isDarkMode);
 
 private slots:
     void onPreset1h();
