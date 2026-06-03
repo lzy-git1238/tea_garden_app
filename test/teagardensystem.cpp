@@ -1128,9 +1128,27 @@ void TeaGardenSystem::applyTheme() {
         deco->setStyleSheet(QString("color: %1; font-size: 14px; border: none;").arg(headerDecoClr));
     }
 
-    // ══════ 左栏：监控 ══════
+    // ══════ 左栏：监控 + 病虫害 ══════
     if (videoTitleLabel)
         videoTitleLabel->setStyleSheet(sectionTitleStyle(videoTitleClr));
+    if (pestPieTitle)
+        pestPieTitle->setStyleSheet(sectionTitleStyle(pestTitleClr));
+    if (pestDetailBtn)
+        pestDetailBtn->setStyleSheet(QString(
+            "QPushButton { background: transparent; color: %1; font-size: 11px; padding: 2px 8px;"
+            "  border: 1px solid %2; border-radius: 3px; }"
+            "QPushButton:hover { background: %3; color: #ffffff; }"
+        ).arg(pestTitleClr, border, isDarkMode ? "rgba(10,50,90,0.8)" : "rgba(187,222,251,0.8)"));
+    if (pestPieView) {
+        pestPieView->setStyleSheet(QString(
+            "background: transparent; border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
+        ).arg(border, borderHi));
+        if (pestPieView->chart()) {
+            pestPieView->chart()->setBackgroundBrush(QBrush(QColor(chartBg)));
+            pestPieView->chart()->legend()->setLabelColor(QColor(muted));
+            pestPieView->chart()->legend()->setFont(QFont("Microsoft YaHei", 10));
+        }
+    }
     if (loraStateLabel)
         loraStateLabel->setStyleSheet(QString("color: %1; font-size: 12px; border: none;").arg(loraColor));
 
