@@ -1,0 +1,118 @@
+<h2>设计 · 第2节：IotUploader 核心逻辑</h2>
+<p class="subtitle">用 QMqttClient 替换 mosquitto_pub，新增命令订阅和响应</p>
+
+<h3>📡 MQTT Topic 定义</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:13px; color:#ccc;">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#1e2a3a;">
+        <th style="padding:6px 10px; text-align:left;">用途</th>
+        <th style="padding:6px 10px; text-align:left;">Topic</th>
+        <th style="padding:6px 10px; text-align:left;">方向</th>
+        <th style="padding:6px 10px; text-align:left;">QoS</th>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#81c784;">属性上报</td>
+        <td style="padding:6px 10px; color:#4fc3f7;">$oc/devices/<b>{id}</b>/sys/properties/report</td>
+        <td style="padding:6px 10px;">设备 → 云端</td>
+        <td style="padding:6px 10px;">1</td>
+      </tr>
+      <tr style="border-bottom:1px solid #2a3a4a;">
+        <td style="padding:6px 10px; color:#ffcc80;">命令订阅</td>
+        <td style="padding:6px 10px; color:#ffcc80;">$oc/devices/<b>{id}</b>/sys/commands/#</td>
+        <td style="padding:6px 10px;">云端 → 设备</td>
+        <td style="padding:6px 10px;">1</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 10px; color:#81c784;">命令响应</td>
+        <td style="padding:6px 10px; color:#81c784;">$oc/devices/<b>{id}</b>/sys/commands/response/request_id=<b>{rid}</b></td>
+        <td style="padding:6px 10px;">设备 → 云端</td>
+        <td style="padding:6px 10px;">1</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<h3 style="margin-top:20px;">⚙️ 新增信号</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:12px; font-size:13px; color:#ccc; line-height:1.8;">
+    <div style="font-family:monospace;">
+      <span style="color:#ffcc80;">// TeaGardenSystem 连接此信号，收到后转发 LoRa</span><br>
+      <span style="color:#4fc3f7;">signals:</span><br>
+      &nbsp;&nbsp;<span style="color:#81c784;">void deviceCommandReceived(</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fff;">const QString &device,</span>  <span style="color:#888;">// "pump" / "lamp"</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fff;">bool on,</span>                  <span style="color:#888;">// true=开 false=关</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fff;">const QString &requestId</span>  <span style="color:#888;">// 华为云 request_id，响应时需要回传</span><br>
+      &nbsp;&nbsp;<span style="color:#81c784;">);</span>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:20px;">🔽 命令解析逻辑</h3>
+<div class="mockup">
+  <div class="mockup-header">messageReceived 槽函数</div>
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:12px; color:#ccc; line-height:1.6;">
+    <span style="color:#4fc3f7;">void IotUploader::onMessageReceived</span>(topic, payload) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#888;">// 1. 解析 JSON</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QJsonObject msg = QJsonDocument::fromJson(payload).object();<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QString serviceId = msg[<span style="color:#ffcc80;">"service_id"</span>].toString();<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QString cmdName   = msg[<span style="color:#ffcc80;">"command_name"</span>].toString();<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QString requestId = msg[<span style="color:#ffcc80;">"request_id"</span>].toString();<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QJsonObject paras = msg[<span style="color:#ffcc80;">"paras"</span>].toObject();<br><br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#888;">// 2. 识别命令</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">if</span> (serviceId == <span style="color:#81c784;">"pump_control"</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">bool</span> on = paras[<span style="color:#81c784;">"pump"</span>].toBool();<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">emit</span> deviceCommandReceived(<span style="color:#81c784;">"pump"</span>, on, requestId);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;} <span style="color:#4fc3f7;">else if</span> (serviceId == <span style="color:#81c784;">"light_control"</span>) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">bool</span> on = paras[<span style="color:#81c784;">"light"</span>].toBool();<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">emit</span> deviceCommandReceived(<span style="color:#81c784;">"lamp"</span>, on, requestId);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    }
+  </div>
+</div>
+
+<h3 style="margin-top:20px;">📤 响应方法</h3>
+<div class="mockup">
+  <div class="mockup-header">TeaGardenSystem 调用此方法发响应到云端</div>
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:12px; color:#ccc; line-height:1.6;">
+    <span style="color:#4fc3f7;">void IotUploader::sendCommandResponse</span>(<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fff;">const QString &cmdName,</span>  <span style="color:#888;">// "pump_control" / "light"</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fff;">const QString &requestId,</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fff;">int result</span>                 <span style="color:#888;">// 0=成功 1=失败</span><br>
+    ) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QString topic = QString(<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#81c784;">"$oc/devices/%1/sys/commands/response/request_id=%2"</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;).arg(deviceId, requestId);<br><br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;QJsonObject body;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;body[<span style="color:#81c784;">"result_code"</span>] = 0;    <span style="color:#888;">// 平台通信成功</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;body[<span style="color:#81c784;">"response_name"</span>] = cmdName;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QJsonObject r;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;r[<span style="color:#81c784;">"result"</span>] = result;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;body[<span style="color:#81c784;">"paras"</span>] = r;<br><br>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;m_client->publish(topic, QJsonDocument(body).toJson(QJsonDocument::Compact), 1);<br>
+    }
+  </div>
+</div>
+
+<h3 style="margin-top:20px;">🔗 TeaGardenSystem 中的信号连接</h3>
+<div class="mockup">
+  <div class="mockup-header">构造函数中添加</div>
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:12px; color:#ccc;">
+    connect(iotUploader, &IotUploader::deviceCommandReceived,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this, <span style="color:#ffcc80;">&TeaGardenSystem::onIotCommand</span>);<br><br>
+
+    <span style="color:#888;">// 新槽函数</span><br>
+    <span style="color:#4fc3f7;">void TeaGardenSystem::onIotCommand</span>(<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;device, on, requestId) {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">int</span> cmd = (device == <span style="color:#81c784;">"pump"</span>) ? (on ? 3 : 4) : (on ? 1 : 2);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">bool</span> ok = loraManager->sendCommand(cmd);<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#4fc3f7;">int</span> result = ok ? 0 : 1;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;QString cmdName = (device == <span style="color:#81c784;">"pump"</span>) <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;? <span style="color:#81c784;">"pump_control"</span> : <span style="color:#81c784;">"light_control"</span>;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;IotUploader::instance()->sendCommandResponse(cmdName, requestId, result);<br>
+    }
+  </div>
+</div>
