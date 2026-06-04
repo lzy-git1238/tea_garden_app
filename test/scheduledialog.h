@@ -4,6 +4,8 @@
 #include <QDialog>
 #include "schedulestore.h"
 
+#include <QtCharts/QChartView>
+
 class QTabWidget;
 class QComboBox;
 class QTableWidget;
@@ -12,7 +14,6 @@ class QLabel;
 class QCheckBox;
 class QTimeEdit;
 class QSpinBox;
-class QChartView;
 class QTextEdit;
 
 // ── 新增/编辑计划的子对话框 ──
