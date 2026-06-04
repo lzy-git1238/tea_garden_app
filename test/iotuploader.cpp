@@ -122,6 +122,8 @@ void IotUploader::connection_lost(const std::string &cause) {
 
 void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
     QString payloadStr = QString::fromStdString(msg->get_payload_str());
+    qDebug() << "[IoT] === MESSAGE ARRIVED ===";
+    qDebug() << "[IoT] raw payload:" << payloadStr;
 
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(payloadStr.toUtf8(), &err);
@@ -135,18 +137,25 @@ void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
     QString requestId = obj["request_id"].toString();
     QJsonObject paras = obj["paras"].toObject();
 
-    qDebug() << "[IoT] received command:" << serviceId << cmdName << requestId;
+    qDebug() << "[IoT] parsed: serviceId=" << serviceId
+             << "cmdName=" << cmdName
+             << "requestId=" << requestId
+             << "paras=" << paras;
 
     if (cmdName == "pump_control") {
         bool on = paras["pump"].toBool();
-        QMetaObject::invokeMethod(this, [this, on, requestId]() {
+        bool ok = QMetaObject::invokeMethod(this, [this, on, requestId]() {
+            qDebug() << "[IoT] emit deviceCommandReceived(pump," << on << ")";
             emit deviceCommandReceived("pump", on, requestId);
         }, Qt::QueuedConnection);
+        qDebug() << "[IoT] invokeMethod queued:" << ok;
     } else if (cmdName == "light") {
         bool on = paras["light"].toBool();
-        QMetaObject::invokeMethod(this, [this, on, requestId]() {
+        bool ok = QMetaObject::invokeMethod(this, [this, on, requestId]() {
+            qDebug() << "[IoT] emit deviceCommandReceived(lamp," << on << ")";
             emit deviceCommandReceived("lamp", on, requestId);
         }, Qt::QueuedConnection);
+        qDebug() << "[IoT] invokeMethod queued:" << ok;
     } else {
         qDebug() << "[IoT] unknown command:" << cmdName << "(service:" << serviceId << ") - ignored";
     }
