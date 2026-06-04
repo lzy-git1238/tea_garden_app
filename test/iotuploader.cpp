@@ -199,27 +199,25 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
     fprintf(stderr, "[IOT-RESP] topic=%s\n", topic.toUtf8().constData());
     fprintf(stderr, "[IOT-RESP] payload=%s\n", payload.constData());
 
-    // 直接 publish，不检查 is_connected()——该函数在回调→主线程切换
-    // 的几百毫秒间可能因 TCP 抖动返回 false，导致响应被静默丢弃。
-    // Paho publish 内部自己会处理连接状态。
+    // 直接 publish, no is_connected() gate
     try {
         m_client->publish(topic.toStdString(),
                           (const void*)payload.constData(),
                           (size_t)payload.size(), 1, false);
-        qDebug() << "[IoT] response published OK:" << cmdName << "result:" << result;
+        fprintf(stderr, "[IOT-RESP] publish() returned OK\n");
     } catch (const mqtt::exception &e) {
-        qWarning() << "[IoT] publish response failed:" << e.what();
-        // Paho 连接可能真的断了——等待异步重连后重试一次
+        fprintf(stderr, "[IOT-RESP] publish() EXCEPTION: %s\n", e.what());
+        // 重试
         QTimer::singleShot(2000, this, [this, topic, payload, cmdName, result]() {
             try {
                 if (m_client) {
                     m_client->publish(topic.toStdString(),
                                       (const void*)payload.constData(),
                                       (size_t)payload.size(), 1, false);
-                    qDebug() << "[IoT] response published (retry) OK:" << cmdName << "result:" << result;
+                    fprintf(stderr, "[IOT-RESP] retry publish OK\n");
                 }
             } catch (const mqtt::exception &e2) {
-                qWarning() << "[IoT] response retry also failed:" << e2.what();
+                fprintf(stderr, "[IOT-RESP] retry publish FAILED: %s\n", e2.what());
             }
         });
     }
