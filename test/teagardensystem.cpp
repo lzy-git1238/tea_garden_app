@@ -1,4 +1,5 @@
 #include "teagardensystem.h"
+#include <cstdio>
 #include "chartdashboard.h"
 #include "thresholddialog.h"
 #include "datastore.h"
