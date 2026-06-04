@@ -60,7 +60,7 @@
 ```json
 {
   "result_code": 0,
-  "response_name": "light",
+  "response_name": "light_control",
   "paras": { "result": 0 }
 }
 ```
