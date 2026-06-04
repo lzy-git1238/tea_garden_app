@@ -1850,6 +1850,55 @@ void TeaGardenSystem::openScheduleDialog(const QString &deviceType) {
     dlg->show();
 }
 
+// ── IoT 云端命令 ──
+
+void TeaGardenSystem::onIotCommand(const QString &device, bool on,
+                                    const QString &requestId) {
+    qDebug() << "[TeaGarden] IoT command:" << device << (on ? "on" : "off");
+
+    // 云端命令覆盖本地定时
+    if (activeJobs.contains(device)) {
+        activeJobs.remove(device);
+        if (device == "pump") flowCard->setVisible(false);
+    }
+
+    // 同步按钮状态
+    if (device == "pump") {
+        pumpBtn->blockSignals(true);
+        pumpBtn->setChecked(on);
+        pumpBtn->blockSignals(false);
+    } else {
+        lampBtn->blockSignals(true);
+        lampBtn->setChecked(on);
+        lampBtn->blockSignals(false);
+    }
+
+    // LoRa 发送（直接发送确保即时响应）
+    int cmd = (device == "pump") ? (on ? 3 : 4) : (on ? 1 : 2);
+    bool ok = sendLoraCommand(device, cmd);
+    int result = ok ? 0 : 1;
+
+    // 记录日志
+    ScheduleLogEntry log;
+    log.deviceType = device;
+    log.scheduleId = 0;
+    log.action = on ? "on" : "off";
+    log.trigger = "manual";  // 云端命令标注为手动
+    log.ts = QDateTime::currentDateTime();
+    ScheduleStore::instance()->appendLog(log);
+
+    // 聊天通知
+    QString devName = (device == "pump") ? "灌溉泵" : "驱虫灯";
+    appendChatMessage("云端", QString("📡 %1: %2 %3")
+        .arg(devName)
+        .arg(on ? "开启" : "关闭")
+        .arg(ok ? "" : "(LoRa发送失败)"));
+
+    // 响应云端
+    QString cmdName = (device == "pump") ? "pump_control" : "light_control";
+    IotUploader::instance()->sendCommandResponse(cmdName, requestId, result);
+}
+
 // ── LoRa 下行控制 ──
 
 bool TeaGardenSystem::sendLoraCommand(const QString & /*deviceKey*/, int value) {
