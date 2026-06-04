@@ -170,6 +170,10 @@ void IotUploader::delivery_complete(mqtt::delivery_token_ptr /*token*/) {
 void IotUploader::sendCommandResponse(const QString &cmdName,
                                        const QString &requestId,
                                        int result) {
+    qDebug() << "[IoT] sendCommandResponse: cmdName=" << cmdName
+             << "requestId=" << requestId << "result=" << result
+             << "connected=" << (m_client ? m_client->is_connected() : false);
+
     if (!m_client || !m_client->is_connected()) {
         qWarning() << "[IoT] cannot respond, not connected";
         return;
