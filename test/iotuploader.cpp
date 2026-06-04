@@ -137,19 +137,18 @@ void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
 
     qDebug() << "[IoT] received command:" << serviceId << cmdName << requestId;
 
-    if (serviceId == "pump_control") {
+    if (cmdName == "pump_control") {
         bool on = paras["pump"].toBool();
-        // 跨线程安全 emit（callback 在 Paho 内部线程，需切换到 Qt 主线程）
         QMetaObject::invokeMethod(this, [this, on, requestId]() {
             emit deviceCommandReceived("pump", on, requestId);
         }, Qt::QueuedConnection);
-    } else if (serviceId == "light_control") {
+    } else if (cmdName == "light") {
         bool on = paras["light"].toBool();
         QMetaObject::invokeMethod(this, [this, on, requestId]() {
             emit deviceCommandReceived("lamp", on, requestId);
         }, Qt::QueuedConnection);
     } else {
-        qDebug() << "[IoT] unknown service:" << serviceId << "- ignored";
+        qDebug() << "[IoT] unknown command:" << cmdName << "(service:" << serviceId << ") - ignored";
     }
 }
 
