@@ -7,7 +7,6 @@
 #include <QFile>
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QThread>
 #include <mqtt/connect_options.h>
 #include <mqtt/ssl_options.h>
 #include <mqtt/message.h>
