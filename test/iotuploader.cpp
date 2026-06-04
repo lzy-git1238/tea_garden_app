@@ -145,20 +145,22 @@ void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
 
     if (cmdName == "pump_control") {
         bool on = paras["pump"].toBool();
+        fprintf(stderr, "[IOT-MSG] routing to pump_control, on=%d\n", on);
         bool ok = QMetaObject::invokeMethod(this, [this, on, requestId]() {
-            qDebug() << "[IoT] emit deviceCommandReceived(pump," << on << ")";
+            fprintf(stderr, "[IOT-EMIT] emitting deviceCommandReceived(pump, %d)\n", on);
             emit deviceCommandReceived("pump", on, requestId);
         }, Qt::QueuedConnection);
-        qDebug() << "[IoT] invokeMethod queued:" << ok;
+        fprintf(stderr, "[IOT-MSG] invokeMethod result=%d\n", ok);
     } else if (cmdName == "light") {
         bool on = paras["light"].toBool();
+        fprintf(stderr, "[IOT-MSG] routing to light, on=%d\n", on);
         bool ok = QMetaObject::invokeMethod(this, [this, on, requestId]() {
-            qDebug() << "[IoT] emit deviceCommandReceived(lamp," << on << ")";
+            fprintf(stderr, "[IOT-EMIT] emitting deviceCommandReceived(lamp, %d)\n", on);
             emit deviceCommandReceived("lamp", on, requestId);
         }, Qt::QueuedConnection);
-        qDebug() << "[IoT] invokeMethod queued:" << ok;
+        fprintf(stderr, "[IOT-MSG] invokeMethod result=%d\n", ok);
     } else {
-        qDebug() << "[IoT] unknown command:" << cmdName << "(service:" << serviceId << ") - ignored";
+        fprintf(stderr, "[IOT-MSG] UNKNOWN command, ignored\n");
     }
 }
 
