@@ -31,6 +31,7 @@
 #include <QWebSocket>
 #include <QDebug>
 #include <QStyle>
+#include <QSettings>
 using namespace QtCharts;
 #include <QApplication>
 #include <cmath>
