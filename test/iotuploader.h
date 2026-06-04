@@ -5,7 +5,6 @@
 #include <QJsonObject>
 #include <QString>
 #include <QTimer>
-#include <QMutex>
 #include <memory>
 #include <mqtt/async_client.h>
 
