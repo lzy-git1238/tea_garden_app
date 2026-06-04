@@ -173,13 +173,17 @@ void IotUploader::delivery_complete(mqtt::delivery_token_ptr /*token*/) {
 void IotUploader::sendCommandResponse(const QString &cmdName,
                                        const QString &requestId,
                                        int result) {
-    qDebug() << "[IoT] sendCommandResponse: cmdName=" << cmdName
-             << "requestId=" << requestId << "result=" << result;
+    fprintf(stderr, "[IOT-RESP] sendCommandResponse: cmdName=%s requestId=%s result=%d\n",
+            cmdName.toUtf8().constData(),
+            requestId.toUtf8().constData(),
+            result);
 
     if (!m_client) {
-        qWarning() << "[IoT] no client, cannot respond";
+        fprintf(stderr, "[IOT-RESP] FAIL: no client\n");
         return;
     }
+
+    fprintf(stderr, "[IOT-RESP] client connected=%d\n", m_client->is_connected() ? 1 : 0);
 
     QString topic = QString("$oc/devices/%1/sys/commands/response/request_id=%2")
                         .arg(m_deviceId, requestId);
@@ -192,8 +196,8 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
     body["paras"] = r;
 
     QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
-    qDebug() << "[IoT] response topic:" << topic;
-    qDebug() << "[IoT] response payload:" << payload;
+    fprintf(stderr, "[IOT-RESP] topic=%s\n", topic.toUtf8().constData());
+    fprintf(stderr, "[IOT-RESP] payload=%s\n", payload.constData());
 
     // 直接 publish，不检查 is_connected()——该函数在回调→主线程切换
     // 的几百毫秒间可能因 TCP 抖动返回 false，导致响应被静默丢弃。
