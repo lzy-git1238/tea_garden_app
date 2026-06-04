@@ -123,8 +123,8 @@ void IotUploader::connection_lost(const std::string &cause) {
 
 void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
     QString payloadStr = QString::fromStdString(msg->get_payload_str());
-    qDebug() << "[IoT] === MESSAGE ARRIVED ===";
-    qDebug() << "[IoT] raw payload:" << payloadStr;
+    fprintf(stderr, "[IOT-MSG] arrived, len=%d\n", (int)payloadStr.size());
+    fprintf(stderr, "[IOT-MSG] payload: %s\n", payloadStr.toUtf8().constData());
 
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(payloadStr.toUtf8(), &err);
