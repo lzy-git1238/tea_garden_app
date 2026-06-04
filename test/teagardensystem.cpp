@@ -1899,6 +1899,11 @@ void TeaGardenSystem::onIotCommand(const QString &device, bool on,
     // 响应云端
     QString cmdName = (device == "pump") ? "pump_control" : "light_control";
     IotUploader::instance()->sendCommandResponse(cmdName, requestId, result);
+
+    // 同步设备状态到云端
+    IotUploader::instance()->uploadDeviceState(
+        pumpBtn ? pumpBtn->isChecked() : false,
+        lampBtn ? lampBtn->isChecked() : false);
 }
 
 // ── LoRa 下行控制 ──
