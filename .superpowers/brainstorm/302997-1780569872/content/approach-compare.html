@@ -1,0 +1,86 @@
+<h2>A vs B：MQTT 双向通信方案对比</h2>
+<p class="subtitle">核心差异：外部进程 vs Qt 原生库</p>
+
+<div class="split" style="gap: 20px;">
+  <div class="mockup" style="flex:1;">
+    <div class="mockup-header">A: 双进程 mosquitto</div>
+    <div class="mockup-body" style="padding:12px; font-size:13px; color:#ccc; line-height:1.6;">
+      <div style="background:#1a2a1a; padding:8px; border-radius:4px; margin-bottom:8px;">
+        <div style="color:#81c784;">mosquitto_pub -l</div>
+        <div style="color:#888; font-size:11px;">属性上报 (已有，不动)</div>
+      </div>
+      <div style="background:#2a1a1a; padding:8px; border-radius:4px;">
+        <div style="color:#ffcc80;">mosquitto_sub -F '%j' -t ...</div>
+        <div style="color:#888; font-size:11px;">命令监听 (新增)</div>
+        <div style="color:#888; font-size:11px;">stdout 逐行 JSON → Qt QProcess 解析</div>
+      </div>
+      <div style="margin-top:8px;">响应怎么办？</div>
+      <div style="background:#1a1a2a; padding:8px; border-radius:4px;">
+        <div style="color:#4fc3f7;">需第三个 mosquitto_pub (一次性)</div>
+        <div style="color:#888; font-size:11px;">收到命令后起一个临时进程发响应</div>
+      </div>
+    </div>
+  </div>
+  <div class="mockup" style="flex:1;">
+    <div class="mockup-header">B: Qt MQTT 模块</div>
+    <div class="mockup-body" style="padding:12px; font-size:13px; color:#ccc; line-height:1.6;">
+      <div style="background:#1a1a2a; padding:8px; border-radius:4px; margin-bottom:8px;">
+        <div style="color:#4fc3f7;">QMqttClient</div>
+        <div style="color:#888; font-size:11px;">一个长连接，同时 pub + sub</div>
+      </div>
+      <div style="color:#888; font-size:11px; margin-top:4px;">subscribe → messageReceived 信号</div>
+      <div style="color:#888; font-size:11px;">publish() → 直接发响应</div>
+      <div style="color:#888; font-size:11px;">自动重连、TLS、QoS 内建</div>
+    </div>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top:20px;">
+  <div class="pros">
+    <h4>✅ A 的优点</h4>
+    <ul>
+      <li>不改现有代码架构，IotUploader 保持 mosquitto_pub 模式</li>
+      <li>mosquitto 是系统级工具，TLS 成熟，调试可单独命令行测试</li>
+      <li>不引入新 Qt 模块依赖</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>❌ A 的缺点</h4>
+    <ul>
+      <li><strong>3 个进程</strong>（pub长连接 + sub长连接 + 临时pub响应），进程管理复杂</li>
+      <li>临时起 mosquitto_pub 发响应 → 每次都要重新 TLS 握手（~1-2秒延迟）</li>
+      <li>sub 进程 stdout 按行解析，JSON 可能跨行截断，需自己拼接</li>
+      <li>命令响应不是实时的，"转发到LoRa然后等结果再响应"这种流程很难串起来</li>
+    </ul>
+  </div>
+</div>
+
+<div class="pros-cons" style="margin-top:12px;">
+  <div class="pros">
+    <h4>✅ B 的优点</h4>
+    <ul>
+      <li><strong>一个 MQTT 连接</strong>搞定全部：上报属性 + 收命令 + 发响应</li>
+      <li>信号/槽驱动：收到命令 → 转发LoRa → 等结果 → publish响应，流程清晰</li>
+      <li>内建 TLS、自动重连、QoS，不依赖外部 mosquitto 工具</li>
+      <li>响应零延迟，不需要临时起进程</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>❌ B 的缺点</h4>
+    <ul>
+      <li>需要安装 QtMqtt 模块（<code>apt install libqt5mqtt5-dev</code> 或自编译）</li>
+      <li>test.pro 加 <code>QT += mqtt</code></li>
+      <li>需要改造 IotUploader，把 mosquitto_pub 替换为 QMqttClient</li>
+      <li>改动量比 A 大</li>
+    </ul>
+  </div>
+</div>
+
+<div style="margin-top:20px; padding:12px; background:#0d2137; border-left:3px solid #ffcc80; border-radius:4px;">
+  <h3 style="margin:0 0 6px 0; color:#ffcc80;">🏆 推荐 B</h3>
+  <p style="margin:0; font-size:13px; color:#ccc;">
+    虽然改动大，但 A 方案的"3个进程 + 临时TLS握手"在命令响应场景下根本不可靠。
+    华为云命令下发有超时限制（通常30秒），A方案光握手就1-2秒，加上LoRa转发延迟，很容易超时。
+    QtMqtt 一个连接解决所有问题，是正确做法。而且你的系统已经在 RK3588 上跑，装个 qt5-mqtt 包很简单。
+  </p>
+</div>
