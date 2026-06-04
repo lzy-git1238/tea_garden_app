@@ -5,9 +5,11 @@
 #include <QJsonObject>
 #include <QString>
 #include <QTimer>
-#include <QMqttClient>
+#include <QMutex>
+#include <memory>
+#include <mqtt/async_client.h>
 
-class IotUploader : public QObject {
+class IotUploader : public QObject, public virtual mqtt::callback {
     Q_OBJECT
 public:
     static IotUploader* instance();
@@ -16,29 +18,31 @@ public:
     void upload(const QJsonObject &sensorData);
     void uploadPest();
 
-    // 新增：响应云端命令
+    // 响应云端命令
     void sendCommandResponse(const QString &cmdName,
                              const QString &requestId,
                              int result);
 
 signals:
-    // 新增：收到云端设备命令
-    void deviceCommandReceived(const QString &device,     // "pump" / "lamp"
-                               bool on,                    // true=开 false=关
-                               const QString &requestId);  // 华为云 request_id
+    // 收到云端设备命令
+    void deviceCommandReceived(const QString &device,
+                               bool on,
+                               const QString &requestId);
 
-private slots:
-    void onConnected();
-    void onMessageReceived(const QByteArray &message, const QMqttTopicName &topic);
-    void onDisconnected();
-    void onError(QMqttClient::ClientError error);
+private:
+    // ── mqtt::callback 重写 ──
+    void connected(const std::string &cause) override;
+    void connection_lost(const std::string &cause) override;
+    void message_arrived(mqtt::const_message_ptr msg) override;
+    void delivery_complete(mqtt::delivery_token_ptr token) override;
 
 private:
     explicit IotUploader(QObject *parent = nullptr);
     void doUpload(const QJsonObject &sensorData);
     void connectToHost();
 
-    QMqttClient *m_client = nullptr;
+    std::unique_ptr<mqtt::async_client> m_client;
+
     QString m_hostname;
     int     m_port = 8883;
     QString m_deviceId;
@@ -49,7 +53,6 @@ private:
     QString m_reportTopic;
     QString m_commandTopic;
 
-    // 保留重连定时器
     QTimer *m_reconnectTimer = nullptr;
     bool    m_connecting = false;
 };
