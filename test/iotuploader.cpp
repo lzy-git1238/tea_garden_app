@@ -202,24 +202,20 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
                           (size_t)payload.size(), 1, false);
         qDebug() << "[IoT] response published OK:" << cmdName << "result:" << result;
     } catch (const mqtt::exception &e) {
-        qWarning() << "[IoT] publish response failed:" << e.what()
-                   << "- retrying once after reconnect...";
-        // 尝试重连再发一次
-        try {
-            if (!m_client->is_connected()) {
-                connectToHost();
-                // Paho connect 是异步的，这里用简单 busy-wait 等连接
-                for (int i = 0; i < 50 && !m_client->is_connected(); ++i) {
-                    QThread::msleep(100);
+        qWarning() << "[IoT] publish response failed:" << e.what();
+        // Paho 连接可能真的断了——等待异步重连后重试一次
+        QTimer::singleShot(2000, this, [this, topic, payload, cmdName, result]() {
+            try {
+                if (m_client) {
+                    m_client->publish(topic.toStdString(),
+                                      (const void*)payload.constData(),
+                                      (size_t)payload.size(), 1, false);
+                    qDebug() << "[IoT] response published (retry) OK:" << cmdName << "result:" << result;
                 }
+            } catch (const mqtt::exception &e2) {
+                qWarning() << "[IoT] response retry also failed:" << e2.what();
             }
-            m_client->publish(topic.toStdString(),
-                              (const void*)payload.constData(),
-                              (size_t)payload.size(), 1, false);
-            qDebug() << "[IoT] response published (retry) OK:" << cmdName << "result:" << result;
-        } catch (const mqtt::exception &e2) {
-            qWarning() << "[IoT] response retry also failed:" << e2.what();
-        }
+        });
     }
 }
 
