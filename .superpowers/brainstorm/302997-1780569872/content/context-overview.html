@@ -1,0 +1,57 @@
+<h2>华为云 IoT 命令下发 — 现状 & 目标</h2>
+<p class="subtitle">在现有属性上报（上行）基础上，新增云端命令接收（下发）+ 响应</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">🔄 现状：仅上行</div>
+    <div class="mockup-body" style="padding:16px; font-family:monospace; font-size:13px; color:#ccc; line-height:1.8;">
+      <div style="color:#888;"># 属性上报 topic</div>
+      <div style="color:#4fc3f7;">$oc/devices/{id}/sys/properties/report</div>
+      <div style="margin-top:8px; color:#888;"># 方式</div>
+      <div style="color:#ccc;">mosquitto_pub -l (stdin 写入)</div>
+      <div style="margin-top:8px; color:#888;"># 数据流</div>
+      <div style="color:#81c784;">RK3588</div>
+      <div style="color:#888;">&nbsp;&nbsp;└─ IotUploader::upload()</div>
+      <div style="color:#888;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ mosquitto_pub → 华为云 ⬆️</div>
+      <div style="margin-top:8px; padding:6px; background:#2a1a1a; border-radius:3px; color:#ef5350;">
+        ❌ 无法接收云端下发指令</div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">🎯 目标：双向通信</div>
+    <div class="mockup-body" style="padding:16px; font-family:monospace; font-size:13px; color:#ccc; line-height:1.8;">
+      <div style="color:#888;"># 属性上报 topic (不变)</div>
+      <div style="color:#4fc3f7;">$oc/devices/{id}/sys/<br>properties/report</div>
+      <div style="margin-top:8px; color:#888;"># 命令接收 topic (新增)</div>
+      <div style="color:#ffcc80;">$oc/devices/{id}/sys/<br>commands/#</div>
+      <div style="margin-top:8px; color:#888;"># 命令响应 topic (新增)</div>
+      <div style="color:#81c784;">$oc/devices/{id}/sys/<br>commands/response/{rid}</div>
+      <div style="margin-top:8px; padding:6px; background:#1a2a1a; border-radius:3px; color:#81c784;">
+        ✅ 接收 pump_control / light_control</div>
+      <div style="padding:6px; background:#1a2a1a; border-radius:3px; color:#81c784; margin-top:4px;">
+        ✅ 转发到 LoRa → 灌溉泵/灭虫灯</div>
+      <div style="padding:6px; background:#1a2a1a; border-radius:3px; color:#81c784; margin-top:4px;">
+        ✅ 返回 result 给云端</div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:20px;">📋 华为云 IoT 命令协议格式</h3>
+<div class="mockup">
+  <div class="mockup-header">云端下发 pump_control / light_control</div>
+  <div class="mockup-body" style="padding:12px; font-family:monospace; font-size:13px; color:#ccc;">
+    <div style="color:#888;">// 云端下发的 MQTT 消息 (command topic)</div>
+    <pre style="color:#ffcc80; background:#0d1020; padding:8px; border-radius:3px;">{
+  "paras": { "value": true },
+  "service_id": "pump_control",
+  "command_name": "pump_control",
+  "request_id": "abc123..."
+}</pre>
+    <div style="margin-top:12px; color:#888;">// 设备端响应 (response topic)</div>
+    <pre style="color:#81c784; background:#0d1020; padding:8px; border-radius:3px;">{
+  "result_code": 0,
+  "response_name": "pump_control",
+  "paras": { "result": 0 }
+}</pre>
+  </div>
+</div>
