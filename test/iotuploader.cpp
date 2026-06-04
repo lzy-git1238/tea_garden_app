@@ -138,10 +138,10 @@ void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
     QString requestId = obj["request_id"].toString();
     QJsonObject paras = obj["paras"].toObject();
 
-    qDebug() << "[IoT] parsed: serviceId=" << serviceId
-             << "cmdName=" << cmdName
-             << "requestId=" << requestId
-             << "paras=" << paras;
+    fprintf(stderr, "[IOT-MSG] serviceId=%s cmdName=%s requestId=%s\n",
+            serviceId.toUtf8().constData(),
+            cmdName.toUtf8().constData(),
+            requestId.toUtf8().constData());
 
     if (cmdName == "pump_control") {
         bool on = paras["pump"].toBool();
