@@ -18,7 +18,7 @@
 #include <QGroupBox>
 #include <QSettings>
 #include <QChart>
-#include <QChartView>
+#include <QtCharts/QChartView>
 #include <QBarSeries>
 #include <QBarSet>
 #include <QBarCategoryAxis>
