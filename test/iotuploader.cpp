@@ -7,7 +7,9 @@
 #include <QFile>
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QSslConfiguration>
+#include <mqtt/connect_options.h>
+#include <mqtt/ssl_options.h>
+#include <mqtt/message.h>
 
 IotUploader* IotUploader::instance() {
     static IotUploader *inst = nullptr;
@@ -19,12 +21,6 @@ IotUploader::IotUploader(QObject *parent) : QObject(parent) {
     m_reconnectTimer = new QTimer(this);
     m_reconnectTimer->setSingleShot(true);
     connect(m_reconnectTimer, &QTimer::timeout, this, &IotUploader::connectToHost);
-
-    m_client = new QMqttClient(this);
-    connect(m_client, &QMqttClient::connected,    this, &IotUploader::onConnected);
-    connect(m_client, &QMqttClient::disconnected, this, &IotUploader::onDisconnected);
-    connect(m_client, &QMqttClient::errorChanged, this, &IotUploader::onError);
-    connect(m_client, &QMqttClient::messageReceived, this, &IotUploader::onMessageReceived);
 }
 
 void IotUploader::init(const QString &configPath) {
@@ -68,72 +64,105 @@ void IotUploader::init(const QString &configPath) {
     m_commandTopic = QString("$oc/devices/%1/sys/commands/#").arg(m_deviceId);
 
     qDebug() << "[IoT] device:" << m_deviceId << "host:" << m_hostname << ":" << m_port;
+
+    // 构造 MQTT 连接 URI（MQTTS 用 ssl:// 前缀）
+    QString uri = QString("ssl://%1:%2").arg(m_hostname).arg(m_port);
+    m_client = std::make_unique<mqtt::async_client>(
+        uri.toStdString(), m_clientId.toStdString());
+    m_client->set_callback(*this);
+
     connectToHost();
 }
 
 void IotUploader::connectToHost() {
-    if (m_connecting) return;
+    if (m_connecting || !m_client) return;
     m_connecting = true;
 
-    m_client->setHostname(m_hostname);
-    m_client->setPort(m_port);
-    m_client->setUsername(m_username);
-    m_client->setPassword(m_password);
-    m_client->setClientId(m_clientId);
-    m_client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
+    mqtt::connect_options connOpts;
+    connOpts.set_user_name(m_username.toStdString());
+    connOpts.set_password(m_password.toStdString());
+    connOpts.set_clean_session(true);
+
+    // TLS 配置（华为云 MQTTS 端口 8883）
+    mqtt::ssl_options sslOpts;
+    sslOpts.set_enable_server_cert_auth(true);
+    // 系统 CA 证书验证华为云证书
+    connOpts.set_ssl(sslOpts);
 
     qDebug() << "[IoT] connecting to" << m_hostname << ":" << m_port;
-    m_client->connectToHost();
+    try {
+        m_client->connect(connOpts);
+    } catch (const mqtt::exception &e) {
+        qWarning() << "[IoT] connect exception:" << e.what();
+        m_connecting = false;
+        m_reconnectTimer->start(5000);
+    }
 }
 
-void IotUploader::onConnected() {
+// ── mqtt::callback 重写 ──
+
+void IotUploader::connected(const std::string & /*cause*/) {
     m_connecting = false;
     qDebug() << "[IoT] MQTT connected, subscribing" << m_commandTopic;
-    m_client->subscribe(m_commandTopic, 1);
+    try {
+        m_client->subscribe(m_commandTopic.toStdString(), 1);
+        qDebug() << "[IoT] subscribed to commands";
+    } catch (const mqtt::exception &e) {
+        qWarning() << "[IoT] subscribe failed:" << e.what();
+    }
 }
 
-void IotUploader::onDisconnected() {
+void IotUploader::connection_lost(const std::string &cause) {
     m_connecting = false;
-    qWarning() << "[IoT] MQTT disconnected, reconnecting in 5s";
-    m_reconnectTimer->start(5000);
+    qWarning() << "[IoT] MQTT disconnected:" << QString::fromStdString(cause);
+    QMetaObject::invokeMethod(this, [this]() {
+        m_reconnectTimer->start(5000);
+    }, Qt::QueuedConnection);
 }
 
-void IotUploader::onError(QMqttClient::ClientError error) {
-    m_connecting = false;
-    qWarning() << "[IoT] MQTT error:" << error;
-    m_reconnectTimer->start(5000);
-}
+void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
+    QString payloadStr = QString::fromStdString(msg->get_payload_str());
 
-void IotUploader::onMessageReceived(const QByteArray &message, const QMqttTopicName & /*topic*/) {
     QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(message, &err);
+    QJsonDocument doc = QJsonDocument::fromJson(payloadStr.toUtf8(), &err);
     if (doc.isNull()) {
         qWarning() << "[IoT] bad JSON:" << err.errorString();
         return;
     }
-    QJsonObject msg = doc.object();
-    QString serviceId = msg["service_id"].toString();
-    QString cmdName   = msg["command_name"].toString();
-    QString requestId = msg["request_id"].toString();
-    QJsonObject paras = msg["paras"].toObject();
+    QJsonObject obj = doc.object();
+    QString serviceId = obj["service_id"].toString();
+    QString cmdName   = obj["command_name"].toString();
+    QString requestId = obj["request_id"].toString();
+    QJsonObject paras = obj["paras"].toObject();
 
     qDebug() << "[IoT] received command:" << serviceId << cmdName << requestId;
 
     if (serviceId == "pump_control") {
         bool on = paras["pump"].toBool();
-        emit deviceCommandReceived("pump", on, requestId);
+        // 跨线程安全 emit（callback 在 Paho 内部线程，需切换到 Qt 主线程）
+        QMetaObject::invokeMethod(this, [this, on, requestId]() {
+            emit deviceCommandReceived("pump", on, requestId);
+        }, Qt::QueuedConnection);
     } else if (serviceId == "light_control") {
         bool on = paras["light"].toBool();
-        emit deviceCommandReceived("lamp", on, requestId);
+        QMetaObject::invokeMethod(this, [this, on, requestId]() {
+            emit deviceCommandReceived("lamp", on, requestId);
+        }, Qt::QueuedConnection);
     } else {
         qDebug() << "[IoT] unknown service:" << serviceId << "- ignored";
     }
 }
 
+void IotUploader::delivery_complete(mqtt::delivery_token_ptr /*token*/) {
+    // 发布完成通知，通常不需要处理
+}
+
+// ── 公共接口 ──
+
 void IotUploader::sendCommandResponse(const QString &cmdName,
                                        const QString &requestId,
                                        int result) {
-    if (m_client->state() != QMqttClient::Connected) {
+    if (!m_client || !m_client->is_connected()) {
         qWarning() << "[IoT] cannot respond, not connected";
         return;
     }
@@ -149,8 +178,12 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
     body["paras"] = r;
 
     QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
-    m_client->publish(topic, payload, 1);
-    qDebug() << "[IoT] command response:" << cmdName << "result:" << result;
+    try {
+        m_client->publish(topic.toStdString(), payload.toStdString(), 1);
+        qDebug() << "[IoT] command response:" << cmdName << "result:" << result;
+    } catch (const mqtt::exception &e) {
+        qWarning() << "[IoT] publish response failed:" << e.what();
+    }
 }
 
 void IotUploader::upload(const QJsonObject &sensorData) {
@@ -159,7 +192,7 @@ void IotUploader::upload(const QJsonObject &sensorData) {
 }
 
 void IotUploader::doUpload(const QJsonObject &sensorData) {
-    if (m_client->state() != QMqttClient::Connected) {
+    if (!m_client || !m_client->is_connected()) {
         qDebug() << "[IoT] skip upload, not connected";
         return;
     }
@@ -174,12 +207,16 @@ void IotUploader::doUpload(const QJsonObject &sensorData) {
     root["services"] = services;
 
     QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
-    m_client->publish(m_reportTopic, payload, 1);
+    try {
+        m_client->publish(m_reportTopic.toStdString(), payload.toStdString(), 1);
+    } catch (const mqtt::exception &e) {
+        qWarning() << "[IoT] publish failed:" << e.what();
+    }
 }
 
 void IotUploader::uploadPest() {
     if (m_deviceId.isEmpty() || m_hostname.isEmpty()) return;
-    if (m_client->state() != QMqttClient::Connected) {
+    if (!m_client || !m_client->is_connected()) {
         qDebug() << "[IoT] skip pest upload, not connected";
         return;
     }
@@ -224,5 +261,9 @@ void IotUploader::uploadPest() {
     QJsonObject root; root["services"] = services;
 
     QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
-    m_client->publish(m_reportTopic, payload, 1);
+    try {
+        m_client->publish(m_reportTopic.toStdString(), payload.toStdString(), 1);
+    } catch (const mqtt::exception &e) {
+        qWarning() << "[IoT] publish pest failed:" << e.what();
+    }
 }
