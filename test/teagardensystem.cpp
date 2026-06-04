@@ -17,6 +17,7 @@
 #include <QDir>
 #include <QUrl>
 #include <QCoreApplication>
+#include <QSettings>
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QDialog>
