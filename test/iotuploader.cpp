@@ -123,7 +123,8 @@ void IotUploader::connection_lost(const std::string &cause) {
 
 void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
     QString payloadStr = QString::fromStdString(msg->get_payload_str());
-    fprintf(stderr, "[IOT-MSG] arrived, len=%d\n", (int)payloadStr.size());
+    QString msgTopic   = QString::fromStdString(msg->get_topic());
+    fprintf(stderr, "[IOT-MSG] arrived, topic=%s\n", msgTopic.toUtf8().constData());
     fprintf(stderr, "[IOT-MSG] payload: %s\n", payloadStr.toUtf8().constData());
 
     QJsonParseError err;
@@ -135,10 +136,17 @@ void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
     QJsonObject obj = doc.object();
     QString serviceId = obj["service_id"].toString();
     QString cmdName   = obj["command_name"].toString();
-    QString requestId = obj["request_id"].toString();
     QJsonObject paras = obj["paras"].toObject();
 
-    fprintf(stderr, "[IOT-MSG] serviceId=%s cmdName=%s requestId=%s\n",
+    // 华为云 request_id 在 topic 中，不在 JSON body 里
+    // topic 格式: $oc/devices/{id}/sys/commands/request_id={rid}
+    QString requestId;
+    int ridPos = msgTopic.indexOf("request_id=");
+    if (ridPos >= 0) {
+        requestId = msgTopic.mid(ridPos + 11); // 跳过 "request_id="
+    }
+
+    fprintf(stderr, "[IOT-MSG] serviceId=%s cmdName=%s requestId=%s (from topic)\n",
             serviceId.toUtf8().constData(),
             cmdName.toUtf8().constData(),
             requestId.toUtf8().constData());
