@@ -1,0 +1,64 @@
+<h2>设计 · 第1节：架构变更</h2>
+<p class="subtitle">IotUploader 从 mosquitto_pub 单向改为 QMqttClient 双向</p>
+
+<h3>📁 文件变更</h3>
+<table style="width:100%; border-collapse:collapse; color:#ccc; font-size:14px;">
+  <tr style="background:#1e2a3a;">
+    <th style="padding:8px 12px; text-align:left;">文件</th>
+    <th style="padding:8px 12px; text-align:left;">操作</th>
+    <th style="padding:8px 12px; text-align:left;">说明</th>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#ffcc80;">iotuploader.h</td>
+    <td style="padding:8px 12px;">重写</td>
+    <td style="padding:8px 12px;">QProcess → QMqttClient，新增信号/槽</td>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#ffcc80;">iotuploader.cpp</td>
+    <td style="padding:8px 12px;">重写</td>
+    <td style="padding:8px 12px;">MQTT 连接、订阅命令、解析+转发+响应</td>
+  </tr>
+  <tr style="border-bottom:1px solid #2a3a4a;">
+    <td style="padding:8px 12px; font-family:monospace; color:#81c784;">test.pro</td>
+    <td style="padding:8px 12px;">修改</td>
+    <td style="padding:8px 12px;">QT += mqtt</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px; font-family:monospace; color:#81c784;">teagardensystem.cpp</td>
+    <td style="padding:8px 12px;">微调</td>
+    <td style="padding:8px 12px;">连接 IotUploader 信号、公开 sendLoraCommand 供 IotUploader 调用</td>
+  </tr>
+</table>
+
+<h3 style="margin-top:20px;">🔄 数据流</h3>
+<div class="mockup">
+  <div class="mockup-body" style="padding:16px; font-size:13px; line-height:2.2;">
+    <div style="display:flex; flex-direction:column; gap:6px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="color:#888;">上行 (不变)</span>
+        <span style="background:#2e7d32; color:#fff; padding:3px 8px; border-radius:3px;">upload()</span>
+        <span>→</span>
+        <span style="background:#1565c0; color:#fff; padding:3px 8px; border-radius:3px;">QMqttClient::publish()</span>
+        <span>→</span>
+        <span style="color:#888;">$oc/.../properties/report</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="color:#888;">下行 (新增)</span>
+        <span style="background:#c62828; color:#fff; padding:3px 8px; border-radius:3px;">messageReceived 信号</span>
+        <span>→</span>
+        <span style="background:#e65100; color:#fff; padding:3px 8px; border-radius:3px;">解析 pump_control / light_control</span>
+        <span>→</span>
+        <span style="background:#6a1b9a; color:#fff; padding:3px 8px; border-radius:3px;">sendLoraCommand()</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="color:#888;">响应 (新增)</span>
+        <span style="background:#6a1b9a; color:#fff; padding:3px 8px; border-radius:3px;">LoRa 发送完成</span>
+        <span>→</span>
+        <span style="background:#00838f; color:#fff; padding:3px 8px; border-radius:3px;">QMqttClient::publish()</span>
+        <span>→</span>
+        <span style="color:#888;">$oc/.../commands/response/{rid}</span>
+        <span style="color:#81c784;">result: 0/1</span>
+      </div>
+    </div>
+  </div>
+</div>
