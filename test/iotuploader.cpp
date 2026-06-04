@@ -210,7 +210,9 @@ void IotUploader::doUpload(const QJsonObject &sensorData) {
 
     QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
     try {
-        m_client->publish(m_reportTopic.toStdString(), payload.toStdString(), 1);
+        m_client->publish(m_reportTopic.toStdString(),
+                        (const void*)payload.constData(),
+                        (size_t)payload.size(), 1, false);
     } catch (const mqtt::exception &e) {
         qWarning() << "[IoT] publish failed:" << e.what();
     }
@@ -264,7 +266,9 @@ void IotUploader::uploadPest() {
 
     QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
     try {
-        m_client->publish(m_reportTopic.toStdString(), payload.toStdString(), 1);
+        m_client->publish(m_reportTopic.toStdString(),
+                        (const void*)payload.constData(),
+                        (size_t)payload.size(), 1, false);
     } catch (const mqtt::exception &e) {
         qWarning() << "[IoT] publish pest failed:" << e.what();
     }
