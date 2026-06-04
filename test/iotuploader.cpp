@@ -191,10 +191,12 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
 
     QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
     try {
+        qDebug() << "[IoT] publishing response to topic:" << topic;
+        qDebug() << "[IoT] response payload:" << payload;
         m_client->publish(topic.toStdString(),
                           (const void*)payload.constData(),
                           (size_t)payload.size(), 1, false);
-        qDebug() << "[IoT] command response:" << cmdName << "result:" << result;
+        qDebug() << "[IoT] command response published:" << cmdName << "result:" << result;
     } catch (const mqtt::exception &e) {
         qWarning() << "[IoT] publish response failed:" << e.what();
     }
