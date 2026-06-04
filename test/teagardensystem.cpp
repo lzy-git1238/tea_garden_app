@@ -1814,6 +1814,11 @@ void TeaGardenSystem::checkSchedules() {
                     .arg(plan.id).arg(plan.durationMin));
         }
     }
+
+    // 每次调度操作后同步状态到云端
+    IotUploader::instance()->uploadDeviceState(
+        pumpBtn ? pumpBtn->isChecked() : false,
+        lampBtn ? lampBtn->isChecked() : false);
 }
 
 void TeaGardenSystem::refreshFlowCard() {
