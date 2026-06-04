@@ -2000,6 +2000,9 @@ void TeaGardenSystem::onPumpToggled(bool checked) {
             appendChatMessage("系统", "💧 灌溉泵: 已关闭");
         }
     }
+    IotUploader::instance()->uploadDeviceState(
+        pumpBtn ? pumpBtn->isChecked() : false,
+        lampBtn ? lampBtn->isChecked() : false);
 }
 
 void TeaGardenSystem::onLampToggled(bool checked) {
