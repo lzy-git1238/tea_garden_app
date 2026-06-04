@@ -171,11 +171,10 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
                                        const QString &requestId,
                                        int result) {
     qDebug() << "[IoT] sendCommandResponse: cmdName=" << cmdName
-             << "requestId=" << requestId << "result=" << result
-             << "connected=" << (m_client ? m_client->is_connected() : false);
+             << "requestId=" << requestId << "result=" << result;
 
-    if (!m_client || !m_client->is_connected()) {
-        qWarning() << "[IoT] cannot respond, not connected";
+    if (!m_client) {
+        qWarning() << "[IoT] no client, cannot respond";
         return;
     }
 
@@ -190,15 +189,36 @@ void IotUploader::sendCommandResponse(const QString &cmdName,
     body["paras"] = r;
 
     QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
+    qDebug() << "[IoT] response topic:" << topic;
+    qDebug() << "[IoT] response payload:" << payload;
+
+    // 直接 publish，不检查 is_connected()——该函数在回调→主线程切换
+    // 的几百毫秒间可能因 TCP 抖动返回 false，导致响应被静默丢弃。
+    // Paho publish 内部自己会处理连接状态。
     try {
-        qDebug() << "[IoT] publishing response to topic:" << topic;
-        qDebug() << "[IoT] response payload:" << payload;
         m_client->publish(topic.toStdString(),
                           (const void*)payload.constData(),
                           (size_t)payload.size(), 1, false);
-        qDebug() << "[IoT] command response published:" << cmdName << "result:" << result;
+        qDebug() << "[IoT] response published OK:" << cmdName << "result:" << result;
     } catch (const mqtt::exception &e) {
-        qWarning() << "[IoT] publish response failed:" << e.what();
+        qWarning() << "[IoT] publish response failed:" << e.what()
+                   << "- retrying once after reconnect...";
+        // 尝试重连再发一次
+        try {
+            if (!m_client->is_connected()) {
+                connectToHost();
+                // Paho connect 是异步的，这里用简单 busy-wait 等连接
+                for (int i = 0; i < 50 && !m_client->is_connected(); ++i) {
+                    QThread::msleep(100);
+                }
+            }
+            m_client->publish(topic.toStdString(),
+                              (const void*)payload.constData(),
+                              (size_t)payload.size(), 1, false);
+            qDebug() << "[IoT] response published (retry) OK:" << cmdName << "result:" << result;
+        } catch (const mqtt::exception &e2) {
+            qWarning() << "[IoT] response retry also failed:" << e2.what();
+        }
     }
 }
 
