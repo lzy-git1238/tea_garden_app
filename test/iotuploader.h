@@ -17,6 +17,9 @@ public:
     void upload(const QJsonObject &sensorData);
     void uploadPest();
 
+    // 上报设备状态（泵/灯开关，每次变化时调用）
+    void uploadDeviceState(bool pumpOn, bool lampOn);
+
     // 响应云端命令
     void sendCommandResponse(const QString &cmdName,
                              const QString &requestId,
