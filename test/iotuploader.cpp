@@ -316,3 +316,34 @@ void IotUploader::uploadPest() {
         qWarning() << "[IoT] publish pest failed:" << e.what();
     }
 }
+
+void IotUploader::uploadDeviceState(bool pumpOn, bool lampOn) {
+    if (m_deviceId.isEmpty() || m_hostname.isEmpty()) return;
+    if (!m_client || !m_client->is_connected()) {
+        qDebug() << "[IoT] skip device state upload, not connected";
+        return;
+    }
+
+    QJsonObject props;
+    props["pump_state"] = pumpOn;
+    props["lamp_state"] = lampOn;
+
+    QJsonObject svc;
+    svc["service_id"] = "tea_device";
+    svc["properties"]  = props;
+    svc["event_time"]  = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+
+    QJsonArray services;
+    services.append(svc);
+    QJsonObject root;
+    root["services"] = services;
+
+    QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
+    try {
+        m_client->publish(m_reportTopic.toStdString(),
+                          (const void*)payload.constData(),
+                          (size_t)payload.size(), 1, false);
+    } catch (const mqtt::exception &e) {
+        qWarning() << "[IoT] publish device state failed:" << e.what();
+    }
+}
