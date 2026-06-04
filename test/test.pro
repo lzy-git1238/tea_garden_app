@@ -1,4 +1,4 @@
-QT       += core gui serialport network charts sql websockets
+QT       += core gui serialport network charts sql websockets mqtt
 
 qtHaveModule(webenginewidgets) {
     QT += webenginewidgets
