@@ -2045,4 +2045,7 @@ void TeaGardenSystem::onLampToggled(bool checked) {
             appendChatMessage("系统", "🪲 驱虫灯: 已关闭");
         }
     }
+    IotUploader::instance()->uploadDeviceState(
+        pumpBtn ? pumpBtn->isChecked() : false,
+        lampBtn ? lampBtn->isChecked() : false);
 }
