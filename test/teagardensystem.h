@@ -62,6 +62,7 @@ private slots:
     void checkSchedules();          // 调度检查（每分钟）
     void refreshFlowCard();         // 刷新流量卡片（每秒）
     void openScheduleDialog(const QString &deviceType);  // 打开定时对话框
+    void onIotCommand(const QString &device, bool on, const QString &requestId);
 
 private:
     void setupUI();
