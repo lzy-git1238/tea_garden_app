@@ -112,6 +112,10 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     ScheduleStore::instance()->init(QCoreApplication::applicationDirPath() + "/schedule.db");
     IotUploader::instance()->init(QCoreApplication::applicationDirPath() + "/../IOT_DATA");
 
+    // 连接 IoT 命令信号
+    connect(IotUploader::instance(), &IotUploader::deviceCommandReceived,
+            this, &TeaGardenSystem::onIotCommand);
+
     // 初始化系统托盘
     trayIcon = new QSystemTrayIcon(this);
     QIcon trayIconFile(":/icons/tray.png");
