@@ -169,7 +169,7 @@ void TeaGardenSystem::onIotCommand(const QString &device, bool on,
     ScheduleStore::instance()->appendLog(log);
 
     // 响应云端
-    QString cmdName = (device == "pump") ? "pump_control" : "light";
+    QString cmdName = (device == "pump") ? "pump_control" : "light_control";
     IotUploader::instance()->sendCommandResponse(cmdName, requestId, result);
 }
 ```
