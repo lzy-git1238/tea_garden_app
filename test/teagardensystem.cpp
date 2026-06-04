@@ -21,6 +21,7 @@
 #include <QHeaderView>
 #include <QDialog>
 #include <QtCharts/QChart>
+#include <QtCharts/QChartView>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
 #include <QPixmap>
