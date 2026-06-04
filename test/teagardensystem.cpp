@@ -1848,7 +1848,7 @@ void TeaGardenSystem::openScheduleDialog(const QString &deviceType) {
 
 // ── LoRa 下行控制 ──
 
-bool TeaGardenSystem::sendLoraCommand(const QString &deviceKey, int value) {
+bool TeaGardenSystem::sendLoraCommand(const QString & /*deviceKey*/, int value) {
     return loraManager->sendCommand(value);
 }
 
