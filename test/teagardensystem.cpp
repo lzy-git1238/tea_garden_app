@@ -1854,7 +1854,7 @@ void TeaGardenSystem::openScheduleDialog(const QString &deviceType) {
 
 void TeaGardenSystem::onIotCommand(const QString &device, bool on,
                                     const QString &requestId) {
-    qDebug() << "[TeaGarden] IoT command:" << device << (on ? "on" : "off");
+    qDebug() << "[TeaGarden] onIotCommand: device=" << device << "on=" << on << "requestId=" << requestId;
 
     // 云端命令覆盖本地定时
     if (activeJobs.contains(device)) {
