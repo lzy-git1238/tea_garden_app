@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
+#include <QDateTime>
+#include <QSslConfiguration>
 
 IotUploader* IotUploader::instance() {
     static IotUploader *inst = nullptr;
@@ -14,9 +16,15 @@ IotUploader* IotUploader::instance() {
 }
 
 IotUploader::IotUploader(QObject *parent) : QObject(parent) {
-    reconnectTimer = new QTimer(this);
-    reconnectTimer->setSingleShot(true);
-    connect(reconnectTimer, &QTimer::timeout, this, &IotUploader::startProcess);
+    m_reconnectTimer = new QTimer(this);
+    m_reconnectTimer->setSingleShot(true);
+    connect(m_reconnectTimer, &QTimer::timeout, this, &IotUploader::connectToHost);
+
+    m_client = new QMqttClient(this);
+    connect(m_client, &QMqttClient::connected,    this, &IotUploader::onConnected);
+    connect(m_client, &QMqttClient::disconnected, this, &IotUploader::onDisconnected);
+    connect(m_client, &QMqttClient::errorChanged, this, &IotUploader::onError);
+    connect(m_client, &QMqttClient::messageReceived, this, &IotUploader::onMessageReceived);
 }
 
 void IotUploader::init(const QString &configPath) {
@@ -28,6 +36,7 @@ void IotUploader::init(const QString &configPath) {
     QString content = QString::fromUtf8(f.readAll());
     f.close();
 
+    // 解析合并的 JSON（每行一个 { ... } 对象）
     QJsonObject merged;
     int depth = 0, start = -1;
     for (int i = 0; i < content.size(); ++i) {
@@ -48,97 +57,132 @@ void IotUploader::init(const QString &configPath) {
         }
     }
 
-    deviceId = merged["device_id"].toString();
-    username = merged["username"].toString();
-    password = merged["password"].toString();
-    clientId = merged["clientId"].toString();
-    hostname = merged["hostname"].toString();
-    port     = merged["port"].toInt(8883);
+    m_deviceId = merged["device_id"].toString();
+    m_username = merged["username"].toString();
+    m_password = merged["password"].toString();
+    m_clientId = merged["clientId"].toString();
+    m_hostname = merged["hostname"].toString();
+    m_port     = merged["port"].toInt(8883);
 
-    qDebug() << "[IoT] device:" << deviceId << "host:" << hostname << ":" << port;
-    startProcess();
+    m_reportTopic  = QString("$oc/devices/%1/sys/properties/report").arg(m_deviceId);
+    m_commandTopic = QString("$oc/devices/%1/sys/commands/#").arg(m_deviceId);
+
+    qDebug() << "[IoT] device:" << m_deviceId << "host:" << m_hostname << ":" << m_port;
+    connectToHost();
 }
 
-void IotUploader::startProcess() {
-    if (proc) {
-        proc->kill();
-        proc->deleteLater();
-        proc = nullptr;
+void IotUploader::connectToHost() {
+    if (m_connecting) return;
+    m_connecting = true;
+
+    m_client->setHostname(m_hostname);
+    m_client->setPort(m_port);
+    m_client->setUsername(m_username);
+    m_client->setPassword(m_password);
+    m_client->setClientId(m_clientId);
+    m_client->setProtocolVersion(QMqttClient::MQTT_3_1_1);
+
+    qDebug() << "[IoT] connecting to" << m_hostname << ":" << m_port;
+    m_client->connectToHost();
+}
+
+void IotUploader::onConnected() {
+    m_connecting = false;
+    qDebug() << "[IoT] MQTT connected, subscribing" << m_commandTopic;
+    m_client->subscribe(m_commandTopic, 1);
+}
+
+void IotUploader::onDisconnected() {
+    m_connecting = false;
+    qWarning() << "[IoT] MQTT disconnected, reconnecting in 5s";
+    m_reconnectTimer->start(5000);
+}
+
+void IotUploader::onError(QMqttClient::ClientError error) {
+    m_connecting = false;
+    qWarning() << "[IoT] MQTT error:" << error;
+    m_reconnectTimer->start(5000);
+}
+
+void IotUploader::onMessageReceived(const QByteArray &message, const QMqttTopicName & /*topic*/) {
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(message, &err);
+    if (doc.isNull()) {
+        qWarning() << "[IoT] bad JSON:" << err.errorString();
+        return;
     }
-    ready = false;
+    QJsonObject msg = doc.object();
+    QString serviceId = msg["service_id"].toString();
+    QString cmdName   = msg["command_name"].toString();
+    QString requestId = msg["request_id"].toString();
+    QJsonObject paras = msg["paras"].toObject();
 
-    // 用 mosquitto_pub -l 保持长连接，stdin 持续发
-    proc = new QProcess(this);
-    proc->setProcessChannelMode(QProcess::SeparateChannels);
+    qDebug() << "[IoT] received command:" << serviceId << cmdName << requestId;
 
-    QString topic = QString("$oc/devices/%1/sys/properties/report").arg(deviceId);
+    if (serviceId == "pump_control") {
+        bool on = paras["pump"].toBool();
+        emit deviceCommandReceived("pump", on, requestId);
+    } else if (serviceId == "light_control") {
+        bool on = paras["light"].toBool();
+        emit deviceCommandReceived("lamp", on, requestId);
+    } else {
+        qDebug() << "[IoT] unknown service:" << serviceId << "- ignored";
+    }
+}
 
-    QStringList args;
-    args << "-h" << hostname
-         << "-p" << QString::number(port)
-         << "-u" << username
-         << "-P" << password
-         << "-i" << clientId
-         << "-t" << topic
-         << "-l"           // 保持连接，从 stdin 读行发送
-         << "--insecure"
-         << "-q" << "1"
-         << "-V" << "mqttv311";
+void IotUploader::sendCommandResponse(const QString &cmdName,
+                                       const QString &requestId,
+                                       int result) {
+    if (m_client->state() != QMqttClient::Connected) {
+        qWarning() << "[IoT] cannot respond, not connected";
+        return;
+    }
 
-    qDebug() << "[IoT] starting persistent mosquitto_pub -l...";
-    proc->start("mosquitto_pub", args);
+    QString topic = QString("$oc/devices/%1/sys/commands/response/request_id=%2")
+                        .arg(m_deviceId, requestId);
 
-    connect(proc, &QProcess::started, this, [this]() {
-        qDebug() << "[IoT] process started, pid:" << proc->processId();
-        ready = true;
-        if (!pendingPayload.isEmpty()) {
-            QByteArray line = pendingPayload.toUtf8().replace('\n', ' ') + '\n';
-            proc->write(line);
-            qDebug() << "[IoT] sent pending payload";
-            pendingPayload.clear();
-        }
-    });
+    QJsonObject body;
+    body["result_code"]   = 0;
+    body["response_name"] = cmdName;
+    QJsonObject r;
+    r["result"] = result;
+    body["paras"] = r;
 
-    connect(proc, &QProcess::readyReadStandardError, this, [this]() {
-        QString err = QString::fromUtf8(proc->readAllStandardError()).trimmed();
-        if (!err.isEmpty())
-            qDebug() << "[IoT]" << err;
-    });
-
-    connect(proc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            this, [this](int code, QProcess::ExitStatus) {
-        qWarning() << "[IoT] mosquitto_pub exited, code:" << code;
-        ready = false;
-        reconnectTimer->start(5000);
-    });
-
-    // 5秒内没收到 started 信号说明启动失败
-    QTimer::singleShot(5000, this, [this]() {
-        if (proc && !ready) {
-            qWarning() << "[IoT] startup timeout, restarting...";
-            proc->kill();
-        }
-    });
+    QByteArray payload = QJsonDocument(body).toJson(QJsonDocument::Compact);
+    m_client->publish(topic, payload, 1);
+    qDebug() << "[IoT] command response:" << cmdName << "result:" << result;
 }
 
 void IotUploader::upload(const QJsonObject &sensorData) {
-    if (deviceId.isEmpty() || hostname.isEmpty()) return;
+    if (m_deviceId.isEmpty() || m_hostname.isEmpty()) return;
+    doUpload(sensorData);
+}
+
+void IotUploader::doUpload(const QJsonObject &sensorData) {
+    if (m_client->state() != QMqttClient::Connected) {
+        qDebug() << "[IoT] skip upload, not connected";
+        return;
+    }
 
     QJsonObject root;
     QJsonArray services;
     QJsonObject svc;
     svc["service_id"] = "tea_sensor";
-    svc["properties"] = sensorData;
-    svc["event_time"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    svc["properties"]  = sensorData;
+    svc["event_time"]  = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
     services.append(svc);
     root["services"] = services;
 
-    QJsonDocument doc(root);
-    sendPayload(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
+    m_client->publish(m_reportTopic, payload, 1);
 }
 
 void IotUploader::uploadPest() {
-    if (deviceId.isEmpty() || hostname.isEmpty()) return;
+    if (m_deviceId.isEmpty() || m_hostname.isEmpty()) return;
+    if (m_client->state() != QMqttClient::Connected) {
+        qDebug() << "[IoT] skip pest upload, not connected";
+        return;
+    }
 
     // 1. 种类统计 → JSON 字符串
     QMap<QString, int> counts = PestStore::instance()->typeCounts();
@@ -167,7 +211,6 @@ void IotUploader::uploadPest() {
     // 3. 总数
     int total = PestStore::instance()->totalCount();
 
-    // 组装 JSON
     QJsonObject props;
     props["pest_counts"]    = pestCounts;
     props["pest_locations"] = pestLocs;
@@ -175,25 +218,11 @@ void IotUploader::uploadPest() {
 
     QJsonObject svc;
     svc["service_id"] = "tea_pest";
-    svc["properties"] = props;
-    svc["event_time"] = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    svc["properties"]  = props;
+    svc["event_time"]  = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
     QJsonArray services; services.append(svc);
     QJsonObject root; root["services"] = services;
 
-    QString payload = QString::fromUtf8(
-        QJsonDocument(root).toJson(QJsonDocument::Compact));
-
-    sendPayload(payload);
-}
-
-void IotUploader::sendPayload(const QString &payload) {
-    if (ready && proc && proc->state() == QProcess::Running) {
-        // mosquitto_pub -l 从 stdin 逐行读取 JSON
-        QByteArray line = payload.toUtf8().replace('\n', ' ') + '\n';
-        proc->write(line);
-    } else {
-        // 进程还没就绪，缓存最新一条数据
-        pendingPayload = payload;
-        if (!ready) startProcess();
-    }
+    QByteArray payload = QJsonDocument(root).toJson(QJsonDocument::Compact);
+    m_client->publish(m_reportTopic, payload, 1);
 }
