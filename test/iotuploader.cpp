@@ -159,7 +159,7 @@ void IotUploader::message_arrived(mqtt::const_message_ptr msg) {
             emit deviceCommandReceived("pump", on, requestId);
         }, Qt::QueuedConnection);
         fprintf(stderr, "[IOT-MSG] invokeMethod result=%d\n", ok);
-    } else if (cmdName == "light") {
+    } else if (cmdName == "light_control") {
         bool on = paras["light"].toBool();
         fprintf(stderr, "[IOT-MSG] routing to light, on=%d\n", on);
         bool ok = QMetaObject::invokeMethod(this, [this, on, requestId]() {
