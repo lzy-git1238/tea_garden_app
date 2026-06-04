@@ -59,7 +59,7 @@ private:
     QComboBox *historyDeviceFilter;
     QComboBox *historyRangeCombo;
     QTableWidget *planTable;
-    QChartView *chartView;
+    QtCharts::QChartView *chartView;
     QTextEdit *logText;
     QLabel *summaryLabel;
 };
