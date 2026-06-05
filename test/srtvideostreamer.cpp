@@ -228,7 +228,7 @@ bool SrtVideoStreamer::openStream() {
         closeStream();
         return false;
     }
-    qDebug() << "[SRT] avformat_open_input OK";
+    fprintf(stderr, "[SRT] avformat_open_input OK\n"); fflush(stderr);
 
     // ── 3. 查找流信息 ──
     ret = avformat_find_stream_info(m_ctx.fmtCtx, nullptr);
