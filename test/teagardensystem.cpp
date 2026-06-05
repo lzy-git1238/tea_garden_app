@@ -101,6 +101,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             this, [this](double fps) {
         loraStateLabel->setText(QString("视频 FPS: %1").arg(fps, 0, 'f', 1));
     });
+    qDebug() << "[VIDEO] SrtVideoStreamer::start() called";
     m_videoStreamer->start();
 
     // 定时器：每3秒更新一次数据
