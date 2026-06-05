@@ -9,6 +9,10 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
+# FFmpeg 满血版（手动编译，含 rkmpp + libsrt + rkrga）
+INCLUDEPATH += /home/elf/qt_sdk_aarch64/aarch64-buildroot-linux-gnu/sysroot/usr/include
+LIBS += -lavformat -lavcodec -lavutil -lswscale
+
 # Paho MQTT C++ (华为云 IoT 双向通信)
 LIBS += -lpaho-mqttpp3 -lpaho-mqtt3as
 
