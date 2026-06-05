@@ -28,6 +28,7 @@
 #include <QtCharts/QChartView>
 
 class ChartDashboard;
+class SrtVideoStreamer;
 
 // --- 主系统类 ---
 class TeaGardenSystem : public QWidget {
