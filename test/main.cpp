@@ -7,10 +7,6 @@
 #include <unistd.h>
 #include "teagardensystem.h"
 
-extern "C" {
-#include <libavformat/avformat.h>
-}
-
 namespace {
 QFile *gRuntimeLogFile = nullptr;
 
