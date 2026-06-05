@@ -220,17 +220,11 @@ bool SrtVideoStreamer::openStream() {
         return false;
     }
 
-    // SRT 选项（不与 fflags 冲突，SRT 协议参数独立设置）
-    AVDictionary *opts = nullptr;
-    av_dict_set(&opts, "fflags", "nobuffer", 0);
-    av_dict_set(&opts, "analyzeduration", "5000000", 0);   // 5 秒，允许 SRT 握手
-    av_dict_set(&opts, "probesize", "5000000", 0);          // 5MB，足够 SRT 连接建立
-    // 注意：不设 max_delay=0，那会让 SRT 握手失败
-
     // ── 2. 打开 SRT 流 ──
+    // SRT listener 不需要特殊的 AVDictionary 选项，
+    // fflags/analyzeduration 会在 find_stream_info 之后设置
     int ret = avformat_open_input(&m_ctx.fmtCtx,
-        m_url.toUtf8().constData(), nullptr, &opts);
-    av_dict_free(&opts);
+        m_url.toUtf8().constData(), nullptr, nullptr);
 
     if (ret < 0) {
         char errBuf[256];
