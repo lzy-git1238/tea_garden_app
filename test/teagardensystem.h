@@ -64,6 +64,8 @@ private slots:
     void refreshFlowCard();         // 刷新流量卡片（每秒）
     void openScheduleDialog(const QString &deviceType);  // 打开定时对话框
     void onIotCommand(const QString &device, bool on, const QString &requestId);
+    void onVideoFrame(const QImage &image);
+    void onVideoStatus(const QString &msg);
 
 private:
     void setupUI();
