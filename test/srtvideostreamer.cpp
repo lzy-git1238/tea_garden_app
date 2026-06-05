@@ -1,6 +1,7 @@
 #include "srtvideostreamer.h"
 #include <QDebug>
 #include <QThread>
+#include <QRegularExpression>
 #include <unistd.h>
 
 SrtVideoStreamer::SrtVideoStreamer(QObject *parent) : QThread(parent) {}
@@ -46,27 +47,24 @@ void SrtVideoStreamer::run() {
             continue;
         }
 
-        // 转发 stderr
-        QObject::connect(&proc, &QProcess::readyReadStandardError, [&]() {
-            QByteArray e = proc.readAllStandardError();
-            ::write(STDERR_FILENO, e.constData(), e.size());
-        });
-
-        // 检测是否进入解码流
+        // 转发 stderr 并检测 Stream
         bool streamReady = false;
         QByteArray errAccum;
         QObject::connect(&proc, &QProcess::readyReadStandardError, [&]() {
+            QByteArray e = proc.readAllStandardError();
+            ::write(STDERR_FILENO, e.constData(), e.size());
             if (!streamReady) {
-                errAccum.append(proc.readAllStandardError());
+                errAccum.append(e);
                 if (errAccum.contains("Stream #0:0")) {
                     streamReady = true;
                     emit streamConnected();
-                    emit statusMessage("SRT 视频流已连接 [硬解]");
+                    emit statusMessage("SRT 视频流已连接");
                 }
             }
         });
 
         QByteArray stdoutBuf;
+        int frameSize = 0;
 
         while (m_running && proc.state() == QProcess::Running) {
             proc.waitForReadyRead(500);
@@ -74,21 +72,32 @@ void SrtVideoStreamer::run() {
             if (!data.isEmpty())
                 stdoutBuf.append(data);
 
-            // JPEG 帧切分: SOI=FFD8, EOI=FFD9
-            while (stdoutBuf.size() > 4) {
-                int soi = stdoutBuf.indexOf("\xFF\xD8");
-                if (soi < 0) { stdoutBuf.clear(); break; }
-                if (soi > 0) stdoutBuf.remove(0, soi);
+            // 从 stderr 提取分辨率
+            if (frameSize == 0 && streamReady) {
+                QString es = QString::fromUtf8(errAccum);
+                QRegularExpression re("(\\d{2,4})x(\\d{2,4})");
+                auto m = re.match(es);
+                if (m.hasMatch()) {
+                    m_resWidth  = m.captured(1).toInt();
+                    m_resHeight = m.captured(2).toInt();
+                    frameSize   = m_resWidth * m_resHeight * 3;
+                    qDebug() << "[SRT] resolution:" << m_resWidth << "x" << m_resHeight
+                             << "frameSize:" << frameSize;
+                    emit statusMessage(QString("视频 %1x%2").arg(m_resWidth).arg(m_resHeight));
+                }
+            }
 
-                int eoi = stdoutBuf.indexOf("\xFF\xD9", 2);
-                if (eoi < 0) break;
+            // 切完整帧
+            while (frameSize > 0 && stdoutBuf.size() >= frameSize) {
+                QByteArray frameData = stdoutBuf.left(frameSize);
+                stdoutBuf.remove(0, frameSize);
 
-                QByteArray jpeg = stdoutBuf.left(eoi + 2);
-                stdoutBuf.remove(0, eoi + 2);
-
-                QImage img = QImage::fromData(jpeg, "JPEG");
-                if (!img.isNull()) {
-                    emit frameReady(img);  // QImage 隐式深拷贝
+                QImage img((const uchar*)frameData.constData(),
+                           m_resWidth, m_resHeight,
+                           QImage::Format_RGB888);
+                QImage copy = img.copy();
+                if (!copy.isNull()) {
+                    emit frameReady(copy);
                     m_frameCount++;
                     if (m_fpsTimer.elapsed() >= 2000) {
                         double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
