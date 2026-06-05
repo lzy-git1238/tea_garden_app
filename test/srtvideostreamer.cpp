@@ -229,17 +229,15 @@ bool SrtVideoStreamer::ensureSwscale(int srcW, int srcH, int srcFmt) {
 bool SrtVideoStreamer::openStream() {
     closeStream();
 
-    // ── 1. 打开 SRT 流（裸 H.264 Annex B，跳过 TS 封装） ──
+    // ── 1. 打开 SRT 流（mpegts 封装） ──
     qDebug() << "[SRT] avformat_open_input:" << m_url;
     AVFormatContext *fc = nullptr;
-    const AVInputFormat *forceFmt = av_find_input_format("h264");
+    AVDictionary *opts = nullptr;
+    av_dict_set(&opts, "probesize", "50000000", 0);      // 50MB，给够时间收 SPS/PPS
+    av_dict_set(&opts, "analyzeduration", "30000000", 0); // 30 秒分析窗口
     int ret = avformat_open_input(&fc,
-        m_url.toUtf8().constData(), nullptr, nullptr);
-    if (ret < 0) {
-        // h264 格式探测失败，回退自动检测（可能是 mpegts）
-        ret = avformat_open_input(&fc,
-            m_url.toUtf8().constData(), forceFmt, nullptr);
-    }
+        m_url.toUtf8().constData(), nullptr, &opts);
+    av_dict_free(&opts);
     m_ctx.fmtCtx = fc;
 
     if (ret < 0) {
