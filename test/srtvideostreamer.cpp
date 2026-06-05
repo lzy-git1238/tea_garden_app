@@ -126,8 +126,12 @@ void SrtVideoStreamer::run() {
                     if (tmpFrame && av_hwframe_transfer_data(tmpFrame, srcFrame, 0) == 0) {
                         srcFrame = tmpFrame;
                         srcFmt = srcFrame->format;
+                        fprintf(stderr, "[SRT] hw transfer OK, new fmt=%d\n", srcFmt); fflush(stderr);
                     } else {
+                        fprintf(stderr, "[SRT] hw transfer FAILED\n"); fflush(stderr);
                         av_frame_free(&tmpFrame);
+                        dec_err_count++;
+                        if (dec_err_count > 10) break;
                         continue;
                     }
                 }
