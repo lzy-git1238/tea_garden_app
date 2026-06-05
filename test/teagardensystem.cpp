@@ -85,11 +85,23 @@ private:
 TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     setupUI();
 
-    // 网络（MJPEG 流 + AI 对话共用）
+    // 网络（AI 对话 + 天气 共用）
     networkManager = new QNetworkAccessManager(this);
     connect(networkManager, &QNetworkAccessManager::finished, this, &TeaGardenSystem::onNetworkReply);
 
-    setupMjpegStream();
+    // SRT 视频流（无人机 H.264 硬解）
+    m_videoStreamer = new SrtVideoStreamer(this);
+    m_videoStreamer->setUrl(
+        qEnvironmentVariable("TEA_SRT_URL", "srt://0.0.0.0:9000?mode=listener"));
+    connect(m_videoStreamer, &SrtVideoStreamer::frameReady,
+            this, &TeaGardenSystem::onVideoFrame);
+    connect(m_videoStreamer, &SrtVideoStreamer::statusMessage,
+            this, &TeaGardenSystem::onVideoStatus);
+    connect(m_videoStreamer, &SrtVideoStreamer::fpsUpdated,
+            this, [this](double fps) {
+        loraStateLabel->setText(QString("视频 FPS: %1").arg(fps, 0, 'f', 1));
+    });
+    m_videoStreamer->start();
 
     // 定时器：每3秒更新一次数据
     updateTimer = new QTimer(this);
