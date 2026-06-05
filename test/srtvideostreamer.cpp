@@ -25,12 +25,10 @@ void SrtVideoStreamer::run() {
         args << "-fflags" << "nobuffer"
              << "-flags"  << "low_delay"
              << "-i" << m_url
-             << "-vcodec" << (m_hwDecode ? "h264_rkmpp" : "h264")
-             << "-vf" << "hwdownload,format=nv12,format=rgb24"  // GPU→CPU
-             << "-an"
+             << "-an"                          // 无音频
              << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
-             << "pipe:1";
+             << "pipe:1";                      // stdout
 
         qDebug() << "[SRT] spawning: ffmpeg" << args;
         proc.start("ffmpeg", args, QIODevice::ReadOnly);
