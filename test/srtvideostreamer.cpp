@@ -24,10 +24,10 @@ void SrtVideoStreamer::run() {
         QStringList args;
         QString srtUrl = m_url;
         if (!srtUrl.contains("latency="))
-            srtUrl += "&latency=5000000";    // SRT 接收缓冲 5 秒
+            srtUrl += "&transtype=live&latency=5000000";
         args << "-fflags" << "nobuffer"
              << "-f" << "mpegts"
-             << "-i" << srtUrl               // 用带 latency 的 URL
+             << "-i" << srtUrl
              << "-an"
              << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
