@@ -31,9 +31,8 @@ void SrtVideoStreamer::run() {
              << "-f" << "h264"
              << "-i" << srtUrl
              << "-an"
-             << "-f" << "image2pipe"
-             << "-vcodec" << "mjpeg"
-             << "-q:v" << "5"
+             << "-f" << "rawvideo"
+             << "-pix_fmt" << "yuv420p"
              << "pipe:1";
 
         qDebug() << "[SRT] spawning: ffmpeg" << args;
