@@ -26,9 +26,9 @@ void SrtVideoStreamer::run() {
              << "-flags"  << "low_delay"
              << "-i" << m_url
              << "-vcodec" << (m_hwDecode ? "h264_rkmpp" : "h264")
-             << "-flags"  << "low_delay"    // 编码器级别 low_delay
+             << "-vf" << "hwdownload,format=nv12,format=rgb24"  // GPU→CPU
              << "-an"
-             << "-f" << "rawvideo"         // raw RGB24 输出，每帧固定大小
+             << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
              << "pipe:1";
 
