@@ -214,6 +214,7 @@ bool SrtVideoStreamer::openStream() {
     closeStream();
 
     // ── 1. 打开 SRT 流（让 FFmpeg 自己 alloc context） ──
+    qDebug() << "[SRT] avformat_open_input:" << m_url;
     AVFormatContext *fc = nullptr;
     int ret = avformat_open_input(&fc,
         m_url.toUtf8().constData(), nullptr, nullptr);
@@ -222,10 +223,12 @@ bool SrtVideoStreamer::openStream() {
     if (ret < 0) {
         char errBuf[256];
         av_strerror(ret, errBuf, sizeof(errBuf));
+        qDebug() << "[SRT] avformat_open_input FAILED:" << errBuf;
         emit statusMessage(QString("打开 SRT 流失败: %1").arg(errBuf));
         closeStream();
         return false;
     }
+    qDebug() << "[SRT] avformat_open_input OK";
 
     // ── 3. 查找流信息 ──
     ret = avformat_find_stream_info(m_ctx.fmtCtx, nullptr);
