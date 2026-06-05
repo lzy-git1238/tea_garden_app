@@ -21,7 +21,9 @@ void SrtVideoStreamer::run() {
     while (m_running) {
         QProcess proc;
 
-        QStringList args;
+        QString srtUrl = m_url;
+        if (!srtUrl.contains("latency="))
+            srtUrl += "&latency=5000000";    // SRT 接收缓冲 5 秒，容忍热点抖动
         args << "-fflags" << "nobuffer"
              << "-f" << "mpegts"         // 明确指定 MPEG-TS 封装
              << "-i" << m_url
