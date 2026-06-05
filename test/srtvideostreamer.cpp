@@ -23,6 +23,7 @@ void SrtVideoStreamer::run() {
 
         QStringList args;
         args << "-fflags" << "nobuffer"
+             << "-f" << "mpegts"         // 明确指定 MPEG-TS 封装
              << "-i" << m_url
              << "-an"
              << "-f" << "rawvideo"
