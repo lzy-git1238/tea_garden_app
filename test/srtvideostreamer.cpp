@@ -64,6 +64,8 @@ void SrtVideoStreamer::run() {
             .arg(m_ctx.codec->name));
 
         // 主解码循环
+        fprintf(stderr, "[SRT] decode loop started\n"); fflush(stderr);
+        int dec_frame_count = 0, dec_err_count = 0;
         int ret = 0;
         while (m_running) {
             ret = av_read_frame(m_ctx.fmtCtx, m_ctx.packet);
