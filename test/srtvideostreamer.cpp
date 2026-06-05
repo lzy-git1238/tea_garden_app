@@ -23,12 +23,13 @@ void SrtVideoStreamer::run() {
         // ── 构建 ffmpeg 命令行 ──
         QStringList args;
         args << "-fflags" << "nobuffer"
-             << "-flags"  << "low_delay"
+             << "-hwaccel" << "rkmpp"       // RK3588 官方硬解加速
              << "-i" << m_url
-             << "-an"                          // 无音频
+             << "-vf" << "hwdownload,format=nv12,format=rgb24"  // GPU→CPU→RGB
+             << "-an"
              << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
-             << "pipe:1";                      // stdout
+             << "pipe:1";
 
         qDebug() << "[SRT] spawning: ffmpeg" << args;
         proc.start("ffmpeg", args, QIODevice::ReadOnly);
