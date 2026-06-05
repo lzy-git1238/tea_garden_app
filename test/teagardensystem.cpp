@@ -92,7 +92,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     // SRT 视频流（无人机 H.264 硬解）
     m_videoStreamer = new SrtVideoStreamer(this);
     m_videoStreamer->setUrl(
-        qEnvironmentVariable("TEA_SRT_URL", "srt://:9000?mode=listener&timeout=5000000"));
+        qEnvironmentVariable("TEA_SRT_URL", "srt://:9000?mode=listener"));
     connect(m_videoStreamer, &SrtVideoStreamer::frameReady,
             this, &TeaGardenSystem::onVideoFrame);
     connect(m_videoStreamer, &SrtVideoStreamer::statusMessage,
