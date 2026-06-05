@@ -32,9 +32,6 @@ void runtimeMessageHandler(QtMsgType type, const QMessageLogContext &, const QSt
 }
 
 int main(int argc, char *argv[]) {
-    // FFmpeg 网络协议初始化（SRT 等网络流必需，cli 自动调用但 API 需手动）
-    avformat_network_init();
-
     QFile runtimeLog("./test_runtime.log");
     if (runtimeLog.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
         gRuntimeLogFile = &runtimeLog;
