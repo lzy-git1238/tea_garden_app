@@ -28,7 +28,7 @@ void SrtVideoStreamer::run() {
 
         QStringList args;
         args << "-fflags" << "nobuffer"
-             << "-f" << "mpegts"
+             << "-f" << "h264"
              << "-i" << srtUrl
              << "-an"
              << "-f" << "image2pipe"
