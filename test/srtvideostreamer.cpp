@@ -47,6 +47,7 @@ void SrtVideoStreamer::stop() {
 
 void SrtVideoStreamer::run() {
     m_running = true;
+    qDebug() << "[SRT] thread run() started, url =" << m_url;
     emit statusMessage("SRT 视频流初始化中...");
 
     while (m_running) {
