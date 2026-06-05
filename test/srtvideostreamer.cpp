@@ -24,13 +24,13 @@ void SrtVideoStreamer::run() {
         QStringList args;
         args << "-fflags" << "nobuffer"
              << "-flags"  << "low_delay"
-             << "-i" << m_url;
-        if (m_hwDecode)
-            args << "-vcodec" << "h264_rkmpp";
-        args << "-an"
-             << "-f" << "mjpeg"        // MJPEG 帧输出，每帧自带 JPEG marker
-             << "-q:v" << "5"
-             << "pipe:1";              // stdout
+             << "-i" << m_url
+             << "-vcodec" << (m_hwDecode ? "h264_rkmpp" : "h264")
+             << "-flags"  << "low_delay"    // 编码器级别 low_delay
+             << "-an"
+             << "-f" << "rawvideo"         // raw RGB24 输出，每帧固定大小
+             << "-pix_fmt" << "rgb24"
+             << "pipe:1";
 
         qDebug() << "[SRT] spawning: ffmpeg" << args;
         proc.start("ffmpeg", args, QIODevice::ReadOnly);
