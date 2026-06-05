@@ -28,6 +28,7 @@ SOURCES += \
     pestdata.cpp \
     scheduledialog.cpp \
     schedulestore.cpp \
+    srtvideostreamer.cpp \
     teagardensystem.cpp \
     thresholddialog.cpp \
     widget.cpp
@@ -41,6 +42,7 @@ HEADERS += \
     pestdata.h \
     scheduledialog.h \
     schedulestore.h \
+    srtvideostreamer.h \
     teagardensystem.h \
     thresholddialog.h \
     widget.h
