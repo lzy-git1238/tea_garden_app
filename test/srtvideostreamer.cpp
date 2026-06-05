@@ -213,18 +213,11 @@ bool SrtVideoStreamer::ensureSwscale(int srcW, int srcH, int srcFmt) {
 bool SrtVideoStreamer::openStream() {
     closeStream();
 
-    // ── 1. 分配格式上下文 ──
-    m_ctx.fmtCtx = avformat_alloc_context();
-    if (!m_ctx.fmtCtx) {
-        emit statusMessage("avformat_alloc_context 失败");
-        return false;
-    }
-
-    // ── 2. 打开 SRT 流 ──
-    // SRT listener 不需要特殊的 AVDictionary 选项，
-    // fflags/analyzeduration 会在 find_stream_info 之后设置
-    int ret = avformat_open_input(&m_ctx.fmtCtx,
+    // ── 1. 打开 SRT 流（让 FFmpeg 自己 alloc context） ──
+    AVFormatContext *fc = nullptr;
+    int ret = avformat_open_input(&fc,
         m_url.toUtf8().constData(), nullptr, nullptr);
+    m_ctx.fmtCtx = fc;
 
     if (ret < 0) {
         char errBuf[256];
