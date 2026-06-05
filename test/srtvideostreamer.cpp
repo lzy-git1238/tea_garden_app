@@ -45,15 +45,13 @@ void SrtVideoStreamer::run() {
         emit statusMessage("SRT 视频流已连接 [h264_rkmpp]");
 
         // ── 主循环：读 raw RGB24 帧 ──
-        QByteArray errBuf;
-        QByteArray stdoutBuf;
-        bool resDetected = false;
-        int frameSize = 0;
-
-        while (m_running && proc.state() == QProcess::Running) {
-            // 1. 读 stderr — 提取分辨率
-            QByteArray err = proc.readAllStandardError();
-            errBuf.append(err);
+        // 连接 stderr 到 QProcess，实时查看 ffmpeg 错误
+        proc.setProcessChannelMode(QProcess::SeparateChannels);
+        QObject::connect(&proc, &QProcess::readyReadStandardError, [&]() {
+            QByteArray e = proc.readAllStandardError();
+            // 直接写 stderr 保证可见
+            ::write(STDERR_FILENO, e.constData(), e.size());
+        });
             if (!resDetected && errBuf.size() > 200) {
                 QString es = QString::fromUtf8(errBuf.right(2000));
                 QRegularExpression re("(\\d{2,4})x(\\d{2,4})");
