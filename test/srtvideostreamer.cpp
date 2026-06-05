@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QRegularExpression>
+#include <unistd.h>
 
 SrtVideoStreamer::SrtVideoStreamer(QObject *parent) : QThread(parent) {}
 SrtVideoStreamer::~SrtVideoStreamer() { stop(); }
