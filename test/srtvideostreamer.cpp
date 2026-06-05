@@ -51,20 +51,12 @@ void SrtVideoStreamer::run() {
 
         QByteArray stdoutBuf;
         int frameSize = 0;
-        int consecutiveNullFrames = 0;
 
         while (m_running && proc.state() == QProcess::Running) {
-            proc.waitForReadyRead(500);
+            proc.waitForReadyRead(2000);  // 2 秒一次轮询
             QByteArray data = proc.readAllStandardOutput();
             if (!data.isEmpty()) {
-                consecutiveNullFrames = 0;
                 stdoutBuf.append(data);
-            } else {
-                consecutiveNullFrames++;
-                if (consecutiveNullFrames > 20) { // 10秒无数据则退出
-                    qDebug() << "[SRT] no data for 10s, restarting";
-                    break;
-                }
             }
 
             // 从第一帧数据推断分辨率（rawvideo 无 header，从数据量反推）
