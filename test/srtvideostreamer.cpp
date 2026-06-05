@@ -23,13 +23,8 @@ void SrtVideoStreamer::run() {
         QProcess proc;
 
         QString srtUrl = m_url;
-        // SRT 抗丢包参数：大缓冲 + NAK 重传 + 时间戳交付
         if (!srtUrl.contains("latency="))
-            srtUrl += "&transtype=live&latency=20000000"       // 20秒缓冲
-                      "&rcvbuf=12582912"                        // 12MB 接收缓存
-                      "&nakreport=1"                            // NAK 负确认重传（抗丢包关键）
-                      "&tlpktdrop=0"                            // 禁止 TLPKTDROP（不因延迟丢包）
-                      "&messageapi=1";                          // 消息模式保持 SPS/PPS 完整性
+            srtUrl += "&transtype=live&latency=5000000";
 
         QStringList args;
         args << "-fflags" << "nobuffer"
