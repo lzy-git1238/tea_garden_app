@@ -109,9 +109,19 @@ void SrtVideoStreamer::run() {
                 AVFrame *srcFrame = m_ctx.frame;
                 int srcFmt = srcFrame->format;
 
+                // 第一帧：打印格式信息
+                if (dec_frame_count == 0) {
+                    const char *fmtName = av_get_pix_fmt_name((AVPixelFormat)srcFmt);
+                    fprintf(stderr, "[SRT] first frame: %dx%d pix_fmt=%d(%s) rkmpp=%d\n",
+                            srcFrame->width, srcFrame->height, srcFmt,
+                            fmtName ? fmtName : "?", m_hwDecode);
+                    fflush(stderr);
+                }
+
                 // rkmpp 硬解可能吐出 DRM_PRIME
                 AVFrame *tmpFrame = nullptr;
                 if (srcFmt == AV_PIX_FMT_DRM_PRIME) {
+                    fprintf(stderr, "[SRT] DRM_PRIME detected, doing hw transfer...\n"); fflush(stderr);
                     tmpFrame = av_frame_alloc();
                     if (tmpFrame && av_hwframe_transfer_data(tmpFrame, srcFrame, 0) == 0) {
                         srcFrame = tmpFrame;
