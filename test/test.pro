@@ -9,9 +9,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-# FFmpeg 6.0.1 头文件（匹配板载 libavformat.so.60）
-INCLUDEPATH += /home/elf/ffmpeg-6.0.1
-LIBS += -L/usr/lib/aarch64-linux-gnu -lavformat -lavcodec -lavutil -lswscale
+# FFmpeg 满血版（通过 QProcess 调二进制，无需链接 API）
+# 板载 ffmpeg 路径 /usr/bin/ffmpeg 已含 h264_rkmpp + libsrt
 
 # Paho MQTT C++ (华为云 IoT 双向通信)
 LIBS += -lpaho-mqttpp3 -lpaho-mqtt3as
