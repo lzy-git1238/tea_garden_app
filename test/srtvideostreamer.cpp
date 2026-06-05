@@ -23,9 +23,7 @@ void SrtVideoStreamer::run() {
 
         QStringList args;
         args << "-fflags" << "nobuffer"
-             << "-hwaccel" << "rkmpp"
              << "-i" << m_url
-             << "-vf" << "hwdownload,format=nv12,format=rgb24"
              << "-an"
              << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
