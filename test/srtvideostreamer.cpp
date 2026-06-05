@@ -45,60 +45,62 @@ void SrtVideoStreamer::run() {
         emit streamConnected();
         emit statusMessage("SRT 视频流已连接 [h264_rkmpp]");
 
+        // ── 主循环：读 raw RGB24 帧 ──
+        QByteArray errBuf;
         QByteArray stdoutBuf;
         bool resDetected = false;
+        int frameSize = 0;
 
         while (m_running && proc.state() == QProcess::Running) {
-            // 读 stderr 提取分辨率
+            // 1. 读 stderr — 提取分辨率
             QByteArray err = proc.readAllStandardError();
-            if (!resDetected && !err.isEmpty()) {
-                QString es = QString::fromUtf8(err);
+            errBuf.append(err);
+            if (!resDetected && errBuf.size() > 200) {
+                QString es = QString::fromUtf8(errBuf.right(2000));
                 QRegularExpression re("(\\d{2,4})x(\\d{2,4})");
                 auto m = re.match(es);
                 if (m.hasMatch()) {
                     m_resWidth  = m.captured(1).toInt();
                     m_resHeight = m.captured(2).toInt();
+                    frameSize   = m_resWidth * m_resHeight * 3;
                     resDetected = true;
-                    qDebug() << "[SRT] detected resolution:" << m_resWidth << "x" << m_resHeight;
+                    m_fpsTimer.start();
+                    m_frameCount = 0;
+                    qDebug() << "[SRT] resolution:" << m_resWidth << "x" << m_resHeight
+                             << "frameSize:" << frameSize;
                     emit statusMessage(QString("视频 %1x%2 [h264_rkmpp]")
                         .arg(m_resWidth).arg(m_resHeight));
                 }
             }
 
-            // 读 stdout — JPEG 帧
+            // 2. 读 stdout — raw RGB24 帧（每帧 w*h*3 字节）
             proc.waitForReadyRead(200);
             QByteArray data = proc.readAllStandardOutput();
             if (!data.isEmpty()) {
                 stdoutBuf.append(data);
+            }
 
-                // 扫描 JPEG 边界: SOI=FFD8, EOI=FFD9
-                while (stdoutBuf.size() > 4) {
-                    int soi = stdoutBuf.indexOf("\xFF\xD8");
-                    if (soi < 0) { stdoutBuf.clear(); break; }
-                    if (soi > 0) stdoutBuf.remove(0, soi);
+            // 3. 尝试取出完整的帧
+            while (resDetected && stdoutBuf.size() >= frameSize) {
+                QByteArray frameData = stdoutBuf.left(frameSize);
+                stdoutBuf.remove(0, frameSize);
 
-                    int eoi = stdoutBuf.indexOf("\xFF\xD9", 2);
-                    if (eoi < 0) break;  // 帧不完整
+                QImage img((const uchar*)frameData.constData(),
+                           m_resWidth, m_resHeight,
+                           QImage::Format_RGB888);
+                QImage copy = img.copy();  // 深拷贝（原 frameData 即将被覆盖）
 
-                    QByteArray jpeg = stdoutBuf.left(eoi + 2);
-                    stdoutBuf.remove(0, eoi + 2);
+                if (!copy.isNull()) {
+                    emit frameReadyForYolo(copy.constBits(),
+                        copy.width(), copy.height(), copy.bytesPerLine());
+                    emit frameReady(copy);
 
-                    QImage img = QImage::fromData(jpeg, "JPEG");
-                    if (!img.isNull()) {
-                        // YOLO 预留 — 先转成 RGB24 再发射指针
-                        QImage rgb = img.convertToFormat(QImage::Format_RGB888);
-                        emit frameReadyForYolo(rgb.constBits(),
-                            rgb.width(), rgb.height(), rgb.bytesPerLine());
-                        emit frameReady(rgb);  // QImage 隐式深拷贝
-
-                        m_frameCount++;
-                        if (!m_fpsTimer.isValid()) m_fpsTimer.start();
-                        else if (m_fpsTimer.elapsed() >= 2000) {
-                            double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
-                            emit fpsUpdated(fps);
-                            m_frameCount = 0;
-                            m_fpsTimer.restart();
-                        }
+                    m_frameCount++;
+                    if (m_fpsTimer.elapsed() >= 2000) {
+                        double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
+                        emit fpsUpdated(fps);
+                        m_frameCount = 0;
+                        m_fpsTimer.restart();
                     }
                 }
             }
