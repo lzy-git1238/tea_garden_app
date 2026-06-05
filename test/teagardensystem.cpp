@@ -1871,6 +1871,22 @@ void TeaGardenSystem::openScheduleDialog(const QString &deviceType) {
     dlg->show();
 }
 
+// ── SRT 视频流回调 ──
+
+void TeaGardenSystem::onVideoFrame(const QImage &image) {
+    if (!videoLabel || image.isNull()) return;
+
+    const int w = qMax(videoLabel->width(), 280);
+    const int h = w * kDroneVideoHeight / kDroneVideoWidth;
+    const QPixmap pix = QPixmap::fromImage(image);
+    videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    videoLabel->setText(QString());
+}
+
+void TeaGardenSystem::onVideoStatus(const QString &msg) {
+    appendChatMessage("视频", msg);
+}
+
 // ── IoT 云端命令 ──
 
 void TeaGardenSystem::onIotCommand(const QString &device, bool on,
