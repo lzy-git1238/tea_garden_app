@@ -13,6 +13,7 @@ extern "C" {
 SrtVideoStreamer::SrtVideoStreamer(QObject *parent)
     : QThread(parent)
 {
+    avformat_network_init();  // 必须！否则 SRT 等网络协议不可用
 }
 
 SrtVideoStreamer::~SrtVideoStreamer() {
