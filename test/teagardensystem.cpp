@@ -8,6 +8,7 @@
 #include "iotuploader.h"
 #include "schedulestore.h"
 #include "scheduledialog.h"
+#include "srtvideostreamer.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
