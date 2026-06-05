@@ -515,6 +515,7 @@ void TeaGardenSystem::setupUI() {
     applyTheme();
 }
 
+#ifdef TEA_USE_WEBSOCKET_VIDEO
 void TeaGardenSystem::setupMjpegStream() {
     const QString streamUrl = qEnvironmentVariable("TEA_MJPEG_URL", "ws://100.108.217.12:8080/ws");
 
@@ -556,6 +557,7 @@ void TeaGardenSystem::setupMjpegStream() {
 
     appendChatMessage("系统", "WebSocket 视频流已连接: " + streamUrl);
 }
+#endif // TEA_USE_WEBSOCKET_VIDEO
 
 void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
 #ifdef TEA_ENABLE_MAP_WEBVIEW
