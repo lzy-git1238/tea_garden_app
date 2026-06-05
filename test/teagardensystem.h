@@ -157,6 +157,7 @@ private:
     // MJPEG 视频流
     class QWebSocket *videoSocket = nullptr;
     QByteArray mjpegBuffer;
+    SrtVideoStreamer *m_videoStreamer = nullptr;
 
     // 当前环境数值（用于AI分析）
     double curTemp = 22.0;
