@@ -38,8 +38,13 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // 板子桌面 GDM autologin 已自动设好 WAYLAND_DISPLAY/XDG_RUNTIME_DIR
-    // 不要从 SSH 运行——SSH 没有 GUI session
+    // 强制使用 xcb (X11) 后端，ibus 中文输入在 Qt5+X11 下最稳定
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
+        if (qEnvironmentVariableIsEmpty("DISPLAY")) {
+            qputenv("DISPLAY", ":0");
+        }
+        qputenv("QT_QPA_PLATFORM", "xcb");
+    }
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
@@ -64,11 +69,6 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     TeaGardenSystem w;
-
-    // MIPI 7寸屏 1024x600：最大话 GNOME 难靠 API，改最小尺寸 + 铺满
-    w.setMinimumSize(1024, 600);
-    w.resize(1024, 600);
-    w.move(0, 0);
     w.show();
 
     return a.exec();
