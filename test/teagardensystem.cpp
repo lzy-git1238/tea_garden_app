@@ -251,7 +251,7 @@ void TeaGardenSystem::setupUI() {
     pestChart->setMargins(QMargins(2, 2, 2, 2));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(240);
+    pestPieView->setMinimumHeight(qRound(240 * m_dpiScale));
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     leftPanel->addWidget(pestPieView, 1);
 
