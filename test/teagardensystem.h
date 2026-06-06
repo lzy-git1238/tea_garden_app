@@ -186,6 +186,9 @@ private:
     QJsonArray weatherForecastData;  // 缓存24h逐时预报数据，用于弹窗
     QString weatherLocationPath;     // 缓存地点名称
 
+    // 屏幕缩放
+    double m_dpiScale = 1.0;
+
     // 主题
     bool isDarkMode = true;
     QPushButton *themeBtn = nullptr;
