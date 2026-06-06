@@ -199,7 +199,7 @@ void TeaGardenSystem::setupUI() {
     // ── 顶部标题栏（参考大数据平台居中标题） ──
     headerFrame = new QFrame();
     headerFrame->setObjectName("headerBar");
-    headerFrame->setFixedHeight(52);
+    headerFrame->setFixedHeight(qRound(52 * m_dpiScale));
     auto *headerRow = new QHBoxLayout(headerFrame);
     headerRow->setContentsMargins(16, 4, 16, 4);
     auto *headerDecoL = new QLabel("━━━");
