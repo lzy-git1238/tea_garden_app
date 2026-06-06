@@ -28,9 +28,16 @@ void SrtVideoStreamer::run() {
             srtUrl += "&transtype=live&latency=5000000";
 
         QStringList args;
-        args << "-fflags" << "nobuffer"
-             << "-f" << "h264"
-             << "-i" << srtUrl
+        // 参照已验证可行的 ffplay 管线:
+        // ffplay -vcodec h264_rkmpp -f mpegts -fflags nobuffer -flags low_delay
+        //        -framedrop -strict experimental -i "srt://...?mode=listener"
+        args << "-vcodec" << "h264_rkmpp"
+             << "-f" << "mpegts"
+             << "-fflags" << "nobuffer"
+             << "-flags"  << "low_delay"
+             << "-framedrop"
+             << "-strict" << "experimental"
+             << "-i" << m_url              // 简洁 URL，不加额外 SRT 参数
              << "-an"
              << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
