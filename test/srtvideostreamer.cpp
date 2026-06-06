@@ -31,7 +31,6 @@ void SrtVideoStreamer::run() {
              << "-f" << "mpegts"
              << "-fflags" << "nobuffer"
              << "-flags"  << "low_delay"
-             << "-strict" << "experimental"
              << "-i" << m_url              // 简洁 URL，不加额外 SRT 参数
              << "-an"
              << "-f" << "rawvideo"
