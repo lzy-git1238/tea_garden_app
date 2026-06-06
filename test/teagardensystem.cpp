@@ -336,7 +336,7 @@ void TeaGardenSystem::setupUI() {
     auto *fpBarLayout = new QHBoxLayout(flowProgressBar);
     fpBarLayout->setContentsMargins(0, 0, 0, 0);
     flowProgressFill = new QFrame();
-    flowProgressFill->setFixedHeight(5);
+    flowProgressFill->setFixedHeight(qRound(5 * m_dpiScale));
     flowProgressFill->setStyleSheet("background: #4caf50; border-radius: 3px;");
     flowProgressFill->setMinimumWidth(0);
     fpBarLayout->addWidget(flowProgressFill);
