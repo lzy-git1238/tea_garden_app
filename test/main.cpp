@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextStream>
-#include <QTimer>
 #include <QtGlobal>
 #include <unistd.h>
 #include "teagardensystem.h"
