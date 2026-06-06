@@ -565,7 +565,7 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     if (!htmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QLabel *fallback = new QLabel("Map page load failed: :/web/amap_view.html");
         fallback->setAlignment(Qt::AlignCenter);
-        fallback->setMinimumHeight(350);
+        fallback->setMinimumHeight(qRound(350 * m_dpiScale));
         fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
         midPanel->addWidget(fallback);
         return;
