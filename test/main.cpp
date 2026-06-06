@@ -67,7 +67,12 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     TeaGardenSystem w;
-    w.show();  // eglfs 自动全屏填满 MIPI 1024x600
+
+    // MIPI 7寸屏 1024x600：无边框 + 精确铺满，等同全屏
+    w.setWindowFlags(Qt::FramelessWindowHint);
+    w.resize(1024, 600);
+    w.move(0, 0);
+    w.show();
 
     return a.exec();
 }
