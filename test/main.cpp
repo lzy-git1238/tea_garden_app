@@ -38,10 +38,8 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // Wayland autologin（板子桌面） → 指定 socket
-    if (QFile::exists("/run/user/1000/wayland-0") && qEnvironmentVariableIsEmpty("WAYLAND_DISPLAY")) {
-        qputenv("WAYLAND_DISPLAY", "wayland-0");
-    }
+    // 板子桌面 GDM autologin 已自动设好 WAYLAND_DISPLAY/XDG_RUNTIME_DIR
+    // 不要从 SSH 运行——SSH 没有 GUI session
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
