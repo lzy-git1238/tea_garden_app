@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
 
     TeaGardenSystem w;
 
-    // MIPI 7寸屏 1024x600：无边框 + 精确铺满，等同全屏
-    w.setWindowFlags(Qt::FramelessWindowHint);
+    // MIPI 7寸屏 1024x600：无标题栏 + 铺满全屏，等同全屏
+    w.setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
     w.resize(1024, 600);
     w.move(0, 0);
     w.show();
