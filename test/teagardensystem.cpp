@@ -604,7 +604,7 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     Q_UNUSED(index);
 
     QFrame *card = new QFrame();
-    card->setMinimumHeight(78);
+    card->setMinimumHeight(qRound(78 * m_dpiScale));
     card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     dataCards.append(card);
 
