@@ -39,9 +39,8 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // RK3588 MIPI 屏：直接走 DRM framebuffer，跳过 Wayland/GNOME
+    // RK3588 MIPI 屏：eglfs 直接驱动 DRM，自动全屏 1024x600
     qputenv("QT_QPA_PLATFORM", "eglfs");
-    qputenv("QT_QPA_EGLFS_KMS_CONFIG", "/home/elf/kms.conf");
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
