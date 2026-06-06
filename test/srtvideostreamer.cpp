@@ -23,10 +23,6 @@ void SrtVideoStreamer::run() {
     while (m_running) {
         QProcess proc;
 
-        QString srtUrl = m_url;
-        if (!srtUrl.contains("latency="))
-            srtUrl += "&transtype=live&latency=5000000";
-
         QStringList args;
         // 参照已验证可行的 ffplay 管线:
         // ffplay -vcodec h264_rkmpp -f mpegts -fflags nobuffer -flags low_delay
