@@ -186,6 +186,7 @@ TeaGardenSystem::~TeaGardenSystem() {
 
 void TeaGardenSystem::setupUI() {
     this->setWindowTitle("智慧茶园综合管理系统 v2.0");
+    this->resize(1400, 900);
 
     auto *rootLayout = new QVBoxLayout(this);
     rootLayout->setSpacing(10);
