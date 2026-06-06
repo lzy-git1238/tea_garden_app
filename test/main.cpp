@@ -65,11 +65,11 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     TeaGardenSystem w;
+    w.show();
 
-    // 延迟全屏：事件循环启动后再执行，避免 Wayland/X11 race
-    QTimer::singleShot(0, [&w]() {
+    // 100ms 后强制全屏（等窗口系统和 VT 切换完毕）
+    QTimer::singleShot(100, &w, [&w]() {
         w.setWindowState(Qt::WindowFullScreen);
-        w.show();
     });
 
     return a.exec();
