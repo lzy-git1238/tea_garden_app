@@ -65,19 +65,7 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     TeaGardenSystem w;
-
-    // MIPI 7寸屏 1024x600 适配
-    qputenv("QT_SCALE_FACTOR", "1");       // 不缩放，用原生分辨率
-    w.setMinimumSize(1024, 600);
-    w.resize(1024, 600);
-    w.move(0, 0);
-    w.show();
-    w.raise();
-
-    // Wayland GWON clean 全屏：设完geometry后调activate
-    QTimer::singleShot(200, &w, [&w]() {
-        w.setWindowState(Qt::WindowMaximized);
-    });
+    w.show();  // eglfs 自动全屏填满 MIPI 1024x600
 
     return a.exec();
 }
