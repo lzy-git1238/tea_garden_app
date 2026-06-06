@@ -70,12 +70,24 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     TeaGardenSystem w;
-    w.show();
 
-    // 100ms 后强制全屏（等窗口系统和 VT 切换完毕）
-    QTimer::singleShot(100, &w, [&w]() {
-        w.setWindowState(Qt::WindowFullScreen);
-    });
+    // MIPI 7寸屏 (1024x600) 全屏：先设无标题栏 + 满屏几何
+    w.setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    // 从 DRM framebuffer 读物理分辨率
+    QFile fbSize("/sys/class/graphics/fb0/virtual_size");
+    int scrW = 1024, scrH = 600;
+    if (fbSize.open(QIODevice::ReadOnly)) {
+        QTextStream ts(&fbSize);
+        ts >> scrW;
+        ts.skipWhiteSpace();
+        QString dummy; ts >> dummy;  // skip comma
+        ts >> scrH;
+        if (scrW <= 0) { scrW = 1024; scrH = 600; }
+    }
+    w.resize(scrW, scrH);
+    w.move(0, 0);
+    w.show();
+    w.raise();
 
     return a.exec();
 }
