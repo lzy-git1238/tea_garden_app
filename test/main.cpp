@@ -39,13 +39,9 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // MIPI 屏自动检测显示后端（Wayland/GDM autologin）
-    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
-        if (QFile::exists("/run/user/1000/wayland-0")) {
-            qputenv("WAYLAND_DISPLAY", "wayland-0");
-            qputenv("QT_QPA_PLATFORM", "wayland");
-        }
-    }
+    // RK3588 MIPI 屏：直接走 DRM framebuffer，跳过 Wayland/GNOME
+    qputenv("QT_QPA_PLATFORM", "eglfs");
+    qputenv("QT_QPA_EGLFS_KMS_CONFIG", "/home/elf/kms.conf");
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
