@@ -39,10 +39,10 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // 自动检测 Wayland（GNOME/GDM）或 X11 后端
-    if (QFile::exists("/run/user/1000/wayland-0")) {
+    // Wayland autologin（板子桌面） → 指定 socket
+    if (QFile::exists("/run/user/1000/wayland-0") && qEnvironmentVariableIsEmpty("WAYLAND_DISPLAY")) {
         qputenv("WAYLAND_DISPLAY", "wayland-0");
-        // 不强制设置 QT_QPA_PLATFORM，让 Qt 自动选
+    }
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
