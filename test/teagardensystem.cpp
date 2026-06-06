@@ -587,14 +587,14 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     html.replace("__ZOOM__", zoom.toHtmlEscaped());
 
     mapView = new QWebEngineView(this);
-    mapView->setMinimumHeight(520);
+    mapView->setMinimumHeight(qRound(520 * m_dpiScale));
     mapView->setStyleSheet("border: 1px solid #334455; border-radius: 8px;");
     static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
     midPanel->addWidget(mapView, 10);
 #else
     QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable Map.");
     fallback->setAlignment(Qt::AlignCenter);
-    fallback->setMinimumHeight(520);
+    fallback->setMinimumHeight(qRound(520 * m_dpiScale));
     fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
     midPanel->addWidget(fallback, 5);
 #endif
