@@ -37,6 +37,7 @@ class TeaGardenSystem : public QWidget {
 public:
     explicit TeaGardenSystem(QWidget *parent = nullptr);
     virtual ~TeaGardenSystem();
+    void setScreenDpiScale(double scale) { m_dpiScale = scale; }
 
 private slots:
     void refreshData();         // 定时刷新环境数据
