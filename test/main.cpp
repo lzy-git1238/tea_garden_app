@@ -39,9 +39,13 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // Wayland 有全屏问题，MIPI 屏统一走 xcb
-    qputenv("QT_QPA_PLATFORM", "xcb");
-    qputenv("QT_XCB_GL_INTEGRATION", "none");  // 禁用 OpenGL（WebEngine 不行用 software）
+    // MIPI 屏自动检测显示后端（Wayland/GDM autologin）
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
+        if (QFile::exists("/run/user/1000/wayland-0")) {
+            qputenv("WAYLAND_DISPLAY", "wayland-0");
+            qputenv("QT_QPA_PLATFORM", "wayland");
+        }
+    }
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
