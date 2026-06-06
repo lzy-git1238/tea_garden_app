@@ -39,8 +39,10 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // RK3588 MIPI 屏：eglfs 直接驱动 DRM，自动全屏 1024x600
-    qputenv("QT_QPA_PLATFORM", "eglfs");
+    // 自动检测 Wayland（GNOME/GDM）或 X11 后端
+    if (QFile::exists("/run/user/1000/wayland-0")) {
+        qputenv("WAYLAND_DISPLAY", "wayland-0");
+        // 不强制设置 QT_QPA_PLATFORM，让 Qt 自动选
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
