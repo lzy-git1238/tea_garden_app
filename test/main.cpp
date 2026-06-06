@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
 
     TeaGardenSystem w;
 
-    // MIPI 7寸屏 1024x600：无标题栏 + 铺满全屏，等同全屏
-    w.setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    // MIPI 7寸屏 1024x600：最大话 GNOME 难靠 API，改最小尺寸 + 铺满
+    w.setMinimumSize(1024, 600);
     w.resize(1024, 600);
     w.move(0, 0);
     w.show();
