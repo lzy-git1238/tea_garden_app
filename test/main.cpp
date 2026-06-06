@@ -65,7 +65,12 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     TeaGardenSystem w;
-    w.showFullScreen();
+
+    // 延迟全屏：事件循环启动后再执行，避免 Wayland/X11 race
+    QTimer::singleShot(0, [&w]() {
+        w.setWindowState(Qt::WindowFullScreen);
+        w.show();
+    });
 
     return a.exec();
 }
