@@ -71,23 +71,18 @@ int main(int argc, char *argv[]) {
 
     TeaGardenSystem w;
 
-    // MIPI 7寸屏 (1024x600) 全屏：先设无标题栏 + 满屏几何
-    w.setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    // 从 DRM framebuffer 读物理分辨率
-    QFile fbSize("/sys/class/graphics/fb0/virtual_size");
-    int scrW = 1024, scrH = 600;
-    if (fbSize.open(QIODevice::ReadOnly)) {
-        QTextStream ts(&fbSize);
-        ts >> scrW;
-        ts.skipWhiteSpace();
-        QString dummy; ts >> dummy;  // skip comma
-        ts >> scrH;
-        if (scrW <= 0) { scrW = 1024; scrH = 600; }
-    }
-    w.resize(scrW, scrH);
+    // MIPI 7寸屏 1024x600 适配
+    qputenv("QT_SCALE_FACTOR", "1");       // 不缩放，用原生分辨率
+    w.setMinimumSize(1024, 600);
+    w.resize(1024, 600);
     w.move(0, 0);
     w.show();
     w.raise();
+
+    // Wayland GWON clean 全屏：设完geometry后调activate
+    QTimer::singleShot(200, &w, [&w]() {
+        w.setWindowState(Qt::WindowMaximized);
+    });
 
     return a.exec();
 }
