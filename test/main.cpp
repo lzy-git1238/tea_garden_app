@@ -38,12 +38,19 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // 强制使用 xcb (X11) 后端，ibus 中文输入在 Qt5+X11 下最稳定
+    // 检测显示后端：优先 Wayland（MIPI 屏/GDM autologin），其次 X11
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
-        if (qEnvironmentVariableIsEmpty("DISPLAY")) {
+        // Wayland GNOME autologin → 走 wayland 平台
+        const bool waylandAvailable = QFile::exists("/run/user/1000/wayland-0");
+        if (waylandAvailable) {
+            qputenv("WAYLAND_DISPLAY", "wayland-0");
+            qputenv("QT_QPA_PLATFORM", "wayland");
+        } else if (qEnvironmentVariableIsEmpty("DISPLAY")) {
             qputenv("DISPLAY", ":0");
+            qputenv("QT_QPA_PLATFORM", "xcb");
+        } else {
+            qputenv("QT_QPA_PLATFORM", "xcb");
         }
-        qputenv("QT_QPA_PLATFORM", "xcb");
     }
 
     // 强制启用 ibus 中文输入法支持
