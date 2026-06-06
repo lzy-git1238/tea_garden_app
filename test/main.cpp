@@ -38,20 +38,9 @@ int main(int argc, char *argv[]) {
         qInstallMessageHandler(runtimeMessageHandler);
     }
 
-    // 检测显示后端：优先 Wayland（MIPI 屏/GDM autologin），其次 X11
-    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
-        // Wayland GNOME autologin → 走 wayland 平台
-        const bool waylandAvailable = QFile::exists("/run/user/1000/wayland-0");
-        if (waylandAvailable) {
-            qputenv("WAYLAND_DISPLAY", "wayland-0");
-            qputenv("QT_QPA_PLATFORM", "wayland");
-        } else if (qEnvironmentVariableIsEmpty("DISPLAY")) {
-            qputenv("DISPLAY", ":0");
-            qputenv("QT_QPA_PLATFORM", "xcb");
-        } else {
-            qputenv("QT_QPA_PLATFORM", "xcb");
-        }
-    }
+    // Wayland 有全屏问题，MIPI 屏统一走 xcb
+    qputenv("QT_QPA_PLATFORM", "xcb");
+    qputenv("QT_XCB_GL_INTEGRATION", "none");  // 禁用 OpenGL（WebEngine 不行用 software）
 
     // 强制启用 ibus 中文输入法支持
     if (qEnvironmentVariableIsEmpty("QT_IM_MODULE")) {
