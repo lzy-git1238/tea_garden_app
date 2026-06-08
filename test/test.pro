@@ -30,7 +30,8 @@ SOURCES += \
     srtvideostreamer.cpp \
     teagardensystem.cpp \
     thresholddialog.cpp \
-    widget.cpp
+    widget.cpp \
+    yolodetector.cpp
 
 HEADERS += \
     chartdashboard.h \
