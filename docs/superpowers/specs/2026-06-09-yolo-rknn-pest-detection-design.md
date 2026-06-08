@@ -308,6 +308,7 @@ if (!det.className.contains("Healthy")) {
 | `teagardensystem.cpp` | 修改 | 构造函数初始化 + 画框叠加 + 写入 PestStore |
 | `test.pro` | 修改 | 添加 `yolodetector.cpp/h` |
 | `rknn_yolo_server.py` | 新增 | Python 推理服务（ELF2 部署） |
+| `start_yolo_server.sh` | 新增 | Shell 包装脚本，解决 rknn_env 虚拟环境依赖 |
 
 ## 错误处理
 
