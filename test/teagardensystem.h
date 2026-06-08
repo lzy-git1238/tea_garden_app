@@ -30,7 +30,6 @@
 
 class ChartDashboard;
 class SrtVideoStreamer;
-class YoloDetector;
 
 // --- 主系统类 ---
 class TeaGardenSystem : public QWidget {
