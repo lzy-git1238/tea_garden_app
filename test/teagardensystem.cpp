@@ -1903,6 +1903,93 @@ void TeaGardenSystem::onVideoStatus(const QString &msg) {
     appendChatMessage("视频", msg);
 }
 
+// ── YOLO 检测结果处理 ──
+
+static QColor colorForYoloClass(const QString &cls) {
+    if (cls == "Algal Leaf Spot")  return QColor("#2196F3");
+    if (cls == "Brown Blight")     return QColor("#F44336");
+    if (cls == "Gray Blight")      return QColor("#9E9E9E");
+    if (cls == "Healthy")          return QColor("#4CAF50");
+    if (cls == "Helopeltis")       return QColor("#FF9800");
+    if (cls == "Red Leaf Spot")    return QColor("#E91E63");
+    return QColor("#FFFFFF");
+}
+
+static QString mapYoloClassToChinese(const QString &cls) {
+    if (cls == "Algal Leaf Spot")  return "茶藻斑病";
+    if (cls == "Brown Blight")     return "茶炭疽病";
+    if (cls == "Gray Blight")      return "茶灰斑病";
+    if (cls == "Helopeltis")       return "茶小绿叶蝉";
+    if (cls == "Red Leaf Spot")    return "茶红叶斑";
+    return cls;
+}
+
+static int scoreToSeverity(double score) {
+    if (score >= 0.75) return 3;  // 严重
+    if (score >= 0.50) return 2;  // 中等
+    return 1;                      // 轻微
+}
+
+void TeaGardenSystem::onYoloResults(const QImage &frame,
+                                     const QVector<DetectionResult> &results) {
+    if (!videoLabel || frame.isNull()) return;
+
+    // 1. 画框叠加
+    QImage overlay = frame.copy();
+    QPainter painter(&overlay);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    for (const DetectionResult &det : results) {
+        QColor color = colorForYoloClass(det.className);
+        painter.setPen(QPen(color, 2));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(det.bbox);
+
+        // 标签背景
+        QString label = QString("%1 %2%").arg(det.className).arg(det.score * 100, 0, 'f', 0);
+        QFont font = painter.font();
+        font.setPixelSize(12);
+        painter.setFont(font);
+        QFontMetrics fm(font);
+        QRect textRect = fm.boundingRect(label);
+        QRect bgRect(det.bbox.topLeft() - QPoint(0, textRect.height() + 4),
+                     QSize(textRect.width() + 8, textRect.height() + 4));
+        painter.fillRect(bgRect, color);
+        painter.setPen(Qt::white);
+        painter.drawText(bgRect, Qt::AlignCenter, label);
+    }
+    painter.end();
+
+    // 2. 显示到 UI
+    const int w = qMax(videoLabel->width(), 280);
+    const int h = w * kDroneVideoHeight / kDroneVideoWidth;
+    const QPixmap pix = QPixmap::fromImage(overlay);
+    videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    videoLabel->setText(QString());
+
+    // 3. 写入 PestStore（非 Healthy 类别）
+    for (const DetectionResult &det : results) {
+        if (det.className == "Healthy") continue;
+
+        PestRecord rec;
+        rec.timestamp = QDateTime::currentDateTime();
+        rec.pestType = mapYoloClassToChinese(det.className);
+        rec.lat = 25.08;
+        rec.lng = 118.232;
+        rec.severity = scoreToSeverity(det.score);
+        PestStore::instance()->append(rec);
+    }
+
+    // 4. 刷新 UI
+    if (!results.isEmpty()) {
+        injectPestMarkers();
+        refreshPestPie();
+        if (pestDashboard && pestDashboard->isVisible()) {
+            pestDashboard->refresh();
+        }
+    }
+}
+
 // ── IoT 云端命令 ──
 
 void TeaGardenSystem::onIotCommand(const QString &device, bool on,
