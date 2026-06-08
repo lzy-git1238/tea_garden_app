@@ -152,12 +152,60 @@ class YoloServer:
 
 **后处理**：复用现有转换脚本中的 `yolov5_post_process`、`filter_boxes`、`nms_boxes` 函数。
 
-**启动命令**：
+**启动方式**：通过 Shell 包装脚本解决虚拟环境问题
+
+新增文件：`start_yolo_server.sh`（部署到 ELF2 `~/sdcard/`）
 
 ```bash
-source ~/sdcard/rknn_env/bin/activate
-python ~/sdcard/rknn_yolo_server.py --port 9800 --model ~/sdcard/models/yolov5s_last.rknn
+#!/bin/bash
+# YOLO RKNN 推理服务启动脚本
+# 解决 rknn_env 虚拟环境依赖问题
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+VENV_DIR="${SCRIPT_DIR}/rknn_env"
+MODEL_DIR="${SCRIPT_DIR}/models"
+PORT="${YOLO_PORT:-9800}"
+
+# 检查虚拟环境
+if [ ! -d "$VENV_DIR" ]; then
+    echo "[ERROR] 虚拟环境不存在: $VENV_DIR"
+    exit 1
+fi
+
+# 激活虚拟环境
+source "${VENV_DIR}/bin/activate"
+
+# 检查模型文件
+RKNN_MODEL="${MODEL_DIR}/yolov5s_last.rknn"
+if [ ! -f "$RKNN_MODEL" ]; then
+    echo "[ERROR] 模型文件不存在: $RKNN_MODEL"
+    exit 1
+fi
+
+echo "[INFO] 启动 YOLO RKNN 推理服务..."
+echo "[INFO] 虚拟环境: $VENV_DIR"
+echo "[INFO] 模型: $RKNN_MODEL"
+echo "[INFO] 端口: $PORT"
+
+# 启动推理服务（在虚拟环境下运行）
+exec python "${SCRIPT_DIR}/rknn_yolo_server.py" \
+    --port "$PORT" \
+    --model "$RKNN_MODEL"
 ```
+
+**使用方式**：
+
+```bash
+# 手动启动（SSH 到 ELF2 后执行）
+cd ~/sdcard
+chmod +x start_yolo_server.sh
+./start_yolo_server.sh
+
+# 或指定端口
+YOLO_PORT=9801 ./start_yolo_server.sh
+```
+
+Qt 端不需要管虚拟环境——它只通过 TCP 连接到 `localhost:9800`，Python 服务已在 Shell 脚本中处理好环境。
 
 ### 3. Socket 通信协议
 
