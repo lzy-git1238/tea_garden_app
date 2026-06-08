@@ -772,14 +772,31 @@ git commit -m "feat: 添加 YoloDetector Qt 类（TCP 客户端 + 降采样 + �
 
 ---
 
-### Task 4: SrtVideoStreamer 补充 emit
+### Task 4: SrtVideoStreamer 修改信号签名 + emit
 
 **Files:**
+- Modify: `test/srtvideostreamer.h:23-24`
 - Modify: `test/srtvideostreamer.cpp:92-110`
 
-在帧循环中 emit `frameReadyForYolo` 信号，让 YoloDetector 能收到帧。
+原信号 `frameReadyForYolo(const uint8_t*, int, int, int)` 与 `YoloDetector::onNewFrame(const QImage&)` 签名不匹配。改为直接传 QImage。
 
-- [ ] **Step 1: 修改 srtvideostreamer.cpp，在切帧完成后 emit frameReadyForYolo**
+- [ ] **Step 1: 修改 srtvideostreamer.h — 改信号签名**
+
+找到 `srtvideostreamer.h` 第 23-24 行：
+
+```cpp
+// 当前代码:
+    void frameReadyForYolo(const uint8_t *rgb24,
+                           int width, int height, int linesize);
+```
+
+改为：
+
+```cpp
+    void frameReadyForYolo(const QImage &image);
+```
+
+- [ ] **Step 2: 修改 srtvideostreamer.cpp — emit 新签名**
 
 找到 `srtvideostreamer.cpp` 第 100-109 行的帧处理代码：
 
@@ -803,17 +820,15 @@ git commit -m "feat: 添加 YoloDetector Qt 类（TCP 客户端 + 降采样 + �
                 QImage copy = img.copy();
                 if (!copy.isNull()) {
                     emit frameReady(copy);
-                    emit frameReadyForYolo(copy.constBits(),
-                                           copy.width(), copy.height(),
-                                           copy.bytesPerLine());
+                    emit frameReadyForYolo(copy);
                     m_frameCount++;
 ```
 
-- [ ] **Step 2: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
-git add test/srtvideostreamer.cpp
-git commit -m "feat: SrtVideoStreamer emit frameReadyForYolo 信号"
+git add test/srtvideostreamer.h test/srtvideostreamer.cpp
+git commit -m "feat: SrtVideoStreamer 修改 frameReadyForYolo 信号为 QImage 并 emit"
 ```
 
 ---
