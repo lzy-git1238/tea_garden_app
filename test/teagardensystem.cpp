@@ -35,6 +35,9 @@
 #include <QWebSocket>
 #include <QDebug>
 #include <QStyle>
+#include <QPainter>
+#include <QPen>
+#include <QFontMetrics>
 using namespace QtCharts;
 #include <QApplication>
 #include <cmath>
