@@ -179,10 +179,10 @@ def send_json(conn, data):
 
 class YoloServer:
     def __init__(self, model_path, port=9800):
-        from rknn.api import RKNN
+        from rknnlite.api import RKNNLite
 
         self.port = port
-        self.rknn = RKNN(verbose=False)
+        self.rknn = RKNNLite(verbose=False)
 
         print(f"[INFO] 加载 RKNN 模型: {model_path}")
         self.rknn.config(
@@ -195,8 +195,8 @@ class YoloServer:
             print("[ERROR] 加载模型失败!")
             sys.exit(1)
 
-        print("[INFO] 初始化 RKNN 运行时 (3xNPU 核心)...")
-        ret = self.rknn.init_runtime(core_mask=3)  # NPU_CORE_0_1_2 = 0b111 = 3
+        print("[INFO] 初始化 RKNNLite 运行时 (3xNPU 核心)...")
+        ret = self.rknn.init_runtime(core_mask=RKNNLite.NPU_CORE_0_1_2)
         if ret != 0:
             print("[ERROR] 初始化运行时失败!")
             sys.exit(1)
