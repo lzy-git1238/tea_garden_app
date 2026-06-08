@@ -99,6 +99,7 @@ void SrtVideoStreamer::run() {
                 QImage copy = img.copy();
                 if (!copy.isNull()) {
                     emit frameReady(copy);
+                    emit frameReadyForYolo(copy);
                     m_frameCount++;
                     if (m_fpsTimer.elapsed() >= 2000) {
                         double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
