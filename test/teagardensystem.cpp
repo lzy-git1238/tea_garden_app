@@ -9,6 +9,7 @@
 #include "schedulestore.h"
 #include "scheduledialog.h"
 #include "srtvideostreamer.h"
+#include "yolodetector.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
