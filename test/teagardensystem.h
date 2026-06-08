@@ -68,6 +68,7 @@ private slots:
     void onIotCommand(const QString &device, bool on, const QString &requestId);
     void onVideoFrame(const QImage &image);
     void onVideoStatus(const QString &msg);
+    void onYoloResults(const QImage &frame, const QVector<DetectionResult> &results);
 
 private:
     void setupUI();
