@@ -45,7 +45,8 @@ HEADERS += \
     srtvideostreamer.h \
     teagardensystem.h \
     thresholddialog.h \
-    widget.h
+    widget.h \
+    yolodetector.h
 
 FORMS += \
     widget.ui
