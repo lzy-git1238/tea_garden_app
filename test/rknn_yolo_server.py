@@ -182,14 +182,9 @@ class YoloServer:
         from rknnlite.api import RKNNLite
 
         self.port = port
-        self.rknn = RKNNLite(verbose=False)
+        self.rknn = RKNNLite()
 
         print(f"[INFO] 加载 RKNN 模型: {model_path}")
-        self.rknn.config(
-            mean_values=[[0, 0, 0]],
-            std_values=[[255, 255, 255]],
-            target_platform='rk3588'
-        )
         ret = self.rknn.load_rknn(model_path)
         if ret != 0:
             print("[ERROR] 加载模型失败!")
