@@ -108,6 +108,18 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     qDebug() << "[VIDEO] SrtVideoStreamer::start() called";
     m_videoStreamer->start();
 
+    // YOLO 病虫害检测（Socket 连接 Python 推理服务）
+    m_yoloDetector = new YoloDetector(this);
+    m_yoloDetector->setFpsLimit(3);
+    connect(m_videoStreamer, &SrtVideoStreamer::frameReadyForYolo,
+            m_yoloDetector, &YoloDetector::onNewFrame);
+    connect(m_yoloDetector, &YoloDetector::detectionReady,
+            this, &TeaGardenSystem::onYoloResults);
+    connect(m_yoloDetector, &YoloDetector::statusMessage,
+            this, &TeaGardenSystem::onVideoStatus);
+    int yoloPort = qEnvironmentVariableIntValue("TEA_YOLO_PORT", nullptr, 9800);
+    m_yoloDetector->start("127.0.0.1", yoloPort);
+
     // 定时器：每3秒更新一次数据
     updateTimer = new QTimer(this);
     connect(updateTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshData);
