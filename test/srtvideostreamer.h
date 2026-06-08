@@ -20,8 +20,7 @@ public:
 
 signals:
     void frameReady(const QImage &image);
-    void frameReadyForYolo(const uint8_t *rgb24,
-                           int width, int height, int linesize);
+    void frameReadyForYolo(const QImage &image);
     void statusMessage(const QString &msg);
     void streamConnected();
     void streamDisconnected();
