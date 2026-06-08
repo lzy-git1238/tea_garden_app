@@ -117,7 +117,9 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             this, &TeaGardenSystem::onYoloResults);
     connect(m_yoloDetector, &YoloDetector::statusMessage,
             this, &TeaGardenSystem::onVideoStatus);
-    int yoloPort = qEnvironmentVariableIntValue("TEA_YOLO_PORT", nullptr, 9800);
+    bool yoloOk = false;
+    int yoloPort = qEnvironmentVariableIntValue("TEA_YOLO_PORT", &yoloOk);
+    if (!yoloOk) yoloPort = 9800;
     m_yoloDetector->start("127.0.0.1", yoloPort);
 
     // 定时器：每3秒更新一次数据
