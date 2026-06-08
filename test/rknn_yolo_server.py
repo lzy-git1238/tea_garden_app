@@ -215,7 +215,7 @@ class YoloServer:
         img = np.expand_dims(img, 0)
 
         # 推理
-        outputs = self.rknn.inference(inputs=[img], data_format=['nhwc'])
+        outputs = self.rknn.inference(inputs=[img])
 
         # 后处理: reshape + transpose
         input_data = []
