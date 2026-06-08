@@ -23,6 +23,7 @@
 #include <QProcess>
 
 #include "loramanager.h"
+#include "yolodetector.h"
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QtCharts/QChartView>
