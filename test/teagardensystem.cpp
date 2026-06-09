@@ -404,7 +404,7 @@ void TeaGardenSystem::setupUI() {
     connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
     devRow->addWidget(pumpBtn);
     scheduleBtnPump = new QPushButton("⏰");
-    scheduleBtnPump->setFixedSize(30, 30);
+    scheduleBtnPump->setFixedSize(qRound(30 * m_scale), qRound(30 * m_scale));
     scheduleBtnPump->setToolTip("灌溉定时计划");
     scheduleBtnPump->setCursor(Qt::PointingHandCursor);
     connect(scheduleBtnPump, &QPushButton::clicked, this, [this]() { openScheduleDialog("pump"); });
