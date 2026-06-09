@@ -293,8 +293,8 @@ void TeaGardenSystem::setupUI() {
     flowCard->setObjectName("flowCard");
     flowCard->setVisible(false);
     auto *fcLayout = new QVBoxLayout(flowCard);
-    fcLayout->setContentsMargins(8, 8, 8, 8);
-    fcLayout->setSpacing(4);
+    fcLayout->setContentsMargins(qRound(8*m_scale), qRound(8*m_scale), qRound(8*m_scale), qRound(8*m_scale));
+    fcLayout->setSpacing(qRound(4 * m_scale));
 
     auto *fcTitleRow = new QHBoxLayout();
     auto *fcIconLabel = new QLabel("💧 灌溉进行中");
