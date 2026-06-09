@@ -429,8 +429,8 @@ void TeaGardenSystem::setupUI() {
     midPanelFrame = new QFrame();
     midPanelFrame->setObjectName("dashPanel");
     auto *midPanel = new QVBoxLayout(midPanelFrame);
-    midPanel->setContentsMargins(10, 8, 10, 8);
-    midPanel->setSpacing(6);
+    midPanel->setContentsMargins(qRound(10*m_scale), qRound(8*m_scale), qRound(10*m_scale), qRound(8*m_scale));
+    midPanel->setSpacing(qRound(6 * m_scale));
 
     mapTitleLabel = new QLabel("▎ 茶园空间分布");
     midPanel->addWidget(mapTitleLabel);
