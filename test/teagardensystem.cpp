@@ -217,7 +217,7 @@ void TeaGardenSystem::setupUI() {
     // ── 顶部标题栏（参考大数据平台居中标题） ──
     headerFrame = new QFrame();
     headerFrame->setObjectName("headerBar");
-    headerFrame->setFixedHeight(qRound(52 * m_dpiScale));
+    headerFrame->setFixedHeight(qRound(52 * m_scale));
     auto *headerRow = new QHBoxLayout(headerFrame);
     headerRow->setContentsMargins(16, 4, 16, 4);
     auto *headerDecoL = new QLabel("━━━");
@@ -269,7 +269,7 @@ void TeaGardenSystem::setupUI() {
     pestChart->setMargins(QMargins(2, 2, 2, 2));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(qRound(240 * m_dpiScale));
+    pestPieView->setMinimumHeight(qRound(240 * m_scale));
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     leftPanel->addWidget(pestPieView, 1);
 
@@ -349,12 +349,12 @@ void TeaGardenSystem::setupUI() {
     flowProgressLabel->setStyleSheet("font-size: 10px; color: #888;");
     fcProgressRow->addWidget(flowProgressLabel);
     flowProgressBar = new QFrame();
-    flowProgressBar->setFixedHeight(qRound(5 * m_dpiScale));
+    flowProgressBar->setFixedHeight(qRound(5 * m_scale));
     flowProgressBar->setStyleSheet("background: #333; border-radius: 3px;");
     auto *fpBarLayout = new QHBoxLayout(flowProgressBar);
     fpBarLayout->setContentsMargins(0, 0, 0, 0);
     flowProgressFill = new QFrame();
-    flowProgressFill->setFixedHeight(qRound(5 * m_dpiScale));
+    flowProgressFill->setFixedHeight(qRound(5 * m_scale));
     flowProgressFill->setStyleSheet("background: #4caf50; border-radius: 3px;");
     flowProgressFill->setMinimumWidth(0);
     fpBarLayout->addWidget(flowProgressFill);
@@ -440,7 +440,7 @@ void TeaGardenSystem::setupUI() {
     midPanel->addWidget(weatherSectionLabel);
 
     weatherCard = new QFrame();
-    weatherCard->setFixedHeight(qRound(205 * m_dpiScale));
+    weatherCard->setFixedHeight(qRound(205 * m_scale));
     weatherCard->setObjectName("weatherCard");
     auto *wcLayout = new QVBoxLayout(weatherCard);
     wcLayout->setContentsMargins(10, 6, 10, 6);
@@ -583,7 +583,7 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     if (!htmlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QLabel *fallback = new QLabel("Map page load failed: :/web/amap_view.html");
         fallback->setAlignment(Qt::AlignCenter);
-        fallback->setMinimumHeight(qRound(350 * m_dpiScale));
+        fallback->setMinimumHeight(qRound(350 * m_scale));
         fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
         midPanel->addWidget(fallback);
         return;
@@ -605,14 +605,14 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     html.replace("__ZOOM__", zoom.toHtmlEscaped());
 
     mapView = new QWebEngineView(this);
-    mapView->setMinimumHeight(qRound(520 * m_dpiScale));
+    mapView->setMinimumHeight(qRound(520 * m_scale));
     mapView->setStyleSheet("border: 1px solid #334455; border-radius: 8px;");
     static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
     midPanel->addWidget(mapView, 10);
 #else
     QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable Map.");
     fallback->setAlignment(Qt::AlignCenter);
-    fallback->setMinimumHeight(qRound(520 * m_dpiScale));
+    fallback->setMinimumHeight(qRound(520 * m_scale));
     fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
     midPanel->addWidget(fallback, 5);
 #endif
@@ -622,7 +622,7 @@ QWidget* TeaGardenSystem::createDataCard(QString title, int index, QString unit)
     Q_UNUSED(index);
 
     QFrame *card = new QFrame();
-    card->setMinimumHeight(qRound(78 * m_dpiScale));
+    card->setMinimumHeight(qRound(78 * m_scale));
     card->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     dataCards.append(card);
 
