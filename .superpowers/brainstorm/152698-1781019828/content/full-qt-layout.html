@@ -1,0 +1,84 @@
+<h2>Qt 全界面确认（完整三栏）</h2>
+<p class="subtitle">请逐一确认左、中、右栏是否满意</p>
+
+<div style="display:flex; gap:4px; padding:4px; background:#0a1628; font-size:9px; color:#E8F4FF; min-height:500px; overflow:hidden;">
+  <!-- 左栏 -->
+  <div style="flex:1.1; background:#0d1f30; border:1px solid #1a3040; border-radius:2px; padding:4px; display:flex; flex-direction:column; gap:3px; overflow-y:auto;">
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 农业无人机实时监控</div>
+    <div style="background:#000; min-height:40px; border:1px solid #1a3040; border-radius:2px; display:flex; align-items:center; justify-content:center; color:#555; font-size:8px;">[无人机 16:9]</div>
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 农业检测车实时监控</div>
+    <div style="background:#000; min-height:30px; border:1px solid #1a3040; border-radius:2px; display:flex; align-items:center; justify-content:center; color:#555; font-size:8px;">[检测车 16:9]</div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 病虫害统计</span>
+      <span style="color:#90A4AE; font-size:8px;">详情 ▶</span>
+    </div>
+    <div style="background:#0a1420; min-height:40px; border:1px solid #1a3040; border-radius:2px; display:flex; align-items:center; justify-content:center; color:#555; font-size:8px;">[饼图]</div>
+    <div style="color:#90A4AE; font-size:8px;">LoRa: 已接收实时数据</div>
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px 6px; border:1px solid #2a5070; border-radius:2px; font-size:9px; text-align:center;">📊 数据看板</div>
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px 6px; border:1px solid #2a5070; border-radius:2px; font-size:9px; text-align:center;">🐛 病虫害面板</div>
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px 6px; border:1px solid #2a5070; border-radius:2px; font-size:9px; text-align:center;">🐛 模拟检测</div>
+    <div style="background:linear-gradient(180deg,#1a5068,#0d2840); color:#90caf9; padding:3px 6px; border:1px solid #2a6080; border-radius:2px; font-size:9px; text-align:center;">🚗 小车控制</div>
+    <div style="display:flex; gap:2px;">
+      <div style="flex:1; background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px; border:1px solid #2a5070; border-radius:2px; font-size:8px; text-align:center;">💧 灌溉泵</div>
+      <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px 4px; border:1px solid #2a5070; border-radius:2px; font-size:8px;">⏰</div>
+      <div style="flex:1; background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px; border:1px solid #2a5070; border-radius:2px; font-size:8px; text-align:center;">🪲 驱虫灯</div>
+      <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px 4px; border:1px solid #2a5070; border-radius:2px; font-size:8px;">⏰</div>
+      <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:3px 4px; border:1px solid #2a5070; border-radius:2px; font-size:8px;">📊</div>
+    </div>
+  </div>
+  <!-- 中栏 -->
+  <div style="flex:1.2; background:#0d1f30; border:1px solid #1a3040; border-radius:2px; padding:4px; display:flex; flex-direction:column; gap:3px;">
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 茶园地图</div>
+    <div style="background:#0a1420; flex:1; border:1px solid #1a3040; border-radius:2px; display:flex; align-items:center; justify-content:center; color:#90A4AE; font-size:10px;">🗺 茶园地图</div>
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 环境监控</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px;">
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">22.3</div><div style="font-size:7px;color:#90A4AE;">空气温度 ℃</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">65</div><div style="font-size:7px;color:#90A4AE;">空气湿度 %</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">2.1k</div><div style="font-size:7px;color:#90A4AE;">光照强度 Lux</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">5.6</div><div style="font-size:7px;color:#90A4AE;">土壤 pH</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">2.5</div><div style="font-size:7px;color:#90A4AE;">风速 m/s</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">18.0</div><div style="font-size:7px;color:#90A4AE;">土壤温度 ℃</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">45</div><div style="font-size:7px;color:#90A4AE;">土壤湿度 %</div></div>
+      <div style="background:#0a1420; border:1px solid #1a3040; padding:3px; text-align:center; border-radius:2px;"><div style="font-size:12px;color:#00d4ff;font-weight:bold;">1.2</div><div style="font-size:7px;color:#90A4AE;">土壤电导率</div></div>
+    </div>
+  </div>
+  <!-- 右栏 -->
+  <div style="flex:1.0; background:#0d1f30; border:1px solid #1a3040; border-radius:2px; padding:4px; display:flex; flex-direction:column; gap:3px;">
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 气象预警</div>
+    <div style="background:#0a1420; border:1px solid #1a3040; padding:4px; border-radius:2px;">
+      <div style="display:flex; justify-content:space-between; font-size:9px;"><span style="font-weight:bold;">🌤 24h预报</span><span style="color:#90A4AE; font-size:8px;">↻</span></div>
+      <div style="font-size:11px; color:#4FC3F7; font-weight:bold; margin-top:2px;">⛅ 多云 28℃</div>
+      <div style="font-size:8px; color:#90A4AE; margin-top:2px;">体感 30℃ | 湿度 65% | 南风 3级 2.5m/s</div>
+    </div>
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ AI 助手</div>
+    <div style="background:#0a1420; border:1px solid #1a3040; border-radius:2px; flex:1; display:flex; flex-direction:column;">
+      <div style="flex:1; padding:3px; font-size:8px; color:#90A4AE;">管家：您好！我是茶园AI管家...</div>
+      <div style="display:flex; gap:2px; padding:3px; border-top:1px solid #1a3040;">
+        <input style="flex:1; background:#0a1420; border:1px solid #1a3040; color:#E8F4FF; padding:2px 4px; font-size:8px; border-radius:2px;" placeholder="输入...">
+        <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:2px 6px; border:1px solid #2a5070; border-radius:2px; font-size:8px;">发送</div>
+        <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:2px 6px; border:1px solid #2a5070; border-radius:2px; font-size:8px;">🎤</div>
+      </div>
+    </div>
+    <div style="color:#00d4ff; font-weight:bold; font-size:9px;">▎ 小车控制</div>
+    <div style="display:inline-grid; grid-template-columns:1fr 1fr 1fr; gap:2px; max-width:100px; align-self:center;">
+      <div></div><div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:4px; font-size:11px; font-weight:bold; text-align:center;">W⬆</div><div></div>
+      <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:4px; font-size:11px; font-weight:bold; text-align:center;">A⬅</div>
+      <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:4px; font-size:11px; font-weight:bold; text-align:center;">S⬇</div>
+      <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:4px; font-size:11px; font-weight:bold; text-align:center;">D➡</div>
+    </div>
+    <div style="background:linear-gradient(180deg,#1565C0,#0D47A1); color:#fff; padding:5px; text-align:center; border:1px solid #1E88E5; border-radius:3px; font-size:10px; font-weight:bold; margin-top:2px;">💧 喷水</div>
+  </div>
+</div>
+
+<p style="margin-top:16px; color:#E8F4FF; text-align:center;">这是一个紧凑版（小字号、小间距），更像 Qt 前端密度。确认？</p>
+
+<div class="options">
+  <div class="option" data-choice="yes" onclick="toggleSelect(this)">
+    <div class="letter">✅</div>
+    <div class="content"><h3>密度 OK 了</h3><p>按这个实现</p></div>
+  </div>
+  <div class="option" data-choice="no" onclick="toggleSelect(this)">
+    <div class="letter">❌</div>
+    <div class="content"><h3>还要调整</h3><p>具体说明</p></div>
+  </div>
+</div>
