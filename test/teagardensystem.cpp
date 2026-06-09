@@ -2016,6 +2016,16 @@ void TeaGardenSystem::onVideoFrame(const QImage &image) {
     const QPixmap pix = QPixmap::fromImage(image);
     videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     videoLabel->setText(QString());
+
+    // 推到网页（JPEG 编码）
+    if (webServer) {
+        QImage scaled = image.scaled(640, 360, Qt::KeepAspectRatio, Qt::FastTransformation);
+        QByteArray jpeg;
+        QBuffer buf(&jpeg);
+        buf.open(QIODevice::WriteOnly);
+        scaled.save(&buf, "JPEG", 50);
+        webServer->pushDroneFrame(jpeg);
+    }
 }
 
 void TeaGardenSystem::onVideoStatus(const QString &msg) {
