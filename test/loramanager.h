@@ -18,6 +18,7 @@ public:
     void stop();
     bool isRunning() const;
     bool sendCommand(int value);
+    bool sendRaw(const QByteArray &data);
 
 signals:
     void sensorDataUpdated(double windSpeed,
