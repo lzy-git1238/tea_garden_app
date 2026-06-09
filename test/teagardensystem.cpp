@@ -158,7 +158,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
                         QByteArray jpeg;
                         QBuffer buf2(&jpeg);
                         buf2.open(QIODevice::WriteOnly);
-                        scaled.save(&buf2, "JPEG", 50);
+                        copy.save(&buf2, "JPEG", 50);
                         webServer->pushRoverFrame(jpeg);
                     }
                 }
