@@ -57,14 +57,15 @@ bool WebServer::start(int port) {
     }
 
     // ── WebSocket 服务 ──
+    int wsPort = port + 1;
     m_wsServer = new QWebSocketServer("TeaGarden", QWebSocketServer::NonSecureMode, this);
-    if (!m_wsServer->listen(QHostAddress::Any, port)) {
+    if (!m_wsServer->listen(QHostAddress::Any, wsPort)) {
         qWarning() << "[WEB] WS server listen failed:" << m_wsServer->errorString();
         return false;
     }
     connect(m_wsServer, &QWebSocketServer::newConnection, this, &WebServer::onWsConnected);
 
-    qDebug() << "[WEB] 服务已启动 http://0.0.0.0:" << port;
+    qDebug() << "[WEB] HTTP:" << port << " WS:" << wsPort;
     return true;
 }
 
