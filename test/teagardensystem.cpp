@@ -456,7 +456,10 @@ void TeaGardenSystem::setupUI() {
     fcBtnRow->addWidget(flowSettingsBtn);
     fcLayout->addLayout(fcBtnRow);
 
-    leftPanel->addWidget(flowCard);
+    // flowCard 作为独立弹窗，不放在主页布局中
+    flowCard->setWindowTitle("💧 灌溉状态");
+    flowCard->setWindowFlags(Qt::Window);
+    flowCard->resize(350, 200);
 
     // ── 设备控制按钮行 ──
     auto *devRow = new QHBoxLayout();
