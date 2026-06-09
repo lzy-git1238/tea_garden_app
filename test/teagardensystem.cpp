@@ -357,10 +357,12 @@ void TeaGardenSystem::setupUI() {
     connect(roverBtn, &QPushButton::clicked, this, &TeaGardenSystem::openRoverPanel);
     leftPanel->addWidget(roverBtn);
 
-    // ── 流量状态卡片（灌溉进行中才显示） ──
-    flowCard = new QFrame();
+    // ── 流量状态卡片（独立弹窗） ──
+    flowCard = new QFrame(this);
     flowCard->setObjectName("flowCard");
-    flowCard->setFixedHeight(0);  // 初始隐藏不占空间
+    flowCard->setWindowFlags(Qt::Window | Qt::Dialog);
+    flowCard->setWindowTitle("💧 灌溉状态");
+    flowCard->resize(350, 220);
     auto *fcLayout = new QVBoxLayout(flowCard);
     fcLayout->setContentsMargins(qRound(8*m_scale), qRound(8*m_scale), qRound(8*m_scale), qRound(8*m_scale));
     fcLayout->setSpacing(qRound(4 * m_scale));
