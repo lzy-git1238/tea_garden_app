@@ -305,8 +305,6 @@ void TeaGardenSystem::setupUI() {
     roverVideoLabel->setAlignment(Qt::AlignCenter);
     leftPanel->addWidget(roverVideoLabel, 0, Qt::AlignTop);
 
-    leftPanel->addStretch(1);
-
     auto *pestHeaderRow = new QHBoxLayout();
     pestPieTitle = new QLabel("▎ 病虫害统计");
     pestHeaderRow->addWidget(pestPieTitle);
