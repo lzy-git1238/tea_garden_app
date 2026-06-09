@@ -503,7 +503,7 @@ void TeaGardenSystem::setupUI() {
     aiWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     auto *aiPanel = new QVBoxLayout(aiWrap);
     aiPanel->setContentsMargins(0, 0, 0, 0);
-    aiPanel->setSpacing(6);
+    aiPanel->setSpacing(qRound(6 * m_scale));
 
     aiTitleLabel = new QLabel("▎ AI 智慧管家");
     aiPanel->addWidget(aiTitleLabel);
