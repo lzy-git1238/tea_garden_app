@@ -1,0 +1,143 @@
+<h2>自适应布局方案对比</h2>
+<p class="subtitle">在 1024×600 (7寸MIPI) 和 1920×1080 (电脑) 上的布局效果</p>
+
+<div class="split">
+  <!-- 电脑端 1920x1080 -->
+  <div class="mockup">
+    <div class="mockup-header">🖥️ 电脑端 1920×1080 (三栏)</div>
+    <div class="mockup-body" style="padding:8px; background:#0a1628; color:#E8F4FF; font-size:11px;">
+      <div style="text-align:center; padding:4px; background:#0d2137; border:1px solid #1a4060; margin-bottom:6px; font-size:13px; font-weight:bold;">
+        ━━━ 智慧茶园综合管理系统 ━━━
+      </div>
+      <div style="display:flex; gap:6px;">
+        <!-- 左栏 -->
+        <div style="flex:1; background:#0d1f30; border:1px solid #1a3040; padding:6px; border-radius:4px;">
+          <div style="color:#00d4ff; font-weight:bold; margin-bottom:4px;">▎实时监控</div>
+          <div style="background:#000; height:80px; display:flex; align-items:center; justify-content:center; border:1px solid #1a3040; font-size:10px; color:#666;">SRT 视频流</div>
+          <div style="color:#00d4ff; font-weight:bold; margin:6px 0 4px;">▎病虫害统计</div>
+          <div style="background:#0a1020; height:60px; border:1px solid #1a3040; display:flex; align-items:center; justify-content:center; font-size:10px; color:#555;">[饼图]</div>
+          <div style="margin-top:4px; font-size:10px; color:#7eb8d4;">LoRa: 已连接</div>
+          <div style="display:flex; gap:3px; margin-top:4px;">
+            <div style="flex:1; background:#1a3040; padding:3px; text-align:center; border-radius:3px; font-size:9px;">📊 看板</div>
+            <div style="flex:1; background:#1a3040; padding:3px; text-align:center; border-radius:3px; font-size:9px;">🐛 面板</div>
+          </div>
+        </div>
+        <!-- 中栏 -->
+        <div style="flex:1.2; background:#0d1f30; border:1px solid #1a3040; padding:6px; border-radius:4px;">
+          <div style="color:#00d4ff; font-weight:bold; margin-bottom:4px;">▎茶园地图</div>
+          <div style="background:#0a1020; height:150px; border:1px solid #1a3040; display:flex; align-items:center; justify-content:center; font-size:10px; color:#555;">[高德地图]</div>
+          <div style="display:flex; gap:4px; margin-top:6px;">
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:4px; text-align:center; border-radius:3px;">
+              <div style="font-size:9px; color:#90A4AE;">🌡️ 温度</div>
+              <div style="font-size:13px; color:#00d4ff; font-weight:bold;">22.3°</div>
+            </div>
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:4px; text-align:center; border-radius:3px;">
+              <div style="font-size:9px; color:#90A4AE;">💧 湿度</div>
+              <div style="font-size:13px; color:#00d4ff; font-weight:bold;">65%</div>
+            </div>
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:4px; text-align:center; border-radius:3px;">
+              <div style="font-size:9px; color:#90A4AE;">☀️ 光照</div>
+              <div style="font-size:13px; color:#00d4ff; font-weight:bold;">2.1k</div>
+            </div>
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:4px; text-align:center; border-radius:3px;">
+              <div style="font-size:9px; color:#90A4AE;">⚗️ pH</div>
+              <div style="font-size:13px; color:#00d4ff; font-weight:bold;">5.6</div>
+            </div>
+          </div>
+        </div>
+        <!-- 右栏 -->
+        <div style="flex:1; background:#0d1f30; border:1px solid #1a3040; padding:6px; border-radius:4px;">
+          <div style="color:#00d4ff; font-weight:bold; margin-bottom:4px;">▎天气预警</div>
+          <div style="background:#0a1020; height:40px; border:1px solid #1a3040; display:flex; align-items:center; padding:0 6px; font-size:10px; color:#90caf9;">
+            ☀️ 多云 28°C
+          </div>
+          <div style="color:#00d4ff; font-weight:bold; margin:6px 0 4px;">▎AI 助手</div>
+          <div style="background:#0a1020; height:60px; border:1px solid #1a3040; padding:4px; font-size:9px; color:#aaa;">
+            [聊天区域]<br>欢迎使用智慧茶园系统...
+          </div>
+          <div style="display:flex; gap:3px; margin-top:4px;">
+            <input style="flex:1; background:#0d1f30; border:1px solid #1a3040; padding:3px; color:#E8F4FF; font-size:9px; border-radius:3px;" placeholder="输入消息..." />
+            <div style="background:#1a5068; padding:3px 6px; border-radius:3px; font-size:9px; cursor:pointer;">发送</div>
+          </div>
+          <div style="display:flex; gap:3px; margin-top:4px;">
+            <div style="flex:1; background:#1a3040; padding:3px; text-align:center; border-radius:3px; font-size:9px;">🎤 语音</div>
+            <div style="flex:1; background:#1a3040; padding:3px; text-align:center; border-radius:3px; font-size:9px;">⚡ 灌溉</div>
+            <div style="flex:1; background:#1a3040; padding:3px; text-align:center; border-radius:3px; font-size:9px;">💡 驱虫</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7寸屏 1024x600 -->
+  <div class="mockup">
+    <div class="mockup-header">📱 7寸 MIPI 1024×600 (两栏)</div>
+    <div class="mockup-body" style="padding:8px; background:#0a1628; color:#E8F4FF; font-size:11px;">
+      <div style="text-align:center; padding:3px; background:#0d2137; border:1px solid #1a4060; margin-bottom:4px; font-size:11px; font-weight:bold;">
+        ━━ 智慧茶园 ━━
+      </div>
+      <div style="display:flex; gap:4px;">
+        <!-- 左栏 -->
+        <div style="flex:1.2; background:#0d1f30; border:1px solid #1a3040; padding:4px; border-radius:4px;">
+          <div style="color:#00d4ff; font-weight:bold; margin-bottom:3px; font-size:10px;">▎实时监控</div>
+          <div style="background:#000; height:90px; display:flex; align-items:center; justify-content:center; border:1px solid #1a3040; font-size:9px; color:#666;">SRT 视频流</div>
+          <div style="color:#00d4ff; font-weight:bold; margin:4px 0 3px; font-size:10px;">▎病虫害</div>
+          <div style="background:#0a1020; height:50px; border:1px solid #1a3040; display:flex; align-items:center; justify-content:center; font-size:9px; color:#555;">[饼图]</div>
+          <div style="display:flex; gap:3px; margin-top:3px;">
+            <div style="flex:1; background:#1a3040; padding:2px; text-align:center; border-radius:3px; font-size:8px;">📊 看板</div>
+            <div style="flex:1; background:#1a3040; padding:2px; text-align:center; border-radius:3px; font-size:8px;">🐛 面板</div>
+          </div>
+        </div>
+        <!-- 右栏 -->
+        <div style="flex:1; background:#0d1f30; border:1px solid #1a3040; padding:4px; border-radius:4px;">
+          <div style="display:flex; gap:3px; margin-bottom:3px;">
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:2px; text-align:center; border-radius:3px;">
+              <div style="font-size:7px; color:#90A4AE;">🌡️</div>
+              <div style="font-size:10px; color:#00d4ff; font-weight:bold;">22°</div>
+            </div>
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:2px; text-align:center; border-radius:3px;">
+              <div style="font-size:7px; color:#90A4AE;">💧</div>
+              <div style="font-size:10px; color:#00d4ff; font-weight:bold;">65%</div>
+            </div>
+            <div style="flex:1; background:#0a1020; border:1px solid #1a3040; padding:2px; text-align:center; border-radius:3px;">
+              <div style="font-size:7px; color:#90A4AE;">☀️</div>
+              <div style="font-size:10px; color:#00d4ff; font-weight:bold;">2.1k</div>
+            </div>
+          </div>
+          <div style="color:#00d4ff; font-weight:bold; margin-bottom:3px; font-size:10px;">▎地图</div>
+          <div style="background:#0a1020; height:80px; border:1px solid #1a3040; display:flex; align-items:center; justify-content:center; font-size:9px; color:#555;">[地图缩略]</div>
+          <div style="color:#00d4ff; font-weight:bold; margin:3px 0; font-size:10px;">▎AI 助手</div>
+          <div style="background:#0a1020; height:40px; border:1px solid #1a3040; padding:3px; font-size:8px; color:#aaa;">
+            [聊天]
+          </div>
+          <div style="display:flex; gap:3px; margin-top:3px;">
+            <div style="flex:1; background:#1a5068; padding:2px; text-align:center; border-radius:3px; font-size:8px;">🎤</div>
+            <div style="flex:1; background:#1a5068; padding:2px; text-align:center; border-radius:3px; font-size:8px;">⚡</div>
+            <div style="flex:1; background:#1a5068; padding:2px; text-align:center; border-radius:3px; font-size:8px;">💡</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:16px;">核心变化</h3>
+<div class="pros-cons">
+  <div class="pros">
+    <h4>自适应策略</h4>
+    <ul>
+      <li><strong>≥1280px</strong> → 三栏（当前电脑布局）</li>
+      <li><strong>800-1279px</strong> → 两栏（视频+地图占左，数据+AI占右）</li>
+      <li><strong>&lt;800px</strong> → 单栏（全部垂直堆叠）</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>需要处理的细节</h4>
+    <ul>
+      <li>视频区宽高比保持 16:9</li>
+      <li>按钮/文字在小屏上等比缩小</li>
+      <li>天气卡片在小屏上折叠</li>
+      <li>AI 聊天区在小屏上可收起</li>
+    </ul>
+  </div>
+</div>
