@@ -85,7 +85,8 @@ var ws, pestCounts = {}, yoloBoxes = [];
 
 function connect() {
   var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  ws = new WebSocket(proto + '//' + location.host);
+  var wsPort = parseInt(location.port || '80') + 1;
+  ws = new WebSocket(proto + '//' + location.hostname + ':' + wsPort);
   ws.binaryType = 'arraybuffer';
   ws.onopen = function() { document.getElementById('status').textContent = '🟢 已连接'; };
   ws.onclose = function() { document.getElementById('status').textContent = '🔴 断开，3s后重连...'; setTimeout(connect, 3000); };
