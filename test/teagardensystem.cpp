@@ -605,7 +605,7 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     html.replace("__ZOOM__", zoom.toHtmlEscaped());
 
     mapView = new QWebEngineView(this);
-    mapView->setMinimumHeight(qRound(520 * m_scale));
+    mapView->setMinimumHeight(qRound(120 * m_scale));
     mapView->setStyleSheet("border: 1px solid #334455; border-radius: 8px;");
     static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
     midPanel->addWidget(mapView, 10);
