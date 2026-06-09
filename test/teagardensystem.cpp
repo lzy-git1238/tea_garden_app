@@ -178,6 +178,13 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(loraManager, &LoraManager::parseError, this, &TeaGardenSystem::onLoraParseError);
     loraManager->start();
 
+    // Web 远程监控服务
+    webServer = new WebServer(this);
+    webServer->start(8080);
+    connect(webServer, &WebServer::roverCommand, this, [this](char key) {
+        loraManager->sendRaw(QByteArray(1, key));
+    });
+
     // 初始化 SQLite 数据存储
     DataStore::instance()->init(QCoreApplication::applicationDirPath() + "/sensor_data.db");
     PestStore::instance()->init(QCoreApplication::applicationDirPath() + "/pest_data.db");
