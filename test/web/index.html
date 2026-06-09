@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧茶园远程监控</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a1628; color:#E8F4FF; font-family:'Microsoft YaHei',sans-serif; }
+.header { text-align:center; padding:8px; background:#0d2137; border-bottom:1px solid #1a4060; }
+.header h1 { font-size:18px; color:#00d4ff; }
+.row { display:flex; gap:8px; padding:8px; flex-wrap:wrap; }
+.col { flex:1; min-width:300px; background:#0d1f30; border:1px solid #1a3040; border-radius:8px; padding:8px; }
+.col-title { color:#00d4ff; font-weight:bold; margin-bottom:6px; font-size:14px; }
+.video-box { background:#000; border:1px solid #1a3040; border-radius:4px; position:relative; overflow:hidden; }
+.video-box img { width:100%; display:block; }
+.video-box canvas { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+.cards { display:flex; gap:6px; flex-wrap:wrap; }
+.card { flex:1; min-width:90px; background:#0a1420; border:1px solid #1a3040; border-radius:6px; padding:6px; text-align:center; }
+.card .val { font-size:18px; font-weight:bold; color:#00d4ff; }
+.card .unit { font-size:10px; color:#888; }
+.pest-chart { height:180px; margin-top:8px; }
+.btn-row { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.btn { padding:8px 14px; border-radius:6px; border:none; color:#fff; font-size:13px; cursor:pointer; font-weight:bold; }
+.btn-pump { background:#1565C0; }
+.btn-lamp { background:#E65100; }
+.btn-rover { background:#2E7D32; }
+.btn-spray { background:#1E88E5; }
+.btn:active { opacity:0.8; }
+.status { font-size:11px; color:#666; text-align:center; padding:4px; }
+</style>
+</head>
+<body>
+<div class="header"><h1>🌿 智慧茶园远程监控</h1></div>
+<div class="row">
+  <div class="col">
+    <div class="col-title">🛸 农业无人机实时监控</div>
+    <div class="video-box" id="droneBox">
+      <img id="droneImg" src="" alt="等待视频流...">
+      <canvas id="droneCanvas"></canvas>
+    </div>
+  </div>
+  <div class="col">
+    <div class="col-title">🚗 农业检测车实时监控</div>
+    <div class="video-box" id="roverBox">
+      <img id="roverImg" src="" alt="等待图传...">
+    </div>
+    <div class="col-title" style="margin-top:8px;">🐛 病虫害统计</div>
+    <div class="pest-chart"><canvas id="pestChart"></canvas></div>
+  </div>
+  <div class="col">
+    <div class="col-title">📊 环境数据</div>
+    <div class="cards" id="sensorCards">
+      <div class="card"><div class="val" id="temp">--</div><div class="unit">温度 ℃</div></div>
+      <div class="card"><div class="val" id="humi">--</div><div class="unit">湿度 %</div></div>
+      <div class="card"><div class="val" id="light">--</div><div class="unit">光照 lux</div></div>
+      <div class="card"><div class="val" id="soilHumi">--</div><div class="unit">土壤湿度 %</div></div>
+      <div class="card"><div class="val" id="soilTemp">--</div><div class="unit">土壤温度 ℃</div></div>
+      <div class="card"><div class="val" id="ph">--</div><div class="unit">土壤 pH</div></div>
+    </div>
+    <div class="col-title" style="margin-top:8px;">🌤 天气预报</div>
+    <div id="weatherInfo" style="font-size:12px; color:#90A4AE;">加载中...</div>
+    <div class="col-title" style="margin-top:8px;">⚙ 设备控制</div>
+    <div class="btn-row">
+      <button class="btn btn-pump" id="btnPump">💧 灌溉泵</button>
+      <button class="btn btn-lamp" id="btnLamp">🪲 驱虫灯</button>
+    </div>
+    <div class="col-title" style="margin-top:8px;">🚗 小车控制 (WASD)</div>
+    <div class="btn-row" style="display:grid; grid-template-columns:repeat(3,1fr); gap:4px; max-width:200px;">
+      <div></div><button class="btn btn-rover" id="btnFwd">W 前进</button><div></div>
+      <button class="btn btn-rover" id="btnLeft">A 左转</button>
+      <button class="btn btn-rover" id="btnBack">S 后退</button>
+      <button class="btn btn-rover" id="btnRight">D 右转</button>
+    </div>
+    <div class="btn-row" style="margin-top:4px;">
+      <button class="btn btn-spray" id="btnSpray">💧 喷水</button>
+    </div>
+  </div>
+</div>
+<div class="status" id="status">连接中...</div>
+
+<script>
+var ws, pestCounts = {}, yoloBoxes = [];
+
+function connect() {
+  var proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  ws = new WebSocket(proto + '//' + location.host);
+  ws.binaryType = 'arraybuffer';
+  ws.onopen = function() { document.getElementById('status').textContent = '🟢 已连接'; };
+  ws.onclose = function() { document.getElementById('status').textContent = '🔴 断开，3s后重连...'; setTimeout(connect, 3000); };
+  ws.onmessage = function(e) {
+    if (e.data instanceof ArrayBuffer) {
+      var buf = new Uint8Array(e.data);
+      var head = new TextDecoder().decode(buf.slice(0, 20));
+      if (head.startsWith('FRAME:')) {
+        var m = head.match(/FRAME:(\d+):/);
+        if (m) {
+          var len = parseInt(m[1]), off = m[0].length;
+          var blob = new Blob([buf.slice(off, off+len)], {type:'image/jpeg'});
+          document.getElementById('droneImg').src = URL.createObjectURL(blob);
+          setTimeout(drawYoloBoxes, 50);
+        }
+      } else if (head.startsWith('ROVER:')) {
+        var m2 = head.match(/ROVER:(\d+):/);
+        if (m2) {
+          var len2 = parseInt(m2[1]), off2 = m2[0].length;
+          var blob2 = new Blob([buf.slice(off2, off2+len2)], {type:'image/jpeg'});
+          document.getElementById('roverImg').src = URL.createObjectURL(blob2);
+        }
+      }
+    } else {
+      var msg = JSON.parse(e.data);
+      switch (msg.type) {
+        case 'sensor': updateSensors(msg.data); break;
+        case 'weather': updateWeather(msg.data); break;
+        case 'yolo':
+          yoloBoxes = msg.detections || [];
+          updatePestChart(yoloBoxes);
+          break;
+      }
+    }
+  };
+}
+
+function updateSensors(d) {
+  var el = function(id, v, n) { document.getElementById(id).textContent = typeof v === 'number' ? v.toFixed(n||1) : v; };
+  el('temp', d.airTemp, 1); el('humi', d.airHumidity, 0); el('light', d.lightLux, 0);
+  el('soilHumi', d.soilHumidity, 0); el('soilTemp', d.soilTemp, 1); el('ph', d.soilPh, 1);
+}
+
+function updateWeather(d) {
+  document.getElementById('weatherInfo').innerHTML = d.icon + ' ' + d.desc + ' ' + d.temp + '℃ | 湿度 ' + d.rh + '% | ' + d.wind;
+}
+
+var pestChartObj = null;
+function updatePestChart(detections) {
+  if (!detections || detections.length === 0) return;
+  detections.forEach(function(d) {
+    var cls = d.class;
+    if (!pestCounts[cls]) pestCounts[cls] = 0;
+    pestCounts[cls]++;
+  });
+  var labels = Object.keys(pestCounts).filter(function(k){return k !== 'Healthy';});
+  var data = labels.map(function(k){return pestCounts[k];});
+  var colors = {AlgalLeafSpot:'#2196F3',BrownBlight:'#F44336',GrayBlight:'#9E9E9E',Helopeltis:'#FF9800',RedLeafSpot:'#E91E63'};
+  var ctx = document.getElementById('pestChart').getContext('2d');
+  if (!pestChartObj) {
+    pestChartObj = new Chart(ctx, {type:'pie', data:{labels:[],datasets:[{data:[],backgroundColor:[]}]},
+      options:{plugins:{legend:{labels:{color:'#90A4AE'}}},responsive:true,maintainAspectRatio:false}});
+  }
+  var bgColors = labels.map(function(k){var c=colors[k.replace(/\s/g,'')]; return c||'#4CAF50';});
+  pestChartObj.data.labels = labels;
+  pestChartObj.data.datasets[0].data = data;
+  pestChartObj.data.datasets[0].backgroundColor = bgColors;
+  pestChartObj.update();
+}
+
+function drawYoloBoxes() {
+  var img = document.getElementById('droneImg'), canvas = document.getElementById('droneCanvas');
+  if (!img || !canvas || !img.naturalWidth) return;
+  canvas.width = img.clientWidth; canvas.height = img.clientHeight;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!yoloBoxes.length) return;
+  var sx = canvas.width / img.naturalWidth, sy = canvas.height / img.naturalHeight;
+  var colors = {'Algal Leaf Spot':'#2196F3','Brown Blight':'#F44336','Gray Blight':'#9E9E9E','Helopeltis':'#FF9800','Red Leaf Spot':'#E91E63','Healthy':'#4CAF50'};
+  yoloBoxes.forEach(function(d) {
+    var x = d.x1*sx, y = d.y1*sy, w = (d.x2-d.x1)*sx, h = (d.y2-d.y1)*sy;
+    var c = colors[d.class] || '#FFF';
+    ctx.strokeStyle = c; ctx.lineWidth = 2; ctx.strokeRect(x, y, w, h);
+    ctx.fillStyle = c; ctx.font = '12px sans-serif';
+    ctx.fillText(d.class + ' ' + (d.score*100).toFixed(0) + '%', x, y-4);
+  });
+}
+
+function sendCmd(cmd, data) { if (ws && ws.readyState === 1) ws.send(JSON.stringify({cmd:cmd, data:data||{}})); }
+function roverSend(key, down) { sendCmd('rover', {key:key, down:down}); }
+['btnFwd','btnBack','btnLeft','btnRight'].forEach(function(id, i) {
+  var keys = ['w','s','a','d'];
+  var el = document.getElementById(id);
+  if (el) { el.onmousedown = function() { roverSend(keys[i], true); }; el.onmouseup = function() { roverSend(keys[i], false); }; }
+});
+var sprayBtn = document.getElementById('btnSpray');
+if (sprayBtn) { sprayBtn.onmousedown = function() { sendCmd('spray','on'); }; sprayBtn.onmouseup = function() { sendCmd('spray','off'); }; }
+
+document.onkeydown = function(e) { var map={87:'w',65:'a',83:'s',68:'d'}; if(map[e.keyCode]){e.preventDefault(); roverSend(map[e.keyCode],true);} };
+document.onkeyup = function(e) { var map={87:'w',65:'a',83:'s',68:'d'}; if(map[e.keyCode]){e.preventDefault(); roverSend(map[e.keyCode],false);} };
+
+connect();
+setInterval(drawYoloBoxes, 100);
+</script>
+</body>
+</html>
