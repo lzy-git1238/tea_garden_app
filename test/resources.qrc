@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/web">
         <file alias="amap_view.html">web/amap_view.html</file>
-        <file>web/index.html</file>
+        <file alias="index.html">web/index.html</file>
     </qresource>
 </RCC>
