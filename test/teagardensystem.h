@@ -30,6 +30,7 @@
 
 class ChartDashboard;
 class SrtVideoStreamer;
+class RoverControlPanel;
 
 // --- 主系统类 ---
 class TeaGardenSystem : public QWidget {
