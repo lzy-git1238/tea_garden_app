@@ -37,10 +37,8 @@ int main(int argc, char *argv[]) {
         if (QFile::exists("/run/user/1000/wayland-0")) {
             // Wayland socket 存在 → wayland
             qputenv("WAYLAND_DISPLAY", "wayland-0");
-        } else if (!qEnvironmentVariableIsEmpty("DISPLAY")) {
-            // 已有 X server → xcb（桌面环境）
         } else {
-            // 无 Wayland、无 X server → eglfs（嵌入式全屏）
+            // 嵌入式环境：无 Wayland → eglfs（直接渲染到 DRM/KMS，全屏无标题栏）
             qputenv("QT_QPA_PLATFORM", "eglfs");
         }
     }
