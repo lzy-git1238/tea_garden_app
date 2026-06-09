@@ -32,12 +32,9 @@ RoverControlPanel::RoverControlPanel(LoraManager *lora, QWidget *parent)
             sendRoverCmd(m_lastCmd);
         }
     });
-
-    startVideoCapture();
 }
 
 RoverControlPanel::~RoverControlPanel() {
-    stopVideoCapture();
 }
 
 void RoverControlPanel::setupUI() {
