@@ -35,14 +35,15 @@ int main(int argc, char *argv[]) {
 
     // ── 显示后端检测 ──
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
-        if (QFile::exists("/run/user/1000/wayland-0")) {
-            // Wayland socket 存在 → wayland
-            qputenv("WAYLAND_DISPLAY", "wayland-0");
-        } else {
-            // 默认 eglfs（嵌入式全屏渲染）
-            // 如需 xcb，在启动前设 export QT_QPA_PLATFORM=xcb
+        QString sessionType = qEnvironmentVariable("XDG_SESSION_TYPE");
+        if (sessionType == "wayland") {
+            // GNOME/Wayland 环境
+            qputenv("QT_QPA_PLATFORM", "wayland");
+        } else if (sessionType == "tty" || sessionType.isEmpty()) {
+            // 无桌面环境（嵌入式/SSH）→ eglfs
             qputenv("QT_QPA_PLATFORM", "eglfs");
         }
+        // 其他情况（x11）让 Qt 自动选择
     }
 
     // 高 DPI 缩放
