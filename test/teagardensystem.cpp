@@ -231,7 +231,7 @@ void TeaGardenSystem::setupUI() {
     headerRow->addWidget(headerTitleLabel, 0, Qt::AlignCenter);
     headerRow->addStretch(1);
     headerRow->addWidget(headerDecoR);
-    headerRow->addSpacing(12);
+    headerRow->addSpacing(qRound(12 * m_scale));
     headerRow->addWidget(themeBtn);
     rootLayout->addWidget(headerFrame);
 
