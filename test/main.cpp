@@ -53,24 +53,26 @@ int main(int argc, char *argv[]) {
 
     QApplication a(argc, argv);
 
-    // ── QScreen 动态 DPI 缩放 ──
+    // ── 按屏幕宽度比例缩放 ──
+    // 参考宽度 1920px，其他屏幕按比例缩放
+    // 1920px → 1.0x, 1024px → 0.53x, 1280px → 0.67x
     QScreen *screen = a.primaryScreen();
-    double dpiScale = 1.0;
+    double scale = 1.0;
     if (screen) {
-        qreal dpi = screen->logicalDotsPerInch();
-        if (dpi > 0) dpiScale = dpi / 96.0;
-        // 7寸 1024x600 ≈ 170 DPI → dpiScale ≈ 1.77
+        qreal screenWidth = screen->geometry().width();
+        scale = screenWidth / 1920.0;
+        scale = qBound(0.4, scale, 2.0);
         qDebug() << "[MAIN] screen:" << screen->geometry()
-                 << "DPI:" << dpi << "scale:" << dpiScale;
+                 << "width:" << screenWidth << "scale:" << scale;
     }
 
     // 全局字体缩放
     QFont appFont = a.font();
-    appFont.setPointSizeF(appFont.pointSizeF() * dpiScale);
+    appFont.setPointSizeF(appFont.pointSizeF() * scale);
     a.setFont(appFont);
 
     TeaGardenSystem w;
-    w.setScreenDpiScale(dpiScale);
+    w.setScreenDpiScale(scale);
     w.setWindowFlags(Qt::FramelessWindowHint);
     w.showFullScreen();
 
