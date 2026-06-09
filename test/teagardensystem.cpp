@@ -123,6 +123,43 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     if (!yoloOk) yoloPort = 9800;
     m_yoloDetector->start("127.0.0.1", yoloPort);
 
+    // 小车图传采集（V4L2）
+    roverFfmpegProc = new QProcess(this);
+    roverFfmpegProc->setProcessChannelMode(QProcess::SeparateChannels);
+    QStringList v4l2Args;
+    v4l2Args << "-f" << "v4l2" << "-input_format" << "yuyv422"
+             << "-video_size" << "640x480" << "-framerate" << "15"
+             << "-i" << "/dev/video0"
+             << "-f" << "rawvideo" << "-pix_fmt" << "rgb24"
+             << "-vf" << "scale=320:240" << "pipe:1";
+    roverFfmpegProc->start("ffmpeg", v4l2Args);
+    if (roverFfmpegProc->waitForStarted(3000)) {
+        connect(roverFfmpegProc, &QProcess::readyReadStandardOutput,
+                this, [this]() {
+            roverVideoBuf.append(roverFfmpegProc->readAllStandardOutput());
+            const int frameSize = 320 * 240 * 3;
+            while (roverVideoBuf.size() >= frameSize) {
+                QByteArray frameData = roverVideoBuf.left(frameSize);
+                roverVideoBuf.remove(0, frameSize);
+                QImage img(reinterpret_cast<const uchar*>(frameData.constData()),
+                           320, 240, QImage::Format_RGB888);
+                QImage copy = img.copy();
+                if (!copy.isNull() && roverVideoLabel) {
+                    QPixmap pix = QPixmap::fromImage(copy);
+                    int w = roverVideoLabel->width() - 4;
+                    int h = w * 240 / 320;
+                    roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
+                        Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                    roverVideoLabel->setText(QString());
+                }
+            }
+        });
+    } else {
+        roverVideoLabel->setText("图传连接失败\n请检查 /dev/video0");
+        delete roverFfmpegProc;
+        roverFfmpegProc = nullptr;
+    }
+
     // 定时器：每3秒更新一次数据
     updateTimer = new QTimer(this);
     connect(updateTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshData);
