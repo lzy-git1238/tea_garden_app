@@ -210,7 +210,7 @@ void TeaGardenSystem::setupUI() {
     rootLayout->setContentsMargins(qRound(10*m_scale), qRound(10*m_scale), qRound(10*m_scale), qRound(10*m_scale));
 
     themeBtn = new QPushButton("☀️ 日间");
-    themeBtn->setFixedSize(90, 28);
+    themeBtn->setFixedSize(qRound(90 * m_scale), qRound(28 * m_scale));
     themeBtn->setCursor(Qt::PointingHandCursor);
     connect(themeBtn, &QPushButton::clicked, this, &TeaGardenSystem::toggleTheme);
 
