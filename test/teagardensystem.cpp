@@ -1231,6 +1231,20 @@ void TeaGardenSystem::onLoraData(double windSpeed,
     if (loraStateLabel) {
         loraStateLabel->setText("LoRa: 已接收实时数据");
     }
+
+    // 推送传感器数据到 Web
+    if (webServer) {
+        QJsonObject d;
+        d["airTemp"] = curTemp;
+        d["airHumidity"] = curHumi;
+        d["lightLux"] = curLight;
+        d["soilHumidity"] = curSoilHumi;
+        d["soilTemp"] = curSoilTemp;
+        d["soilConductivity"] = curSoilEc;
+        d["soilPh"] = curPh;
+        d["windSpeed"] = curWindSpeed;
+        webServer->pushSensorData(d);
+    }
 }
 
 void TeaGardenSystem::onLoraStatus(const QString &status) {
