@@ -11,7 +11,6 @@
 #include "srtvideostreamer.h"
 #include "yolodetector.h"
 #include "rovercontrolpanel.h"
-#include "webserver.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
@@ -41,7 +40,6 @@
 #include <QPen>
 #include <QFontMetrics>
 using namespace QtCharts;
-#include <QBuffer>
 #include <QApplication>
 #include <cmath>
 #ifdef TEA_ENABLE_MAP_WEBVIEW
@@ -153,14 +151,6 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
                     roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
                         Qt::KeepAspectRatio, Qt::SmoothTransformation));
                     roverVideoLabel->setText(QString());
-                    // 推送小车帧到网页
-                    if (webServer) {
-                        QByteArray jpeg;
-                        QBuffer buf2(&jpeg);
-                        buf2.open(QIODevice::WriteOnly);
-                        copy.save(&buf2, "JPEG", 50);
-                        webServer->pushRoverFrame(jpeg);
-                    }
                 }
             }
         });
@@ -186,13 +176,6 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(loraManager, &LoraManager::statusChanged, this, &TeaGardenSystem::onLoraStatus);
     connect(loraManager, &LoraManager::parseError, this, &TeaGardenSystem::onLoraParseError);
     loraManager->start();
-
-    // Web 远程监控服务
-    webServer = new WebServer(this);
-    webServer->start(8080);
-    connect(webServer, &WebServer::roverCommand, this, [this](char key) {
-        loraManager->sendRaw(QByteArray(1, key));
-    });
 
     // 初始化 SQLite 数据存储
     DataStore::instance()->init(QCoreApplication::applicationDirPath() + "/sensor_data.db");
@@ -1240,20 +1223,6 @@ void TeaGardenSystem::onLoraData(double windSpeed,
     if (loraStateLabel) {
         loraStateLabel->setText("LoRa: 已接收实时数据");
     }
-
-    // 推送传感器数据到 Web
-    if (webServer) {
-        QJsonObject d;
-        d["airTemp"] = curTemp;
-        d["airHumidity"] = curHumi;
-        d["lightLux"] = curLight;
-        d["soilHumidity"] = curSoilHumi;
-        d["soilTemp"] = curSoilTemp;
-        d["soilConductivity"] = curSoilEc;
-        d["soilPh"] = curPh;
-        d["windSpeed"] = curWindSpeed;
-        webServer->pushSensorData(d);
-    }
 }
 
 void TeaGardenSystem::onLoraStatus(const QString &status) {
@@ -2025,16 +1994,6 @@ void TeaGardenSystem::onVideoFrame(const QImage &image) {
     const QPixmap pix = QPixmap::fromImage(image);
     videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     videoLabel->setText(QString());
-
-    // 推到网页（JPEG 编码）
-    if (webServer) {
-        QImage scaled = image.scaled(640, 360, Qt::KeepAspectRatio, Qt::FastTransformation);
-        QByteArray jpeg;
-        QBuffer buf(&jpeg);
-        buf.open(QIODevice::WriteOnly);
-        scaled.save(&buf, "JPEG", 50);
-        webServer->pushDroneFrame(jpeg);
-    }
 }
 
 void TeaGardenSystem::onVideoStatus(const QString &msg) {
@@ -2125,22 +2084,6 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
         if (pestDashboard && pestDashboard->isVisible()) {
             pestDashboard->refresh();
         }
-    }
-
-    // 5. 推送 YOLO bbox 到网页（JSON）
-    if (webServer && !results.isEmpty()) {
-        QJsonArray arr;
-        for (const DetectionResult &det : results) {
-            QJsonObject d;
-            d["class"] = det.className;
-            d["score"] = det.score;
-            d["x1"] = det.bbox.x();
-            d["y1"] = det.bbox.y();
-            d["x2"] = det.bbox.x() + det.bbox.width();
-            d["y2"] = det.bbox.y() + det.bbox.height();
-            arr.append(d);
-        }
-        webServer->pushYoloDetections(arr);
     }
 }
 

@@ -32,8 +32,7 @@ SOURCES += \
     teagardensystem.cpp \
     thresholddialog.cpp \
     widget.cpp \
-    yolodetector.cpp \
-    webserver.cpp
+    yolodetector.cpp
 
 HEADERS += \
     chartdashboard.h \
@@ -49,8 +48,7 @@ HEADERS += \
     teagardensystem.h \
     thresholddialog.h \
     widget.h \
-    yolodetector.h \
-    webserver.h
+    yolodetector.h
 
 FORMS += \
     widget.ui
