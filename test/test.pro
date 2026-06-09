@@ -36,6 +36,8 @@ SOURCES += \
     webserver.cpp
 
 HEADERS += \
+    webserver.h \
+
     chartdashboard.h \
     datastore.h \
     iotuploader.h \
