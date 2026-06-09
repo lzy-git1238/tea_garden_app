@@ -51,19 +51,6 @@ HEADERS += \
     widget.h \
     yolodetector.h \
     webserver.h
-    datastore.h \
-    iotuploader.h \
-    loramanager.h \
-    pestdashboard.h \
-    pestdata.h \
-    rovercontrolpanel.h \
-    scheduledialog.h \
-    schedulestore.h \
-    srtvideostreamer.h \
-    teagardensystem.h \
-    thresholddialog.h \
-    widget.h \
-    yolodetector.h
 
 FORMS += \
     widget.ui
