@@ -415,7 +415,7 @@ void TeaGardenSystem::setupUI() {
     connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
     devRow->addWidget(lampBtn);
     scheduleBtnLamp = new QPushButton("⏰");
-    scheduleBtnLamp->setFixedSize(30, 30);
+    scheduleBtnLamp->setFixedSize(qRound(30 * m_scale), qRound(30 * m_scale));
     scheduleBtnLamp->setToolTip("驱虫灯定时计划");
     scheduleBtnLamp->setCursor(Qt::PointingHandCursor);
     connect(scheduleBtnLamp, &QPushButton::clicked, this, [this]() { openScheduleDialog("lamp"); });
