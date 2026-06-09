@@ -35,15 +35,17 @@ int main(int argc, char *argv[]) {
 
     // ── 显示后端检测 ──
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
-        QString sessionType = qEnvironmentVariable("XDG_SESSION_TYPE");
+        QByteArray sessionType = qgetenv("XDG_SESSION_TYPE");
+        qDebug() << "[MAIN] XDG_SESSION_TYPE:" << sessionType;
         if (sessionType == "wayland") {
-            // GNOME/Wayland 环境
             qputenv("QT_QPA_PLATFORM", "wayland");
+            qDebug() << "[MAIN] 设置 QT_QPA_PLATFORM=wayland";
         } else if (sessionType == "tty" || sessionType.isEmpty()) {
-            // 无桌面环境（嵌入式/SSH）→ eglfs
             qputenv("QT_QPA_PLATFORM", "eglfs");
+            qDebug() << "[MAIN] 设置 QT_QPA_PLATFORM=eglfs";
         }
-        // 其他情况（x11）让 Qt 自动选择
+    } else {
+        qDebug() << "[MAIN] QT_QPA_PLATFORM 已设为:" << qgetenv("QT_QPA_PLATFORM");
     }
 
     // 高 DPI 缩放
