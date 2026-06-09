@@ -11,6 +11,7 @@
 #include "srtvideostreamer.h"
 #include "yolodetector.h"
 #include "rovercontrolpanel.h"
+#include "webserver.h"
 
 #include <QRandomGenerator>
 #include <QDateTime>
