@@ -481,7 +481,7 @@ void TeaGardenSystem::setupUI() {
     auto *metricsWrap = new QWidget();
     metricsWrap->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     auto *metricsGrid = new QGridLayout(metricsWrap);
-    metricsGrid->setSpacing(8);
+    metricsGrid->setSpacing(qRound(8 * m_scale));
     metricsGrid->setContentsMargins(0, 0, 0, 0);
     QStringList names = {"空气温度", "空气湿度", "光照强度", "土壤pH", "风速", "土壤温度", "土壤湿度", "土壤电导率"};
     QStringList units = {"℃", "%", "Lux", "", "m/s", "℃", "%", "mS/cm"};
