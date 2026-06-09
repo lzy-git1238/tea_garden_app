@@ -1950,7 +1950,7 @@ void TeaGardenSystem::checkSchedules() {
 }
 
 void TeaGardenSystem::refreshFlowCard() {
-    if (!activeJobs.contains("pump") || !flowCard->isVisible()) return;
+    if (!activeJobs.contains("pump")) return;
 
     ActiveJob &job = activeJobs["pump"];
     QDateTime now = QDateTime::currentDateTime();
