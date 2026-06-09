@@ -205,6 +205,7 @@ private:
     void refreshPestPie();
     class PestDashboard *pestDashboard = nullptr;
     class QtCharts::QChartView *pestPieView = nullptr;
+    class RoverControlPanel *roverPanel = nullptr;
 };
 
 #endif // TEAGARDENSYSTEM_H
