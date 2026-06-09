@@ -115,6 +115,25 @@ bool LoraManager::sendCommand(int value) {
     return true;
 }
 
+bool LoraManager::sendRaw(const QByteArray &data) {
+    if (!serialPort->isOpen()) {
+        emit statusChanged("LoRa 未连接，无法发送命令");
+        return false;
+    }
+
+    const QByteArray payload = data + "\n";
+    const int repeatCount = 50;
+    for (int i = 0; i < repeatCount; ++i) {
+        const qint64 written = serialPort->write(payload);
+        if (written != payload.size()) {
+            emit statusChanged("LoRa 命令发送失败");
+            return false;
+        }
+    }
+    serialPort->flush();
+    return true;
+}
+
 void LoraManager::onReadyRead() {
     rxBuffer.append(serialPort->readAll());
     parseTextLines();
