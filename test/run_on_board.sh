@@ -10,9 +10,10 @@ fi
 cd "${BUILD_DIR}" || exit 1
 
 # 清除可能干扰的显示环境变量
-unset DISPLAY
+unset WAYLAND_DISPLAY
 
 # 用 XWayland（X11 兼容层），全屏控制更可靠
+export DISPLAY=:0
 export QT_QPA_PLATFORM=xcb
 export QT_AUTO_SCREEN_SCALE_FACTOR=1
 unset DISPLAY
