@@ -254,6 +254,20 @@ void TeaGardenSystem::setupUI() {
     videoLabel->setAlignment(Qt::AlignCenter);
     leftPanel->addWidget(videoLabel, 0, Qt::AlignTop);
 
+    // 小车图传画面
+    auto *roverVideoTitle = new QLabel("▎ 小车图传");
+    roverVideoTitle->setStyleSheet("color: #00d4ff; font-weight: bold;");
+    leftPanel->addWidget(roverVideoTitle);
+
+    roverVideoLabel = new QLabel("等待图传连接...\n(/dev/video0)");
+    roverVideoLabel->setAlignment(Qt::AlignCenter);
+    roverVideoLabel->setMinimumHeight(qRound(100 * m_scale));
+    roverVideoLabel->setMaximumHeight(qRound(180 * m_scale));
+    roverVideoLabel->setStyleSheet(
+        "background: #000; border: 1px solid #1a3040; border-radius: 4px;"
+        "color: #666; font-size: 11px;");
+    leftPanel->addWidget(roverVideoLabel);
+
     auto *pestHeaderRow = new QHBoxLayout();
     pestPieTitle = new QLabel("▎ 病虫害统计");
     pestHeaderRow->addWidget(pestPieTitle);
