@@ -42,8 +42,8 @@ RoverControlPanel::~RoverControlPanel() {
 
 void RoverControlPanel::setupUI() {
     auto *mainLayout = new QVBoxLayout(this);
-    mainLayout->setSpacing(10);
-    mainLayout->setContentsMargins(15, 15, 15, 15);
+    mainLayout->setSpacing(12);
+    mainLayout->setContentsMargins(20, 15, 20, 15);
 
     // 标题
     auto *titleLabel = new QLabel("🎮 农业检测车控制 (WASD)");
@@ -51,19 +51,16 @@ void RoverControlPanel::setupUI() {
     titleLabel->setAlignment(Qt::AlignCenter);
     mainLayout->addWidget(titleLabel);
 
-    auto *titleLabel = new QLabel("🎮 方向控制 (WASD)");
-    titleLabel->setStyleSheet("color: #00d4ff; font-size: 16px; font-weight: bold;");
-    rightPanel->addWidget(titleLabel);
-
+    // 方向按钮网格
     auto *dirGrid = new QGridLayout();
-    dirGrid->setSpacing(6);
+    dirGrid->setSpacing(8);
 
     auto dirBtnStyle = []() {
         return QString(
             "QPushButton { background: qlineargradient(x1:0,y1:0,x2:0,y2:1,"
             "stop:0 #1a4060, stop:1 #0d2030); color: #90caf9; font-size: 20px;"
             "font-weight: bold; padding: 15px; border: 1px solid #2a5070;"
-            "border-radius: 8px; min-width: 60px; min-height: 40px; }"
+            "border-radius: 8px; min-width: 70px; min-height: 45px; }"
             "QPushButton:pressed { background: #2a6090; color: #ffffff; }"
         );
     };
@@ -92,12 +89,9 @@ void RoverControlPanel::setupUI() {
     connect(m_rightBtn, &QPushButton::released, this, &RoverControlPanel::onRightReleased);
     dirGrid->addWidget(m_rightBtn, 1, 2);
 
-    rightPanel->addLayout(dirGrid);
+    mainLayout->addLayout(dirGrid);
 
-    auto *sprayLabel = new QLabel("💧 喷水控制");
-    sprayLabel->setStyleSheet("color: #00d4ff; font-size: 14px; font-weight: bold; margin-top: 8px;");
-    rightPanel->addWidget(sprayLabel);
-
+    // 喷水按钮
     m_sprayBtn = new QPushButton("💧 喷水");
     m_sprayBtn->setStyleSheet(
         "QPushButton { background: qlineargradient(x1:0,y1:0,x2:0,y2:1,"
@@ -108,10 +102,15 @@ void RoverControlPanel::setupUI() {
     );
     connect(m_sprayBtn, &QPushButton::pressed, this, &RoverControlPanel::onSprayPressed);
     connect(m_sprayBtn, &QPushButton::released, this, &RoverControlPanel::onSprayReleased);
-    rightPanel->addWidget(m_sprayBtn);
+    mainLayout->addWidget(m_sprayBtn);
 
-    rightPanel->addStretch();
-    mainLayout->addLayout(rightPanel, 1);
+    // 状态
+    m_statusLabel = new QLabel("LoRa: 就绪 | 键盘: WASD");
+    m_statusLabel->setStyleSheet("color: #90A4AE; font-size: 11px; padding: 4px;");
+    m_statusLabel->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(m_statusLabel);
+
+    mainLayout->addStretch();
 }
 
 void RoverControlPanel::sendRoverCmd(char cmd) {
