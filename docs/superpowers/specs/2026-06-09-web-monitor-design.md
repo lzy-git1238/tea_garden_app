@@ -146,8 +146,10 @@ Qt 端帧处理流水线：
 
 ## 视频帧编码
 
-无人机帧：1920×1080 → 缩放到 640×360 → JPEG base64 → WebSocket
-小车帧：320×240 → JPEG base64 → WebSocket
+- **视频流**：原始帧 → JPEG 编码 → WebSocket MJPEG 推流
+- **检测框**：YOLO 输出 → JSON bbox → WebSocket → 网页 JS Canvas 独立画框
+- 无人机帧：1920×1080 → 缩放到 640×360 → JPEG
+- 小车帧：320×240 → JPEG
 
 ## 前端依赖
 
