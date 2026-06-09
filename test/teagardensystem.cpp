@@ -398,7 +398,7 @@ void TeaGardenSystem::setupUI() {
 
     // ── 设备控制按钮行 ──
     auto *devRow = new QHBoxLayout();
-    devRow->setSpacing(4);
+    devRow->setSpacing(qRound(4 * m_scale));
     pumpBtn = new QPushButton("💧 灌溉泵");
     pumpBtn->setCheckable(true);
     connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
