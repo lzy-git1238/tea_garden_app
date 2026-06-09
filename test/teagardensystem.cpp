@@ -219,7 +219,7 @@ void TeaGardenSystem::setupUI() {
     headerFrame->setObjectName("headerBar");
     headerFrame->setFixedHeight(qRound(52 * m_scale));
     auto *headerRow = new QHBoxLayout(headerFrame);
-    headerRow->setContentsMargins(16, 4, 16, 4);
+    headerRow->setContentsMargins(qRound(16*m_scale), qRound(4*m_scale), qRound(16*m_scale), qRound(4*m_scale));
     auto *headerDecoL = new QLabel("━━━");
     headerDecoL->setObjectName("headerDeco");
     headerTitleLabel = new QLabel("智慧茶园综合管理系统");
