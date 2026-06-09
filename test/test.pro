@@ -41,6 +41,7 @@ HEADERS += \
     loramanager.h \
     pestdashboard.h \
     pestdata.h \
+    rovercontrolpanel.h \
     scheduledialog.h \
     schedulestore.h \
     srtvideostreamer.h \
