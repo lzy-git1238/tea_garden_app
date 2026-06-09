@@ -206,8 +206,8 @@ void TeaGardenSystem::setupUI() {
     this->setWindowTitle("智慧茶园综合管理系统 v2.0");
 
     auto *rootLayout = new QVBoxLayout(this);
-    rootLayout->setSpacing(10);
-    rootLayout->setContentsMargins(10, 10, 10, 10);
+    rootLayout->setSpacing(qRound(10 * m_scale));
+    rootLayout->setContentsMargins(qRound(10*m_scale), qRound(10*m_scale), qRound(10*m_scale), qRound(10*m_scale));
 
     themeBtn = new QPushButton("☀️ 日间");
     themeBtn->setFixedSize(90, 28);
