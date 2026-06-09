@@ -3,7 +3,11 @@
 # 强制使用 eglfs 全屏渲染，绕过 X11/Wayland
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "${SCRIPT_DIR}" || exit 1
+BUILD_DIR="${SCRIPT_DIR}/../build-arm-Debug"
+if [ ! -f "${BUILD_DIR}/test" ]; then
+    BUILD_DIR="${SCRIPT_DIR}"
+fi
+cd "${BUILD_DIR}" || exit 1
 
 # 清除可能干扰的显示环境变量
 unset DISPLAY
