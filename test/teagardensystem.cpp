@@ -1218,6 +1218,18 @@ QString TeaGardenSystem::techBtnStyle(const QString &bg1, const QString &bg2, co
     ).arg(bg1, bg2, border, text);
 }
 
+void TeaGardenSystem::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Escape) {
+        if (isFullScreen()) {
+            showNormal();
+        } else {
+            showFullScreen();
+        }
+    } else {
+        QWidget::keyPressEvent(event);
+    }
+}
+
 void TeaGardenSystem::applyTheme() {
     // ══════ 颜色色板 ══════
     QString bg, fg, cardBg, border, borderHi, muted, accent, accent2;
