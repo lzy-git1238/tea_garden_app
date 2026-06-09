@@ -443,8 +443,8 @@ void TeaGardenSystem::setupUI() {
     weatherCard->setFixedHeight(qRound(205 * m_scale));
     weatherCard->setObjectName("weatherCard");
     auto *wcLayout = new QVBoxLayout(weatherCard);
-    wcLayout->setContentsMargins(10, 6, 10, 6);
-    wcLayout->setSpacing(3);
+    wcLayout->setContentsMargins(qRound(10*m_scale), qRound(6*m_scale), qRound(10*m_scale), qRound(6*m_scale));
+    wcLayout->setSpacing(qRound(3 * m_scale));
 
     auto *wcTitleRow = new QHBoxLayout();
     weatherTitleLabel = new QLabel("🌤 24h预报");
