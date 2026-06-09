@@ -287,7 +287,7 @@ void TeaGardenSystem::setupUI() {
     leftPanel->setContentsMargins(qRound(10*m_scale), qRound(8*m_scale), qRound(10*m_scale), qRound(8*m_scale));
     leftPanel->setSpacing(qRound(6 * m_scale));
 
-    videoTitleLabel = new QLabel("▎ 实时监控");
+    videoTitleLabel = new QLabel("▎ 农业无人机实时监控");
     leftPanel->addWidget(videoTitleLabel);
 
     videoLabel = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
