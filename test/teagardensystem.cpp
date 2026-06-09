@@ -1207,18 +1207,6 @@ QString TeaGardenSystem::techBtnStyle(const QString &bg1, const QString &bg2, co
     ).arg(bg1, bg2, border, text);
 }
 
-void TeaGardenSystem::showEvent(QShowEvent *event) {
-    QWidget::showEvent(event);
-    // Wayland 下 showFullScreen() 可能不生效，强制窗口尺寸铺满屏幕
-    QScreen *scr = screen();
-    if (scr) {
-        QRect geo = scr->geometry();
-        setGeometry(geo);
-        showMaximized();
-        qDebug() << "[UI] showEvent: 强制全屏" << geo;
-    }
-}
-
 void TeaGardenSystem::applyTheme() {
     // ══════ 颜色色板 ══════
     QString bg, fg, cardBg, border, borderHi, muted, accent, accent2;
