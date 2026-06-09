@@ -105,6 +105,9 @@ private:
     QLabel *loraStateLabel;
     QLabel *videoLabel = nullptr;
     QLabel *videoTitleLabel = nullptr;
+    QLabel *roverVideoLabel = nullptr;
+    QProcess *roverFfmpegProc = nullptr;
+    QByteArray roverVideoBuf;
     QTextEdit *chatDisplay;
     QLineEdit *chatInput;
     QPushButton *voiceBtn;
