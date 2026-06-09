@@ -38,7 +38,7 @@ class TeaGardenSystem : public QWidget {
 public:
     explicit TeaGardenSystem(QWidget *parent = nullptr);
     virtual ~TeaGardenSystem();
-    void setScreenDpiScale(double scale) { m_dpiScale = scale; }
+    void setScreenDpiScale(double scale) { m_scale = scale; }
 
 private slots:
     void refreshData();         // 定时刷新环境数据
@@ -190,7 +190,7 @@ private:
     QString weatherLocationPath;     // 缓存地点名称
 
     // 屏幕缩放
-    double m_dpiScale = 1.0;
+    double m_scale = 1.0;
 
     // 主题
     bool isDarkMode = true;
