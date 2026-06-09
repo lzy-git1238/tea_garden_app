@@ -41,29 +41,15 @@ RoverControlPanel::~RoverControlPanel() {
 }
 
 void RoverControlPanel::setupUI() {
-    auto *mainLayout = new QHBoxLayout(this);
+    auto *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(10);
-    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->setContentsMargins(15, 15, 15, 15);
 
-    // 左侧：视频区
-    auto *leftPanel = new QVBoxLayout();
-    m_videoLabel = new QLabel("等待图传连接...\n(/dev/video0)");
-    m_videoLabel->setAlignment(Qt::AlignCenter);
-    m_videoLabel->setMinimumSize(400, 300);
-    m_videoLabel->setStyleSheet(
-        "background: #000; border: 2px solid #1a3040; border-radius: 8px;"
-        "color: #666; font-size: 14px;");
-    leftPanel->addWidget(m_videoLabel, 1);
-
-    m_statusLabel = new QLabel("LoRa: 初始化中...");
-    m_statusLabel->setStyleSheet("color: #90A4AE; font-size: 12px; padding: 4px;");
-    leftPanel->addWidget(m_statusLabel);
-
-    mainLayout->addLayout(leftPanel, 2);
-
-    // 右侧：控制区
-    auto *rightPanel = new QVBoxLayout();
-    rightPanel->setSpacing(8);
+    // 标题
+    auto *titleLabel = new QLabel("🎮 农业检测车控制 (WASD)");
+    titleLabel->setStyleSheet("color: #00d4ff; font-size: 18px; font-weight: bold;");
+    titleLabel->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(titleLabel);
 
     auto *titleLabel = new QLabel("🎮 方向控制 (WASD)");
     titleLabel->setStyleSheet("color: #00d4ff; font-size: 16px; font-weight: bold;");
