@@ -41,6 +41,7 @@
 #include <QPen>
 #include <QFontMetrics>
 using namespace QtCharts;
+#include <QBuffer>
 #include <QApplication>
 #include <cmath>
 #ifdef TEA_ENABLE_MAP_WEBVIEW
