@@ -14,8 +14,14 @@ unset DISPLAY
 unset WAYLAND_DISPLAY
 unset QT_QPA_PLATFORM
 
-# 强制 eglfs（DRM/KMS 直接渲染，全屏无标题栏）
-export QT_QPA_PLATFORM=eglfs
+# 检测显示环境
+if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+    export QT_QPA_PLATFORM=wayland
+elif [ -z "$XDG_SESSION_TYPE" ]; then
+    # SSH/无桌面环境 → eglfs
+    export QT_QPA_PLATFORM=eglfs
+fi
+unset DISPLAY
 
 echo "[INFO] 使用 eglfs 全屏模式启动"
 echo "[INFO] 屏幕: $(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null || echo '未知')"
