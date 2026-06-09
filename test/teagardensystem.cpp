@@ -1910,6 +1910,8 @@ void TeaGardenSystem::checkSchedules() {
             pumpBtn->blockSignals(false);
             flowPlanIdLabel->setText(QString("计划 #%1").arg(plan.id));
             flowCard->setVisible(true);
+            flowCard->show();
+            flowCard->raise();
             refreshFlowCard();
             double expectedVol = flowRate * plan.durationMin;
             appendChatMessage("系统",
