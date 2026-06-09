@@ -325,7 +325,7 @@ void TeaGardenSystem::setupUI() {
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // 用 AspectRatioLabel 包裹饼图，保持与视频同比例 16:9
-    auto *pestPieWrapper = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoWidth * 1000 / 1920, leftPanelFrame);
+    auto *pestPieWrapper = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoWidth * 900 / 1920, leftPanelFrame);
     pestPieWrapper->setStyleSheet("background: #0a1628;");
     auto *wrapperLayout = new QVBoxLayout(pestPieWrapper);
     wrapperLayout->setContentsMargins(0, 0, 0, 0);
@@ -463,10 +463,11 @@ void TeaGardenSystem::setupUI() {
     fcBtnRow->addWidget(flowSettingsBtn);
     fcLayout->addLayout(fcBtnRow);
 
-    // flowCard 作为独立弹窗，不放在主页布局中
+    // flowCard 作为独立弹窗
     flowCard->setWindowTitle("💧 灌溉状态");
-    flowCard->setWindowFlags(Qt::Window);
+    flowCard->setWindowFlags(flowCard->windowFlags() | Qt::Window);
     flowCard->resize(350, 200);
+    flowCard->hide();
 
     // ── 设备控制按钮行 ──
     auto *devRow = new QHBoxLayout();
