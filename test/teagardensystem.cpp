@@ -612,7 +612,7 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
 #else
     QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable Map.");
     fallback->setAlignment(Qt::AlignCenter);
-    fallback->setMinimumHeight(qRound(520 * m_scale));
+    fallback->setMinimumHeight(qRound(120 * m_scale));
     fallback->setStyleSheet("background: #1a2a3a; border: 1px solid #334455; color: #ff8a80;");
     midPanel->addWidget(fallback, 5);
 #endif
