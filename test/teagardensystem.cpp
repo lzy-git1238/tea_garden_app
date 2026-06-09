@@ -350,8 +350,6 @@ void TeaGardenSystem::setupUI() {
     connect(roverBtn, &QPushButton::clicked, this, &TeaGardenSystem::openRoverPanel);
     leftPanel->addWidget(roverBtn);
 
-    leftPanel->addStretch(1);
-
     // ── 流量状态卡片（灌溉进行中才显示） ──
     flowCard = new QFrame();
     flowCard->setObjectName("flowCard");
