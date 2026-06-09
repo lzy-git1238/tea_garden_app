@@ -321,9 +321,16 @@ void TeaGardenSystem::setupUI() {
     pestChart->setMargins(QMargins(2, 2, 2, 2));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(qRound(150 * m_scale));
+    pestPieView->setMinimumHeight(qRound(80 * m_scale));
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    leftPanel->addWidget(pestPieView, 1);
+
+    // 用 AspectRatioLabel 包裹饼图，保持与视频同比例 16:9
+    auto *pestPieWrapper = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
+    pestPieWrapper->setStyleSheet("background: #0a1628;");
+    auto *wrapperLayout = new QVBoxLayout(pestPieWrapper);
+    wrapperLayout->setContentsMargins(0, 0, 0, 0);
+    wrapperLayout->addWidget(pestPieView);
+    leftPanel->addWidget(pestPieWrapper, 1);
 
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
