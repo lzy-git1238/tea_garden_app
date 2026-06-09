@@ -2118,6 +2118,22 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
             pestDashboard->refresh();
         }
     }
+
+    // 5. 推送 YOLO bbox 到网页（JSON）
+    if (webServer && !results.isEmpty()) {
+        QJsonArray arr;
+        for (const DetectionResult &det : results) {
+            QJsonObject d;
+            d["class"] = det.className;
+            d["score"] = det.score;
+            d["x1"] = det.bbox.x();
+            d["y1"] = det.bbox.y();
+            d["x2"] = det.bbox.x() + det.bbox.width();
+            d["y2"] = det.bbox.y() + det.bbox.height();
+            arr.append(d);
+        }
+        webServer->pushYoloDetections(arr);
+    }
 }
 
 // ── IoT 云端命令 ──
