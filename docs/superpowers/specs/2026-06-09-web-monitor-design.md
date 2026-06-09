@@ -38,13 +38,30 @@ RK3588
 | 类型 | 方向 | 格式 | 频率 |
 |------|------|------|------|
 | 环境数据 | Qt→Web | JSON `{temp, humi, ...}` | 3s |
-| 无人机视频 | Qt→Web | WebSocket JPEG binary | 实时 MJPEG |
-| 小车图传 | Qt→Web | WebSocket JPEG binary | 实时 MJPEG |
-| 病虫害检测 | Qt→Web | WebSocket JSON（已在帧上画框） | 检测到时 |
-| YOLO 框 | Qt→Web | **在 Qt 端画好框再编码为 JPEG 推送** | 实时 |
+| 无人机视频 | Qt→Web | WebSocket MJPEG（原始无框） | 实时 |
+| 小车图传 | Qt→Web | WebSocket MJPEG（原始无框） | 实时 |
+| YOLO 检测框 | Qt→Web | **JSON bbox** `[{class,score,x1,y1,x2,y2}]` | 检测到时 |
+| 病虫害记录 | Qt→Web | WebSocket JSON | 检测到时 |
 | 设备控制 | Web→Qt | WebSocket `{cmd: "pump_on"}` | 按需 |
 | 小车控制 | Web→Qt | WebSocket `{cmd: "rover", key: "w"}` | 按需 |
 | 天气数据 | Qt→Web | WebSocket JSON | 首次+每30min |
+
+### 视频 + 检测框分离架构
+
+```
+SRT 视频流
+    │
+    ├──→ MJPEG 直推网页（原始画面，无框）
+    │         │
+    │     JS Canvas 叠加 YOLO 框
+    │
+    └──→ YoloDetector (RKNN NPU)
+              │
+         JSON bbox → WebSocket → 网页
+         [{class: "Brown Blight", score: 0.87, x1:120, y1:80, x2:350, y2:290}]
+              │
+         JS Canvas 在视频上画框（可开关显示/隐藏）
+```
 
 ## 组件设计
 
