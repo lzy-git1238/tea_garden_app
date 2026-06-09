@@ -37,13 +37,11 @@ int main(int argc, char *argv[]) {
     if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM")) {
         QByteArray sessionType = qgetenv("XDG_SESSION_TYPE");
         qDebug() << "[MAIN] XDG_SESSION_TYPE:" << sessionType;
-        if (sessionType == "wayland") {
-            qputenv("QT_QPA_PLATFORM", "wayland");
-            qDebug() << "[MAIN] 设置 QT_QPA_PLATFORM=wayland";
-        } else if (sessionType == "tty" || sessionType.isEmpty()) {
+        if (sessionType == "tty" || sessionType.isEmpty()) {
+            // 无桌面环境（SSH/嵌入式）→ eglfs
             qputenv("QT_QPA_PLATFORM", "eglfs");
-            qDebug() << "[MAIN] 设置 QT_QPA_PLATFORM=eglfs";
         }
+        // Wayland/X11 环境不设，让启动脚本或 Qt 自动选择 xcb
     } else {
         qDebug() << "[MAIN] QT_QPA_PLATFORM 已设为:" << qgetenv("QT_QPA_PLATFORM");
     }
