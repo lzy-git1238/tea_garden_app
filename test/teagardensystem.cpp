@@ -153,6 +153,14 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
                     roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
                         Qt::KeepAspectRatio, Qt::SmoothTransformation));
                     roverVideoLabel->setText(QString());
+                    // 推送小车帧到网页
+                    if (webServer) {
+                        QByteArray jpeg;
+                        QBuffer buf2(&jpeg);
+                        buf2.open(QIODevice::WriteOnly);
+                        scaled.save(&buf2, "JPEG", 50);
+                        webServer->pushRoverFrame(jpeg);
+                    }
                 }
             }
         });
