@@ -242,8 +242,8 @@ void TeaGardenSystem::setupUI() {
     leftPanelFrame = new QFrame();
     leftPanelFrame->setObjectName("dashPanel");
     auto *leftPanel = new QVBoxLayout(leftPanelFrame);
-    leftPanel->setContentsMargins(10, 8, 10, 8);
-    leftPanel->setSpacing(6);
+    leftPanel->setContentsMargins(qRound(10*m_scale), qRound(8*m_scale), qRound(10*m_scale), qRound(8*m_scale));
+    leftPanel->setSpacing(qRound(6 * m_scale));
 
     videoTitleLabel = new QLabel("▎ 实时监控");
     leftPanel->addWidget(videoTitleLabel);
