@@ -325,7 +325,7 @@ void TeaGardenSystem::setupUI() {
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // 用 AspectRatioLabel 包裹饼图，保持与视频同比例 16:9
-    auto *pestPieWrapper = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
+    auto *pestPieWrapper = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoWidth * 1000 / 1920, leftPanelFrame);
     pestPieWrapper->setStyleSheet("background: #0a1628;");
     auto *wrapperLayout = new QVBoxLayout(pestPieWrapper);
     wrapperLayout->setContentsMargins(0, 0, 0, 0);
