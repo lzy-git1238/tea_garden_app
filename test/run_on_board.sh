@@ -20,4 +20,4 @@ export QT_QPA_PLATFORM=eglfs
 echo "[INFO] 使用 eglfs 全屏模式启动"
 echo "[INFO] 屏幕: $(cat /sys/class/graphics/fb0/virtual_size 2>/dev/null || echo '未知')"
 
-exec ./test "$@"
+exec "${BUILD_DIR}/test" "$@"
