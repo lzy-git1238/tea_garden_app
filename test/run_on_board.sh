@@ -11,16 +11,10 @@ cd "${BUILD_DIR}" || exit 1
 
 # 清除可能干扰的显示环境变量
 unset DISPLAY
-unset WAYLAND_DISPLAY
-unset QT_QPA_PLATFORM
 
-# 检测显示环境
-if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-    export QT_QPA_PLATFORM=wayland
-elif [ -z "$XDG_SESSION_TYPE" ]; then
-    # SSH/无桌面环境 → eglfs
-    export QT_QPA_PLATFORM=eglfs
-fi
+# 强制 Wayland（板子跑 GNOME Wayland）
+export QT_QPA_PLATFORM=wayland
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
 unset DISPLAY
 
 echo "[INFO] 使用 eglfs 全屏模式启动"
