@@ -25,6 +25,7 @@ SOURCES += \
     main.cpp \
     pestdashboard.cpp \
     pestdata.cpp \
+    rovercontrolpanel.cpp \
     scheduledialog.cpp \
     schedulestore.cpp \
     srtvideostreamer.cpp \
