@@ -1538,7 +1538,7 @@ void TeaGardenSystem::showWeatherDetail() {
             dialogTitle = "24小时逐时预报 · " + weatherLocationPath;
     }
     dlg->setWindowTitle(dialogTitle);
-    dlg->resize(750, 520);
+    dlg->resize(qRound(750 * m_scale), qRound(520 * m_scale));
     dlg->setStyleSheet(QString("background-color: %1;").arg(isDarkMode ? "#0a1628" : "#eef4fb"));
 
     auto *layout = new QVBoxLayout(dlg);
