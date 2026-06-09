@@ -289,6 +289,16 @@ void TeaGardenSystem::setupUI() {
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     leftPanel->addWidget(mockPestBtn);
 
+    auto *roverBtn = new QPushButton("🚗 小车控制");
+    roverBtn->setStyleSheet(
+        "QPushButton { background: qlineargradient(x1:0,y1:0,x2:0,y2:1,"
+        "stop:0 #1a5068, stop:1 #0d2840); color: #90caf9; padding: 8px;"
+        "border: 1px solid #2a6080; border-radius: 4px; font-weight: bold; }"
+        "QPushButton:hover { background: #2a6090; color: #ffffff; }"
+    );
+    connect(roverBtn, &QPushButton::clicked, this, &TeaGardenSystem::openRoverPanel);
+    leftPanel->addWidget(roverBtn);
+
     // ── 流量状态卡片（灌溉进行中才显示） ──
     flowCard = new QFrame();
     flowCard->setObjectName("flowCard");
