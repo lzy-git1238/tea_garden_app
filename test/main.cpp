@@ -38,11 +38,11 @@ int main(int argc, char *argv[]) {
         if (QFile::exists("/run/user/1000/wayland-0")) {
             // Wayland socket 存在 → wayland
             qputenv("WAYLAND_DISPLAY", "wayland-0");
-        } else if (QDir("/tmp/.X11-unix").entryList(QDir::Files).isEmpty()) {
-            // 无 X11 socket → 嵌入式环境，用 eglfs 直接渲染到 DRM
+        } else {
+            // 默认 eglfs（嵌入式全屏渲染）
+            // 如需 xcb，在启动前设 export QT_QPA_PLATFORM=xcb
             qputenv("QT_QPA_PLATFORM", "eglfs");
         }
-        // 有 X11 socket → 让 Qt 自动选择 xcb
     }
 
     // 高 DPI 缩放
