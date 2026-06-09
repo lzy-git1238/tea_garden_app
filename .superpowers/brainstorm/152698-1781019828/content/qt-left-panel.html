@@ -1,0 +1,53 @@
+<h2>Qt 左栏真实布局（逐项）</h2>
+<p class="subtitle">新增空白页确认</p>
+
+<div style="padding:20px; background:#0a1628; color:#E8F4FF; font-size:13px; max-width:350px; margin:0 auto; border-radius:8px;">
+  <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #1a3040;">
+    <div style="color:#00d4ff; font-weight:bold; margin-bottom:4px;">▎ 农业无人机实时监控</div>
+    <div style="background:#000; height:60px; border:1px solid #1a3040; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#555;">[视频 16:9]</div>
+  </div>
+  <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #1a3040;">
+    <div style="color:#00d4ff; font-weight:bold; margin-bottom:4px;">▎ 农业检测车实时监控</div>
+    <div style="background:#000; height:40px; border:1px solid #1a3040; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#555;">[图传 16:9]</div>
+  </div>
+  <div style="margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid #1a3040;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="color:#00d4ff; font-weight:bold;">▎ 病虫害统计</span>
+      <span style="color:#90A4AE; font-size:11px; cursor:pointer;">详情 ▶</span>
+    </div>
+    <div style="background:#0a1420; height:60px; border:1px solid #1a3040; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#555; margin-top:4px;">[饼图]</div>
+  </div>
+  <div style="margin-bottom:12px; color:#90A4AE; font-size:11px;">LoRa: 已接收实时数据</div>
+  <div style="margin-bottom:6px;">
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px 10px; border:1px solid #2a5070; border-radius:3px; font-size:11px; text-align:center;">📊 数据看板</div>
+  </div>
+  <div style="margin-bottom:6px;">
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px 10px; border:1px solid #2a5070; border-radius:3px; font-size:11px; text-align:center;">🐛 病虫害面板</div>
+  </div>
+  <div style="margin-bottom:6px;">
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px 10px; border:1px solid #2a5070; border-radius:3px; font-size:11px; text-align:center;">🐛 模拟检测</div>
+  </div>
+  <div style="margin-bottom:12px;">
+    <div style="background:linear-gradient(180deg,#1a5068,#0d2840); color:#90caf9; padding:5px 10px; border:1px solid #2a6080; border-radius:3px; font-size:11px; text-align:center;">🚗 小车控制</div>
+  </div>
+  <div style="display:flex; gap:4px; margin-bottom:8px;">
+    <div style="flex:1; background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:3px; font-size:10px; text-align:center;">💧 灌溉泵</div>
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:3px; font-size:10px;">⏰</div>
+    <div style="flex:1; background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:3px; font-size:10px; text-align:center;">🪲 驱虫灯</div>
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:3px; font-size:10px;">⏰</div>
+    <div style="background:linear-gradient(180deg,#1a4060,#0d2030); color:#90caf9; padding:5px; border:1px solid #2a5070; border-radius:3px; font-size:10px;">📊</div>
+  </div>
+</div>
+
+<p style="margin-top:16px; color:#E8F4FF; text-align:center;">这就是 Qt 左栏从上到下的完整顺序。确认无误？</p>
+
+<div class="options">
+  <div class="option" data-choice="yes" onclick="toggleSelect(this)">
+    <div class="letter">✅</div>
+    <div class="content"><h3>确认，左栏正确</h3><p>按这个改网页</p></div>
+  </div>
+  <div class="option" data-choice="no" onclick="toggleSelect(this)">
+    <div class="letter">❌</div>
+    <div class="content"><h3>还有问题</h3><p>我来具体说哪里不对</p></div>
+  </div>
+</div>
