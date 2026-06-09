@@ -78,7 +78,6 @@ int main(int argc, char *argv[]) {
 
     TeaGardenSystem w;
     w.setScreenDpiScale(scale);
-    w.setWindowFlags(Qt::FramelessWindowHint);
     w.showFullScreen();
 
     return a.exec();
