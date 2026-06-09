@@ -14,8 +14,10 @@
 RoverControlPanel::RoverControlPanel(LoraManager *lora, QWidget *parent)
     : QWidget(parent), m_lora(lora)
 {
-    setWindowTitle("地面小车控制");
-    setFixedSize(800, 500);
+    setWindowTitle("🚗 地面小车控制");
+    resize(800, 500);
+    setMinimumSize(600, 400);
+    setWindowFlags(Qt::Window);  // 有标题栏，可移动、可缩放
     setStyleSheet(
         "RoverControlPanel { background: #0a1628; color: #E8F4FF; }"
         "QLabel { color: #E8F4FF; }"
