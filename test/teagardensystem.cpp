@@ -236,7 +236,7 @@ void TeaGardenSystem::setupUI() {
     rootLayout->addWidget(headerFrame);
 
     auto *bodyLayout = new QHBoxLayout();
-    bodyLayout->setSpacing(12);
+    bodyLayout->setSpacing(qRound(12 * m_scale));
 
     // ── 左栏：实时监控 + 设备控制（参考图左侧视频区） ──
     leftPanelFrame = new QFrame();
