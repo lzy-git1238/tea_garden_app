@@ -323,9 +323,9 @@ void TeaGardenSystem::setupUI() {
     pestChart->setMargins(QMargins(2, 2, 2, 2));
     pestPieView = new QChartView(pestChart);
     pestPieView->setRenderHint(QPainter::Antialiasing);
-    pestPieView->setMinimumHeight(qRound(120 * m_scale));
+    pestPieView->setMinimumHeight(qRound(80 * m_scale));
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    leftPanel->addWidget(pestPieView, 2);
+    leftPanel->addWidget(pestPieView, 1);
 
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
