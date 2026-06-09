@@ -2201,3 +2201,16 @@ void TeaGardenSystem::onLampToggled(bool checked) {
         pumpBtn ? pumpBtn->isChecked() : false,
         lampBtn ? lampBtn->isChecked() : false);
 }
+
+void TeaGardenSystem::openRoverPanel() {
+    if (!roverPanel) {
+        roverPanel = new RoverControlPanel(loraManager, this);
+        connect(roverPanel, &RoverControlPanel::closed, this, [this]() {
+            roverPanel = nullptr;
+        });
+    }
+    roverPanel->show();
+    roverPanel->raise();
+    roverPanel->activateWindow();
+    roverPanel->setFocus();
+}
