@@ -12,9 +12,9 @@ cd "${BUILD_DIR}" || exit 1
 # 清除可能干扰的显示环境变量
 unset DISPLAY
 
-# 强制 Wayland（板子跑 GNOME Wayland）
-export QT_QPA_PLATFORM=wayland
-export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+# 用 XWayland（X11 兼容层），全屏控制更可靠
+export QT_QPA_PLATFORM=xcb
+export QT_AUTO_SCREEN_SCALE_FACTOR=1
 unset DISPLAY
 
 echo "[INFO] 使用 eglfs 全屏模式启动"
