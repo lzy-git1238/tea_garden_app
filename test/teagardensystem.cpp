@@ -303,6 +303,7 @@ void TeaGardenSystem::setupUI() {
     roverVideoLabel = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
     roverVideoLabel->setText("【农业检测车：等待图传连接...】");
     roverVideoLabel->setAlignment(Qt::AlignCenter);
+    roverVideoLabel->setMaximumHeight(qRound(200 * m_scale));
     leftPanel->addWidget(roverVideoLabel, 0, Qt::AlignTop);
 
     auto *pestHeaderRow = new QHBoxLayout();
