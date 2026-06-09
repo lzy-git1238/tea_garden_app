@@ -353,7 +353,7 @@ void TeaGardenSystem::setupUI() {
     // ── 流量状态卡片（灌溉进行中才显示） ──
     flowCard = new QFrame();
     flowCard->setObjectName("flowCard");
-    flowCard->setVisible(false);
+    flowCard->setFixedHeight(0);  // 初始隐藏不占空间
     auto *fcLayout = new QVBoxLayout(flowCard);
     fcLayout->setContentsMargins(qRound(8*m_scale), qRound(8*m_scale), qRound(8*m_scale), qRound(8*m_scale));
     fcLayout->setSpacing(qRound(4 * m_scale));
