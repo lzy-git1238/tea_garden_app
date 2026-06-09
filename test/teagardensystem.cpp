@@ -451,7 +451,7 @@ void TeaGardenSystem::setupUI() {
     wcTitleRow->addWidget(weatherTitleLabel);
     wcTitleRow->addStretch();
     weatherRefreshBtn = new QPushButton("↻");
-    weatherRefreshBtn->setFixedSize(26, 26);
+    weatherRefreshBtn->setFixedSize(qRound(26 * m_scale), qRound(26 * m_scale));
     connect(weatherRefreshBtn, &QPushButton::clicked, this, &TeaGardenSystem::refreshWeatherAlert);
     wcTitleRow->addWidget(weatherRefreshBtn);
     wcLayout->addLayout(wcTitleRow);
