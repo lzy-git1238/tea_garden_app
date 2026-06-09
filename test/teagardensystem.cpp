@@ -486,7 +486,19 @@ void TeaGardenSystem::setupUI() {
     connect(scheduleBtnLamp, &QPushButton::clicked, this, [this]() { openScheduleDialog("lamp"); });
     devRow->addWidget(scheduleBtnLamp);
 
+    auto *flowStatsBtn = new QPushButton("📊");
+    flowStatsBtn->setFixedSize(qRound(30 * m_scale), qRound(30 * m_scale));
+    flowStatsBtn->setToolTip("灌溉统计");
+    flowStatsBtn->setCursor(Qt::PointingHandCursor);
+    connect(flowStatsBtn, &QPushButton::clicked, this, [this]() {
+        flowCard->show();
+        flowCard->raise();
+        refreshFlowCard();
+    });
+    devRow->addWidget(flowStatsBtn);
+
     leftPanel->addLayout(devRow);
+    leftPanel->addStretch(1);
     leftPanel->addStretch(1);
     bodyLayout->addWidget(leftPanelFrame, 28);
 
