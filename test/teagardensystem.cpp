@@ -307,7 +307,7 @@ void TeaGardenSystem::setupUI() {
     fcLayout->addLayout(fcTitleRow);
 
     auto *fcMetricsRow = new QHBoxLayout();
-    fcMetricsRow->setSpacing(8);
+    fcMetricsRow->setSpacing(qRound(8 * m_scale));
     // 已灌溉
     auto *fcCurCol = new QVBoxLayout();
     flowCurrentLabel = new QLabel("0.0");
