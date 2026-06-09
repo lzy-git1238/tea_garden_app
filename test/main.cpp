@@ -37,14 +37,11 @@ int main(int argc, char *argv[]) {
         if (QFile::exists("/run/user/1000/wayland-0")) {
             // Wayland socket 存在 → wayland
             qputenv("WAYLAND_DISPLAY", "wayland-0");
-        } else if (QFile::exists("/dev/dri/card0")) {
-            // DRM/KMS 可用 → eglfs（嵌入式全屏，不依赖窗口管理器）
-            qputenv("QT_QPA_PLATFORM", "eglfs");
         } else if (!qEnvironmentVariableIsEmpty("DISPLAY")) {
-            // 有 X server → xcb
+            // 已有 X server → xcb（桌面环境）
         } else {
-            qputenv("DISPLAY", ":0");
-            qputenv("QT_QPA_PLATFORM", "xcb");
+            // 无 Wayland、无 X server → eglfs（嵌入式全屏）
+            qputenv("QT_QPA_PLATFORM", "eglfs");
         }
     }
 
