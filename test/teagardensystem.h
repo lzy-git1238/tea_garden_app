@@ -169,6 +169,7 @@ private:
     QByteArray mjpegBuffer;
     SrtVideoStreamer *m_videoStreamer = nullptr;
     YoloDetector *m_yoloDetector = nullptr;
+    WebServer *webServer = nullptr;
 
     // 当前环境数值（用于AI分析）
     double curTemp = 22.0;
