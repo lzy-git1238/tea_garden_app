@@ -458,8 +458,12 @@ void TeaGardenSystem::setupUI() {
     midPanel->addWidget(mapTitleLabel);
     setupMapView(midPanel);
 
-    weatherSectionLabel = new QLabel("▎ 气象预警");
+    weatherSectionLabel = new QLabel("▎ 气象预警 & 快捷控制");
     midPanel->addWidget(weatherSectionLabel);
+
+    // ── 天气卡片 + 按钮区 并排 ──
+    auto *bottomRow = new QHBoxLayout();
+    bottomRow->setSpacing(qRound(8 * m_scale));
 
     weatherCard = new QFrame();
     weatherCard->setMinimumHeight(qRound(80 * m_scale));
@@ -487,7 +491,65 @@ void TeaGardenSystem::setupUI() {
     wcLayout->addWidget(weatherTimeLabel);
     weatherCard->setCursor(Qt::PointingHandCursor);
     weatherCard->installEventFilter(this);
-    midPanel->addWidget(weatherCard);
+    bottomRow->addWidget(weatherCard, 45);
+
+    // ── 按钮区 ──
+    auto *btnArea = new QVBoxLayout();
+    btnArea->setSpacing(qRound(4 * m_scale));
+
+    auto *btnGrid = new QGridLayout();
+    btnGrid->setSpacing(qRound(4 * m_scale));
+    chartBtn = new QPushButton("📊 数据看板");
+    connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
+    btnGrid->addWidget(chartBtn, 0, 0);
+    pestBtn = new QPushButton("🐛 病虫害面板");
+    connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
+    btnGrid->addWidget(pestBtn, 0, 1);
+    mockPestBtn = new QPushButton("🐛 模拟检测");
+    connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
+    btnGrid->addWidget(mockPestBtn, 1, 0);
+    roverBtn = new QPushButton("🚗 小车控制");
+    roverBtn->setCursor(Qt::PointingHandCursor);
+    connect(roverBtn, &QPushButton::clicked, this, &TeaGardenSystem::openRoverPanel);
+    btnGrid->addWidget(roverBtn, 1, 1);
+    btnArea->addLayout(btnGrid);
+
+    auto *devRow = new QHBoxLayout();
+    devRow->setSpacing(qRound(4 * m_scale));
+    pumpBtn = new QPushButton("💧 灌溉泵");
+    pumpBtn->setCheckable(true);
+    connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
+    devRow->addWidget(pumpBtn);
+    scheduleBtnPump = new QPushButton("⏰");
+    scheduleBtnPump->setFixedHeight(qRound(34 * m_scale));
+    scheduleBtnPump->setToolTip("灌溉定时计划");
+    scheduleBtnPump->setCursor(Qt::PointingHandCursor);
+    connect(scheduleBtnPump, &QPushButton::clicked, this, [this]() { openScheduleDialog("pump"); });
+    devRow->addWidget(scheduleBtnPump);
+    lampBtn = new QPushButton("🪲 驱虫灯");
+    lampBtn->setCheckable(true);
+    connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
+    devRow->addWidget(lampBtn);
+    scheduleBtnLamp = new QPushButton("⏰");
+    scheduleBtnLamp->setFixedHeight(qRound(34 * m_scale));
+    scheduleBtnLamp->setToolTip("驱虫灯定时计划");
+    scheduleBtnLamp->setCursor(Qt::PointingHandCursor);
+    connect(scheduleBtnLamp, &QPushButton::clicked, this, [this]() { openScheduleDialog("lamp"); });
+    devRow->addWidget(scheduleBtnLamp);
+    auto *flowStatsBtn = new QPushButton("📊");
+    flowStatsBtn->setFixedHeight(qRound(34 * m_scale));
+    flowStatsBtn->setToolTip("灌溉统计");
+    flowStatsBtn->setCursor(Qt::PointingHandCursor);
+    connect(flowStatsBtn, &QPushButton::clicked, this, [this]() {
+        flowCard->show();
+        flowCard->raise();
+        refreshFlowCard();
+    });
+    devRow->addWidget(flowStatsBtn);
+    btnArea->addLayout(devRow);
+
+    bottomRow->addLayout(btnArea, 55);
+    midPanel->addLayout(bottomRow);
     bodyLayout->addWidget(midPanelFrame, 44);
 
     // ── 右栏：环境指标网格 + 病虫害 + AI（参考图右侧） ──
