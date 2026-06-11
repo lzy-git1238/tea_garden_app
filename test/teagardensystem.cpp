@@ -529,9 +529,11 @@ void TeaGardenSystem::setupUI() {
     auto *devRow = new QHBoxLayout();
     devRow->setSpacing(qRound(4 * m_scale));
     pestBtn = new QPushButton("🐛 病虫害面板");
+    pestBtn->setFixedHeight(qRound(34 * m_scale));
     connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
     devRow->addWidget(pestBtn);
     mockPestBtn = new QPushButton("🐛 模拟检测");
+    mockPestBtn->setFixedHeight(qRound(34 * m_scale));
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
     devRow->addWidget(mockPestBtn);
     scheduleBtnPump = new QPushButton("⏰");
