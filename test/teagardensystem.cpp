@@ -1344,13 +1344,13 @@ void TeaGardenSystem::applyTheme() {
         metricsTitleClr = "#00d4ff";  weatherSecClr = "#00d4ff";  aiTitleClr = "#00d4ff";
         headerTitleClr = "#ffffff";  headerDecoClr = "#1a6fa8";
         pestTitleClr = "#ffb74d";
-        pestBtnBg1 = "#0088cc"; pestBtnBg2 = "#005588"; pestBtnBorder = borderHi; pestBtnText = "#ffffff";
-        mockBtnBg1 = "#0088cc"; mockBtnBg2 = "#005588"; mockBtnBorder = borderHi; mockBtnText = "#ffffff";
-        pumpBg = "#0088cc"; pumpText = "#ffffff"; pumpBorder = borderHi;
-        pumpChecked = "#1565c0";
-        lampBg = "#0088cc"; lampText = "#ffffff"; lampBorder = borderHi;
-        lampChecked = "#1565c0";
-        schedBtnBg1 = "#0088cc"; schedBtnBg2 = "#005588"; schedBtnBorder = borderHi; schedBtnText = "#ffffff";
+        pestBtnBg1 = "#0d2840"; pestBtnBg2 = "#071828"; pestBtnBorder = "#1a4a78"; pestBtnText = "#c0d8f0";
+        mockBtnBg1 = "#0d2840"; mockBtnBg2 = "#071828"; mockBtnBorder = "#1a4a78"; mockBtnText = "#c0d8f0";
+        pumpBg = "#0d2840"; pumpText = "#c0d8f0"; pumpBorder = "#1a4a78";
+        pumpChecked = "#1a5080";
+        lampBg = "#0d2840"; lampText = "#c0d8f0"; lampBorder = "#1a4a78";
+        lampChecked = "#1a5080";
+        schedBtnBg1 = "#0d2840"; schedBtnBg2 = "#071828"; schedBtnBorder = "#1a4a78"; schedBtnText = "#c0d8f0";
     } else {
         bg          = "#eef4fb";  fg          = "#1a3050";
         panelBg     = "rgba(255, 255, 255, 0.85)";
