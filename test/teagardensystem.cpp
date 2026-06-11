@@ -552,7 +552,7 @@ void TeaGardenSystem::setupUI() {
     devRow->addWidget(flowStatsBtn);
     btnArea->addLayout(devRow);
 
-    bottomRow->addLayout(btnArea, 55);
+    bottomRow->addWidget(btnFrame, 55);
     midPanel->addLayout(bottomRow);
     bodyLayout->addWidget(midPanelFrame, 44);
 
