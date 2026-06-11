@@ -1380,7 +1380,7 @@ void TeaGardenSystem::applyTheme() {
         pumpChecked = "#1565c0";
         lampBg = "#42a5f5"; lampText = "#ffffff"; lampBorder = borderHi;
         lampChecked = "#1e88e5";
-        schedBtnBg1 = "#e3f2fd"; schedBtnBg2 = "#bbdefb"; schedBtnBorder = "#64b5f6"; schedBtnText = "#0277bd";
+        schedBtnBg1 = "#42a5f5"; schedBtnBg2 = "#1e88e5"; schedBtnBorder = borderHi; schedBtnText = "#ffffff";
     }
 
     const QString panelStyle = dashPanelStyle(panelBg, border, borderHi);
