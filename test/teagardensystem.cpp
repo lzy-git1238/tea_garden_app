@@ -1378,8 +1378,8 @@ void TeaGardenSystem::applyTheme() {
         mockBtnBg1 = "#42a5f5"; mockBtnBg2 = "#1e88e5"; mockBtnBorder = borderHi; mockBtnText = "#ffffff";
         pumpBg = "#42a5f5"; pumpText = "#ffffff"; pumpBorder = borderHi;
         pumpChecked = "#1565c0";
-        lampBg = "#fce4ec"; lampText = "#c62828"; lampBorder = "#ef9a9a";
-        lampChecked = "#b71c1c";
+        lampBg = "#42a5f5"; lampText = "#ffffff"; lampBorder = borderHi;
+        lampChecked = "#1e88e5";
         schedBtnBg1 = "#e3f2fd"; schedBtnBg2 = "#bbdefb"; schedBtnBorder = "#64b5f6"; schedBtnText = "#0277bd";
     }
 
