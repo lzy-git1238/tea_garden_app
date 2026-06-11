@@ -1474,8 +1474,8 @@ void TeaGardenSystem::applyTheme() {
             "QPushButton:hover { background: %4; }"
             "QPushButton:checked { background: %5; color: #fff; border-color: %6; }"
         ).arg(pumpBg, pumpText, pumpBorder,
-              isDarkMode ? "#124068" : "#bbdefb",
-              pumpChecked, isDarkMode ? "#42a5f5" : "#1565c0"));
+              isDarkMode ? "#0077cc" : "#2196f3",
+              pumpChecked, borderHi));
     if (lampBtn)
         lampBtn->setStyleSheet(QString(
             "QPushButton { background: %1; color: %2; padding: 9px 14px; font-size: 14px; font-weight: bold;"
@@ -1483,8 +1483,8 @@ void TeaGardenSystem::applyTheme() {
             "QPushButton:hover { background: %4; }"
             "QPushButton:checked { background: %5; color: #fff; border-color: %6; }"
         ).arg(lampBg, lampText, lampBorder,
-              isDarkMode ? "#402030" : "#ffcdd2",
-              lampChecked, isDarkMode ? "#ef5350" : "#c62828"));
+              isDarkMode ? "#0077cc" : "#2196f3",
+              lampChecked, borderHi));
 
     // 定时按钮
     QString schedBtnStyle = QString(
