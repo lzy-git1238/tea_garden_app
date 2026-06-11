@@ -1331,7 +1331,7 @@ void TeaGardenSystem::applyTheme() {
         videoStatusClr = "#64b5f6";
         voiceBtnBg  = "#e65100";
         // 小车控制按钮 — 深蓝科技
-        roverBg1 = "#0088cc"; roverBg2 = "#005588"; roverBorder = borderHi; roverText = "#ffffff";
+        roverBg1 = "#0d2840"; roverBg2 = "#071828"; roverBorder = "#1a4a78"; roverText = "#c0d8f0";
         // 天气卡片 — 科技蓝
         wcBg1 = "#0c2540";  wcBg2 = "#0a1e38";  wcBg3 = "#081830";
         wcBorder1 = "#1a6fa8";  wcBorder2 = "#0a1628";
