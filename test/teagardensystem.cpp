@@ -1571,6 +1571,14 @@ void TeaGardenSystem::applyTheme() {
             "  border-radius: 4px;"
             "}"
         ).arg(wcBg1, wcBg2, wcBg3, wcBorder1, isDarkMode ? "#2a9fd8" : wcBorder2));
+    if (controlFrame)
+        controlFrame->setStyleSheet(QString(
+            "QFrame#weatherCard {"
+            "  background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 %1, stop:0.4 %2, stop:1 %3);"
+            "  border: 1px solid %4; border-top: 2px solid %5;"
+            "  border-radius: 4px;"
+            "}"
+        ).arg(wcBg1, wcBg2, wcBg3, wcBorder1, isDarkMode ? "#2a9fd8" : wcBorder2));
     if (weatherTitleLabel)
         weatherTitleLabel->setStyleSheet(QString(
             "color: %1; font-size: 13px; font-weight: bold; border: none; background: transparent;"
