@@ -1376,7 +1376,7 @@ void TeaGardenSystem::applyTheme() {
         pestTitleClr = "#e65100";
         pestBtnBg1 = "#42a5f5"; pestBtnBg2 = "#1e88e5"; pestBtnBorder = borderHi; pestBtnText = "#ffffff";
         mockBtnBg1 = "#42a5f5"; mockBtnBg2 = "#1e88e5"; mockBtnBorder = borderHi; mockBtnText = "#ffffff";
-        pumpBg = "#e3f2fd"; pumpText = "#0277bd"; pumpBorder = "#64b5f6";
+        pumpBg = "#42a5f5"; pumpText = "#ffffff"; pumpBorder = borderHi;
         pumpChecked = "#1565c0";
         lampBg = "#fce4ec"; lampText = "#c62828"; lampBorder = "#ef9a9a";
         lampChecked = "#b71c1c";
