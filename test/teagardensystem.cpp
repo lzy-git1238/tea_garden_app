@@ -1488,7 +1488,6 @@ void TeaGardenSystem::applyTheme() {
     ).arg(schedBtnBg1, schedBtnText, schedBtnBorder,
           isDarkMode ? "#153a55" : "#1976d2");
     if (scheduleBtnPump) scheduleBtnPump->setStyleSheet(schedBtnStyle);
-    if (scheduleBtnLamp) scheduleBtnLamp->setStyleSheet(schedBtnStyle);
 
     // 流量卡片
     if (flowCard) {
