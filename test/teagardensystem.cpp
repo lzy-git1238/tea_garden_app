@@ -336,17 +336,20 @@ void TeaGardenSystem::setupUI() {
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
 
+    // ── 功能按钮 2×2 网格 ──
+    auto *btnGrid = new QGridLayout();
+    btnGrid->setSpacing(qRound(4 * m_scale));
     chartBtn = new QPushButton("📊 数据看板");
     connect(chartBtn, &QPushButton::clicked, this, &TeaGardenSystem::openChartDashboard);
-    leftPanel->addWidget(chartBtn);
+    btnGrid->addWidget(chartBtn, 0, 0);
 
     pestBtn = new QPushButton("🐛 病虫害面板");
     connect(pestBtn, &QPushButton::clicked, this, &TeaGardenSystem::openPestDashboard);
-    leftPanel->addWidget(pestBtn);
+    btnGrid->addWidget(pestBtn, 0, 1);
 
     mockPestBtn = new QPushButton("🐛 模拟检测");
     connect(mockPestBtn, &QPushButton::clicked, this, &TeaGardenSystem::injectMockPest);
-    leftPanel->addWidget(mockPestBtn);
+    btnGrid->addWidget(mockPestBtn, 1, 0);
 
     auto *roverBtn = new QPushButton("🚗 小车控制");
     roverBtn->setStyleSheet(
@@ -356,7 +359,9 @@ void TeaGardenSystem::setupUI() {
         "QPushButton:hover { background: #2a6090; color: #ffffff; }"
     );
     connect(roverBtn, &QPushButton::clicked, this, &TeaGardenSystem::openRoverPanel);
-    leftPanel->addWidget(roverBtn);
+    btnGrid->addWidget(roverBtn, 1, 1);
+
+    leftPanel->addLayout(btnGrid);
 
     // ── 流量状态卡片（独立弹窗） ──
     flowCard = new QFrame(this);
