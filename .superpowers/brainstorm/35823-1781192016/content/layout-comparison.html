@@ -1,0 +1,175 @@
+<div class="split">
+
+<!-- 改前 -->
+<div class="mockup">
+  <div class="mockup-header">改前 — 左栏按钮拥挤，中栏天气过宽</div>
+  <div class="mockup-body" style="background:#0a1628; color:#E8F4FF; font-family:'Microsoft YaHei',sans-serif; padding:8px; min-height:500px;">
+
+    <!-- header -->
+    <div style="background:linear-gradient(90deg,rgba(10,35,70,0.2),rgba(10,50,90,0.5),rgba(10,35,70,0.2)); border:1px solid #1a4a78; border-radius:4px; padding:10px; text-align:center; margin-bottom:8px; font-weight:bold; color:#fff;">
+      ━━━ 智慧茶园综合管理系统 ━━━
+    </div>
+
+    <div style="display:flex; gap:8px; height:460px;">
+
+      <!-- 左栏 -->
+      <div style="flex:28; background:rgba(10,35,70,0.55); border:1px solid #1a4a78; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px; font-size:10px;">
+        <div style="color:#00d4ff; font-weight:bold;">▎ 无人机监控</div>
+        <div style="background:#020810; border:1px solid #1a4a78; border-radius:3px; flex:1; display:flex; align-items:center; justify-content:center; color:#555; min-height:60px;">📹 16:9 视频</div>
+        <div style="color:#00d4ff; font-weight:bold;">▎ 检测车监控</div>
+        <div style="background:#020810; border:1px solid #1a4a78; border-radius:3px; flex:1; display:flex; align-items:center; justify-content:center; color:#555; min-height:60px;">📹 16:9 视频</div>
+        <div style="color:#ffb74d; font-weight:bold;">▎ 病虫害统计</div>
+        <div style="background:#0a1628; border:1px solid #1a4a78; border-radius:3px; flex:1; display:flex; align-items:center; justify-content:center; color:#555; min-height:50px;">🥧 饼图</div>
+        <div style="color:#64b5f6;">LoRa: 实时</div>
+        <!-- 按钮 2x2 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px;">
+          <div class="mock-button" style="font-size:9px;">📊 数据看板</div>
+          <div class="mock-button" style="font-size:9px;">🐛 病虫害面板</div>
+          <div class="mock-button" style="font-size:9px;">🐛 模拟检测</div>
+          <div class="mock-button" style="font-size:9px;">🚗 小车控制</div>
+        </div>
+        <!-- 设备控制 -->
+        <div style="display:flex; gap:3px; align-items:center;">
+          <span class="mock-button" style="font-size:9px; flex:1;">💧 灌溉泵</span>
+          <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:2px 4px; font-size:9px;">⏰</span>
+          <span class="mock-button" style="font-size:9px; flex:1;">🪲 驱虫灯</span>
+          <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:2px 4px; font-size:9px;">⏰</span>
+          <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:2px 4px; font-size:9px;">📊</span>
+        </div>
+      </div>
+
+      <!-- 中栏 -->
+      <div style="flex:44; background:rgba(10,35,70,0.55); border:1px solid #1a4a78; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px; font-size:10px;">
+        <div style="color:#00d4ff; font-weight:bold;">▎ 茶园空间分布</div>
+        <div style="background:#1a2a3a; border:1px solid #334455; border-radius:4px; flex:1; display:flex; align-items:center; justify-content:center; color:#555; min-height:200px;">🗺 地图</div>
+        <div style="color:#00d4ff; font-weight:bold;">▎ 气象预警</div>
+        <!-- 天气卡片 — 占满横向 -->
+        <div style="border:1px solid #1a6fa8; border-radius:4px; background:linear-gradient(0deg,#081830,#0a1e38,#0c2540); padding:6px; font-size:9px;">
+          <div style="display:flex; justify-content:space-between;"><span style="color:#00d4ff;">🌤 24h预报 · 珠海·斗门</span><span>↻</span></div>
+          <div style="color:#4FC3F7; font-size:14px; font-weight:bold;">☀️ 晴 28℃</div>
+          <div style="color:#90caf9;">体感 30℃ | 湿度 65% | 东南风 微风 3.2m/s</div>
+          <div style="color:#90caf9;">降水量 0.0mm | 气温 24~32℃</div>
+          <div style="color:#5a8fb4; font-size:8px;">更新: 15:00 | 24小时逐时预报</div>
+        </div>
+        <div style="flex: 0.3;"></div> <!-- spacer -->
+      </div>
+
+      <!-- 右栏 -->
+      <div style="flex:28; background:rgba(10,35,70,0.55); border:1px solid #1a4a78; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px; font-size:10px;">
+        <div style="color:#00d4ff; font-weight:bold;">▎ 实时环境监控</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px; flex:2;">
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">空气温度<br><span style="color:#00d4ff; font-size:14px;">25.30 ℃</span></div>
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">空气湿度<br><span style="color:#00d4ff; font-size:14px;">62.50 %</span></div>
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">光照强度<br><span style="color:#00d4ff; font-size:14px;">2100 Lux</span></div>
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">土壤pH<br><span style="color:#00d4ff; font-size:14px;">5.60</span></div>
+        </div>
+        <div style="color:#00d4ff; font-weight:bold;">▎ AI 智慧管家</div>
+        <div style="background:rgba(5,20,45,0.65); border:1px solid #1a4a78; border-radius:3px; flex:1; padding:4px; color:#555;">💬 聊天窗口</div>
+        <div style="display:flex; gap:3px;">
+          <input class="mock-input" placeholder="询问..." style="flex:1; font-size:9px;">
+          <span class="mock-button" style="font-size:9px;">🎤</span>
+          <span class="mock-button" style="font-size:9px;">发送</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 改后 -->
+<div class="mockup">
+  <div class="mockup-header">改后 — 按钮移到中栏下方，天气与按钮并排</div>
+  <div class="mockup-body" style="background:#0a1628; color:#E8F4FF; font-family:'Microsoft YaHei',sans-serif; padding:8px; min-height:500px;">
+
+    <div style="background:linear-gradient(90deg,rgba(10,35,70,0.2),rgba(10,50,90,0.5),rgba(10,35,70,0.2)); border:1px solid #1a4a78; border-radius:4px; padding:10px; text-align:center; margin-bottom:8px; font-weight:bold; color:#fff;">
+      ━━━ 智慧茶园综合管理系统 ━━━
+    </div>
+
+    <div style="display:flex; gap:8px; height:460px;">
+
+      <!-- 左栏 — 按钮移除了，视频+饼图更大 -->
+      <div style="flex:28; background:rgba(10,35,70,0.55); border:1px solid #1a4a78; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px; font-size:10px; position:relative;">
+        <div style="color:#00d4ff; font-weight:bold;">▎ 无人机监控</div>
+        <div style="background:#020810; border:1px solid #1a4a78; border-radius:3px; flex:1; display:flex; align-items:center; justify-content:center; color:#555;">📹 16:9 视频 (更大)</div>
+        <div style="color:#00d4ff; font-weight:bold;">▎ 检测车监控</div>
+        <div style="background:#020810; border:1px solid #1a4a78; border-radius:3px; flex:1; display:flex; align-items:center; justify-content:center; color:#555;">📹 16:9 视频 (更大)</div>
+        <div style="color:#ffb74d; font-weight:bold;">▎ 病虫害统计</div>
+        <div style="background:#0a1628; border:1px solid #1a4a78; border-radius:3px; flex:1; display:flex; align-items:center; justify-content:center; color:#555;">🥧 饼图 (更大)</div>
+        <div style="color:#64b5f6;">LoRa: 实时</div>
+        <div style="position:absolute; bottom:6px; right:8px; color:#4caf50; font-size:9px; font-weight:bold;">✅ 释放空间</div>
+      </div>
+
+      <!-- 中栏 — 地图下方：天气(45%) + 按钮(55%) -->
+      <div style="flex:44; background:rgba(10,35,70,0.55); border:1px solid #1a4a78; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px; font-size:10px;">
+        <div style="color:#00d4ff; font-weight:bold;">▎ 茶园空间分布</div>
+        <div style="background:#1a2a3a; border:1px solid #334455; border-radius:4px; flex:1; display:flex; align-items:center; justify-content:center; color:#555;">🗺 地图</div>
+
+        <!-- 底部：天气 + 按钮并排，总高度不变 -->
+        <div style="color:#00d4ff; font-weight:bold;">▎ 气象预警 & 快捷控制</div>
+        <div style="display:flex; gap:6px;">
+          <!-- 天气卡片 45% -->
+          <div style="flex:45; border:1px solid #1a6fa8; border-radius:4px; background:linear-gradient(0deg,#081830,#0a1e38,#0c2540); padding:6px; font-size:9px;">
+            <div style="display:flex; justify-content:space-between;"><span style="color:#00d4ff;">🌤 24h预报</span><span>↻</span></div>
+            <div style="color:#4FC3F7; font-size:14px; font-weight:bold;">☀️ 晴 28℃</div>
+            <div style="color:#90caf9;">体感 30℃ | 湿度 65%</div>
+            <div style="color:#90caf9;">东南风 3.2m/s</div>
+            <div style="color:#5a8fb4; font-size:8px;">更新: 15:00</div>
+          </div>
+          <!-- 按钮区 55% -->
+          <div style="flex:55; display:flex; flex-direction:column; gap:4px; justify-content:center;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+              <div class="mock-button" style="font-size:10px; padding:8px;">📊 数据看板</div>
+              <div class="mock-button" style="font-size:10px; padding:8px;">🐛 病虫害面板</div>
+              <div class="mock-button" style="font-size:10px; padding:8px;">🐛 模拟检测</div>
+              <div class="mock-button" style="font-size:10px; padding:8px;">🚗 小车控制</div>
+            </div>
+            <div style="display:flex; gap:3px; align-items:center;">
+              <span class="mock-button" style="font-size:10px; flex:1;">💧 灌溉泵</span>
+              <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:3px 5px;">⏰</span>
+              <span class="mock-button" style="font-size:10px; flex:1;">🪲 驱虫灯</span>
+              <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:3px 5px;">⏰</span>
+              <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:3px 5px;">📊</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右栏 — 不变 -->
+      <div style="flex:28; background:rgba(10,35,70,0.55); border:1px solid #1a4a78; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px; font-size:10px;">
+        <div style="color:#00d4ff; font-weight:bold;">▎ 实时环境监控</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px; flex:2;">
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">空气温度<br><span style="color:#00d4ff; font-size:14px;">25.30 ℃</span></div>
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">空气湿度<br><span style="color:#00d4ff; font-size:14px;">62.50 %</span></div>
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">光照强度<br><span style="color:#00d4ff; font-size:14px;">2100 Lux</span></div>
+          <div style="background:rgba(10,50,90,0.45); border:1px solid #1a4a78; border-radius:3px; padding:4px;">土壤pH<br><span style="color:#00d4ff; font-size:14px;">5.60</span></div>
+        </div>
+        <div style="color:#00d4ff; font-weight:bold;">▎ AI 智慧管家</div>
+        <div style="background:rgba(5,20,45,0.65); border:1px solid #1a4a78; border-radius:3px; flex:1; padding:4px; color:#555;">💬 聊天窗口</div>
+        <div style="display:flex; gap:3px;">
+          <input class="mock-input" placeholder="询问..." style="flex:1; font-size:9px;">
+          <span class="mock-button" style="font-size:9px;">🎤</span>
+          <span class="mock-button" style="font-size:9px;">发送</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<h3 style="margin-top:20px;">改动要点</h3>
+<div class="pros-cons">
+  <div class="pros"><h4>✅ 改后优势</h4>
+    <ul>
+      <li>左栏视频 / 饼图更大，不再被按钮挤占</li>
+      <li>中栏天气 45% + 按钮 55% 并排，天气区域不改变总高度</li>
+      <li>按钮集中在同一个视觉区域，操作更方便</li>
+      <li>右栏完全不受影响</li>
+    </ul>
+  </div>
+  <div class="cons"><h4>⚠️ 注意事项</h4>
+    <ul>
+      <li>天气卡片变窄，文字可能换行增多</li>
+      <li>中栏下方固定高度不变，如果内容过多可能溢出</li>
+    </ul>
+  </div>
+</div>
