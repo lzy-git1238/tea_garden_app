@@ -1351,7 +1351,7 @@ void TeaGardenSystem::applyTheme() {
         pumpChecked = "#1565c0";
         lampBg = "#0088cc"; lampText = "#ffffff"; lampBorder = borderHi;
         lampChecked = "#1565c0";
-        schedBtnBg1 = "#0c3050"; schedBtnBg2 = "#081830"; schedBtnBorder = "#1a6fa8"; schedBtnText = "#90caf9";
+        schedBtnBg1 = "#0088cc"; schedBtnBg2 = "#005588"; schedBtnBorder = borderHi; schedBtnText = "#ffffff";
     } else {
         bg          = "#eef4fb";  fg          = "#1a3050";
         panelBg     = "rgba(255, 255, 255, 0.85)";
