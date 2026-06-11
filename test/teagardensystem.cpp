@@ -445,43 +445,6 @@ void TeaGardenSystem::setupUI() {
     fcBtnRow->addWidget(flowSettingsBtn);
     fcLayout->addLayout(fcBtnRow);
 
-    // ── 设备控制按钮行 ──
-    auto *devRow = new QHBoxLayout();
-    devRow->setSpacing(qRound(4 * m_scale));
-    pumpBtn = new QPushButton("💧 灌溉泵");
-    pumpBtn->setCheckable(true);
-    connect(pumpBtn, &QPushButton::toggled, this, &TeaGardenSystem::onPumpToggled);
-    devRow->addWidget(pumpBtn);
-    scheduleBtnPump = new QPushButton("⏰");
-    scheduleBtnPump->setFixedHeight(qRound(34 * m_scale));
-    scheduleBtnPump->setToolTip("灌溉定时计划");
-    scheduleBtnPump->setCursor(Qt::PointingHandCursor);
-    connect(scheduleBtnPump, &QPushButton::clicked, this, [this]() { openScheduleDialog("pump"); });
-    devRow->addWidget(scheduleBtnPump);
-
-    lampBtn = new QPushButton("🪲 驱虫灯");
-    lampBtn->setCheckable(true);
-    connect(lampBtn, &QPushButton::toggled, this, &TeaGardenSystem::onLampToggled);
-    devRow->addWidget(lampBtn);
-    scheduleBtnLamp = new QPushButton("⏰");
-    scheduleBtnLamp->setFixedHeight(qRound(34 * m_scale));
-    scheduleBtnLamp->setToolTip("驱虫灯定时计划");
-    scheduleBtnLamp->setCursor(Qt::PointingHandCursor);
-    connect(scheduleBtnLamp, &QPushButton::clicked, this, [this]() { openScheduleDialog("lamp"); });
-    devRow->addWidget(scheduleBtnLamp);
-
-    auto *flowStatsBtn = new QPushButton("📊");
-    flowStatsBtn->setFixedHeight(qRound(34 * m_scale));
-    flowStatsBtn->setToolTip("灌溉统计");
-    flowStatsBtn->setCursor(Qt::PointingHandCursor);
-    connect(flowStatsBtn, &QPushButton::clicked, this, [this]() {
-        flowCard->show();
-        flowCard->raise();
-        refreshFlowCard();
-    });
-    devRow->addWidget(flowStatsBtn);
-
-    leftPanel->addLayout(devRow);
     bodyLayout->addWidget(leftPanelFrame, 28);
 
     // ── 中栏：地图为主 + 底部气象（参考图中央大图） ──
