@@ -462,7 +462,7 @@ void TeaGardenSystem::setupUI() {
     weatherSectionLabel = new QLabel("▎ 气象预警");
     sectionTitleRow->addWidget(weatherSectionLabel);
     sectionTitleRow->addStretch();
-    auto *controlSectionLabel = new QLabel("▎ 快捷控制");
+    controlSectionLabel = new QLabel("▎ 快捷控制");
     sectionTitleRow->addWidget(controlSectionLabel);
     midPanel->addLayout(sectionTitleRow);
 
