@@ -1463,6 +1463,8 @@ void TeaGardenSystem::applyTheme() {
         pestBtn->setStyleSheet(techBtnStyle(pestBtnBg1, pestBtnBg2, pestBtnBorder, pestBtnText));
     if (mockPestBtn)
         mockPestBtn->setStyleSheet(techBtnStyle(mockBtnBg1, mockBtnBg2, mockBtnBorder, mockBtnText));
+    if (roverBtn)
+        roverBtn->setStyleSheet(techBtnStyle(roverBg1, roverBg2, roverBorder, roverText));
 
     if (pumpBtn)
         pumpBtn->setStyleSheet(QString(
