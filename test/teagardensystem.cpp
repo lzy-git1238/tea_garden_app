@@ -1492,7 +1492,7 @@ void TeaGardenSystem::applyTheme() {
         "border: 1px solid %3; border-radius: 3px; }"
         "QPushButton:hover { background: %4; }"
     ).arg(schedBtnBg1, schedBtnText, schedBtnBorder,
-          isDarkMode ? "#0077cc" : "#2196f3");
+          isDarkMode ? "#153a55" : "#1976d2");
     if (scheduleBtnPump) scheduleBtnPump->setStyleSheet(schedBtnStyle);
     if (scheduleBtnLamp) scheduleBtnLamp->setStyleSheet(schedBtnStyle);
 
