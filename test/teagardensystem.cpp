@@ -498,8 +498,13 @@ void TeaGardenSystem::setupUI() {
     weatherCard->installEventFilter(this);
     bottomRow->addWidget(weatherCard, 45);
 
-    // ── 按钮区 ──
-    auto *btnArea = new QVBoxLayout();
+    // ── 按钮框（与天气卡片对称的立体框） ──
+    auto *btnFrame = new QFrame();
+    btnFrame->setObjectName("weatherCard");  // 复用天气卡片立体样式
+    btnFrame->setMinimumHeight(qRound(80 * m_scale));
+    btnFrame->setCursor(Qt::PointingHandCursor);
+    auto *btnArea = new QVBoxLayout(btnFrame);
+    btnArea->setContentsMargins(qRound(10*m_scale), qRound(6*m_scale), qRound(10*m_scale), qRound(6*m_scale));
     btnArea->setSpacing(qRound(4 * m_scale));
 
     auto *btnGrid = new QGridLayout();
