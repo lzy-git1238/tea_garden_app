@@ -103,6 +103,7 @@ private:
     QLabel *mapTitleLabel = nullptr;
     QLabel *weatherSectionLabel = nullptr;
     QLabel *controlSectionLabel = nullptr;
+    QFrame *controlFrame = nullptr;       // 快捷控制框（与天气卡片对称）
     QLabel *loraStateLabel;
     QLabel *videoLabel = nullptr;
     QLabel *videoTitleLabel = nullptr;
