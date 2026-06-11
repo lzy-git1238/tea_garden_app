@@ -1374,7 +1374,7 @@ void TeaGardenSystem::applyTheme() {
         metricsTitleClr = "#0277bd";  weatherSecClr = "#0277bd";  aiTitleClr = "#0277bd";
         headerTitleClr = "#1a3050";  headerDecoClr = "#64b5f6";
         pestTitleClr = "#e65100";
-        pestBtnBg1 = "#e3f2fd"; pestBtnBg2 = "#bbdefb"; pestBtnBorder = "#64b5f6"; pestBtnText = "#0277bd";
+        pestBtnBg1 = "#42a5f5"; pestBtnBg2 = "#1e88e5"; pestBtnBorder = borderHi; pestBtnText = "#ffffff";
         mockBtnBg1 = "#fff3e0"; mockBtnBg2 = "#ffe0b2"; mockBtnBorder = "#ffb74d"; mockBtnText = "#e65100";
         pumpBg = "#e3f2fd"; pumpText = "#0277bd"; pumpBorder = "#64b5f6";
         pumpChecked = "#1565c0";
