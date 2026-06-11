@@ -508,8 +508,6 @@ void TeaGardenSystem::setupUI() {
     devRow->addWidget(flowStatsBtn);
 
     leftPanel->addLayout(devRow);
-    leftPanel->addStretch(1);
-    leftPanel->addStretch(1);
     bodyLayout->addWidget(leftPanelFrame, 28);
 
     // ── 中栏：地图为主 + 底部气象（参考图中央大图） ──
