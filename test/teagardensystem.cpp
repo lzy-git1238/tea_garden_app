@@ -502,7 +502,6 @@ void TeaGardenSystem::setupUI() {
     auto *btnFrame = new QFrame();
     btnFrame->setObjectName("weatherCard");  // 复用天气卡片立体样式
     btnFrame->setMinimumHeight(qRound(80 * m_scale));
-    btnFrame->setCursor(Qt::PointingHandCursor);
     auto *btnArea = new QVBoxLayout(btnFrame);
     btnArea->setContentsMargins(qRound(10*m_scale), qRound(6*m_scale), qRound(10*m_scale), qRound(6*m_scale));
     btnArea->setSpacing(qRound(4 * m_scale));
