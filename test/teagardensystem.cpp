@@ -457,10 +457,16 @@ void TeaGardenSystem::setupUI() {
     midPanel->addWidget(mapTitleLabel);
     setupMapView(midPanel);
 
-    weatherSectionLabel = new QLabel("▎ 气象预警 & 快捷控制");
-    midPanel->addWidget(weatherSectionLabel);
+    // ── 双标题行：左"气象预警"  右"快捷控制" ──
+    auto *sectionTitleRow = new QHBoxLayout();
+    weatherSectionLabel = new QLabel("▎ 气象预警");
+    sectionTitleRow->addWidget(weatherSectionLabel);
+    sectionTitleRow->addStretch();
+    auto *controlSectionLabel = new QLabel("▎ 快捷控制");
+    sectionTitleRow->addWidget(controlSectionLabel);
+    midPanel->addLayout(sectionTitleRow);
 
-    // ── 天气卡片 + 按钮区 并排 ──
+    // ── 天气卡片 + 按钮框 并排 ──
     auto *bottomRow = new QHBoxLayout();
     bottomRow->setSpacing(qRound(8 * m_scale));
 
