@@ -335,7 +335,6 @@ void TeaGardenSystem::setupUI() {
 
     loraStateLabel = new QLabel("LoRa: 初始化中...");
     leftPanel->addWidget(loraStateLabel);
-    leftPanel->addStretch(1);
 
     // ── 流量状态卡片（独立弹窗） ──
     flowCard = new QFrame(this);
