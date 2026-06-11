@@ -1372,13 +1372,13 @@ void TeaGardenSystem::applyTheme() {
         metricsTitleClr = "#0277bd";  weatherSecClr = "#0277bd";  aiTitleClr = "#0277bd";
         headerTitleClr = "#1a3050";  headerDecoClr = "#64b5f6";
         pestTitleClr = "#e65100";
-        pestBtnBg1 = "#42a5f5"; pestBtnBg2 = "#1e88e5"; pestBtnBorder = borderHi; pestBtnText = "#ffffff";
-        mockBtnBg1 = "#42a5f5"; mockBtnBg2 = "#1e88e5"; mockBtnBorder = borderHi; mockBtnText = "#ffffff";
-        pumpBg = "#42a5f5"; pumpText = "#ffffff"; pumpBorder = borderHi;
-        pumpChecked = "#1565c0";
-        lampBg = "#42a5f5"; lampText = "#ffffff"; lampBorder = borderHi;
-        lampChecked = "#1e88e5";
-        schedBtnBg1 = "#42a5f5"; schedBtnBg2 = "#1e88e5"; schedBtnBorder = borderHi; schedBtnText = "#ffffff";
+        pestBtnBg1 = "#1565c0"; pestBtnBg2 = "#0d47a1"; pestBtnBorder = "#1a4a78"; pestBtnText = "#ffffff";
+        mockBtnBg1 = "#1565c0"; mockBtnBg2 = "#0d47a1"; mockBtnBorder = "#1a4a78"; mockBtnText = "#ffffff";
+        pumpBg = "#1565c0"; pumpText = "#ffffff"; pumpBorder = "#1a4a78";
+        pumpChecked = "#0d47a1";
+        lampBg = "#1565c0"; lampText = "#ffffff"; lampBorder = "#1a4a78";
+        lampChecked = "#0d47a1";
+        schedBtnBg1 = "#1565c0"; schedBtnBg2 = "#0d47a1"; schedBtnBorder = "#1a4a78"; schedBtnText = "#ffffff";
     }
 
     const QString panelStyle = dashPanelStyle(panelBg, border, borderHi);
