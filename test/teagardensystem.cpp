@@ -324,9 +324,10 @@ void TeaGardenSystem::setupUI() {
     pestPieView->setMinimumHeight(qRound(80 * m_scale));
     pestPieView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    // 用 AspectRatioLabel 包裹饼图，保持与视频同比例 16:9
-    auto *pestPieWrapper = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoWidth * 900 / 1920, leftPanelFrame);
+    // 病虫害饼图 — 自适应高度，不固定宽高比，让布局自然分配剩余空间
+    auto *pestPieWrapper = new QFrame(leftPanelFrame);
     pestPieWrapper->setStyleSheet("background: #0a1628;");
+    pestPieWrapper->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     auto *wrapperLayout = new QVBoxLayout(pestPieWrapper);
     wrapperLayout->setContentsMargins(0, 0, 0, 0);
     wrapperLayout->addWidget(pestPieView);
