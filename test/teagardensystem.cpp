@@ -1359,6 +1359,8 @@ void TeaGardenSystem::applyTheme() {
         chartBg     = "#eef4fb";
         videoStatusClr = "#2e7d32";
         voiceBtnBg  = "#ef6c00";
+        roverBg1 = "#e3f2fd"; roverBg2 = "#bbdefb"; roverBorder = "#64b5f6"; roverText = "#0277bd";
+        roverHoverBg = "#42a5f5";
         wcBg1 = "#e3f2fd";  wcBg2 = "#bbdefb";  wcBg3 = "#90caf9";
         wcBorder1 = "#64b5f6";  wcBorder2 = "#42a5f5";
         wcTitle = "#0277bd";  wcLevel = "#e65100";  wcDetail = "#37474f";  wcTime = "#78909c";
