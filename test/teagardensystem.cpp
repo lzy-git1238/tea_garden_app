@@ -506,6 +506,7 @@ void TeaGardenSystem::setupUI() {
     auto *btnArea = new QVBoxLayout(btnFrame);
     btnArea->setContentsMargins(qRound(10*m_scale), qRound(6*m_scale), qRound(10*m_scale), qRound(6*m_scale));
     btnArea->setSpacing(qRound(4 * m_scale));
+    controlFrame = btnFrame;
 
     auto *btnGrid = new QGridLayout();
     btnGrid->setSpacing(qRound(4 * m_scale));
