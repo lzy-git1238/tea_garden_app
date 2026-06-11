@@ -1519,6 +1519,8 @@ void TeaGardenSystem::applyTheme() {
         mapTitleLabel->setStyleSheet(sectionTitleStyle(mapTitleClr));
     if (weatherSectionLabel)
         weatherSectionLabel->setStyleSheet(sectionTitleStyle(weatherSecClr));
+    if (controlSectionLabel)
+        controlSectionLabel->setStyleSheet(sectionTitleStyle(weatherSecClr));
     if (videoLabel)
         videoLabel->setStyleSheet(QString(
             "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
