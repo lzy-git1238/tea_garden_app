@@ -1516,6 +1516,11 @@ void TeaGardenSystem::applyTheme() {
             "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
             "color: %3; border-radius: 3px;"
         ).arg(border, borderHi, videoStatusClr));
+    if (roverVideoLabel)
+        roverVideoLabel->setStyleSheet(QString(
+            "background: #020810; border: 1px solid %1; border-top: 1px solid %2;"
+            "color: %3; border-radius: 3px;"
+        ).arg(border, borderHi, videoStatusClr));
     if (mapView)
         mapView->setStyleSheet(QString(
             "border: 1px solid %1; border-top: 1px solid %2; border-radius: 4px;"
