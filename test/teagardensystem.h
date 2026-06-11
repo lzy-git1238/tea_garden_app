@@ -209,6 +209,7 @@ private:
     void refreshPestPie();
     class PestDashboard *pestDashboard = nullptr;
     class QtCharts::QChartView *pestPieView = nullptr;
+    QPushButton *roverBtn = nullptr;
     class RoverControlPanel *roverPanel = nullptr;
 };
 
