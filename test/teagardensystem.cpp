@@ -1474,7 +1474,7 @@ void TeaGardenSystem::applyTheme() {
             "QPushButton:hover { background: %4; }"
             "QPushButton:checked { background: %5; color: #fff; border-color: %6; }"
         ).arg(pumpBg, pumpText, pumpBorder,
-              isDarkMode ? "#0077cc" : "#2196f3",
+              isDarkMode ? "#153a55" : "#1976d2",
               pumpChecked, borderHi));
     if (lampBtn)
         lampBtn->setStyleSheet(QString(
@@ -1483,7 +1483,7 @@ void TeaGardenSystem::applyTheme() {
             "QPushButton:hover { background: %4; }"
             "QPushButton:checked { background: %5; color: #fff; border-color: %6; }"
         ).arg(lampBg, lampText, lampBorder,
-              isDarkMode ? "#0077cc" : "#2196f3",
+              isDarkMode ? "#153a55" : "#1976d2",
               lampChecked, borderHi));
 
     // 定时按钮
