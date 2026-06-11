@@ -102,6 +102,7 @@ private:
     QLabel *metricsTitleLabel = nullptr;
     QLabel *mapTitleLabel = nullptr;
     QLabel *weatherSectionLabel = nullptr;
+    QLabel *controlSectionLabel = nullptr;
     QLabel *loraStateLabel;
     QLabel *videoLabel = nullptr;
     QLabel *videoTitleLabel = nullptr;
