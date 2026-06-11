@@ -1457,9 +1457,9 @@ void TeaGardenSystem::applyTheme() {
 
     if (chartBtn)
         chartBtn->setStyleSheet(techBtnStyle(
-            isDarkMode ? "#0088cc" : "#42a5f5",
-            isDarkMode ? "#005588" : "#1e88e5",
-            borderHi, "#ffffff"));
+            isDarkMode ? "#0d2840" : "#1565c0",
+            isDarkMode ? "#071828" : "#0d47a1",
+            isDarkMode ? "#1a4a78" : "#1a4a78", "#ffffff"));
     if (pestBtn)
         pestBtn->setStyleSheet(techBtnStyle(pestBtnBg1, pestBtnBg2, pestBtnBorder, pestBtnText));
     if (mockPestBtn)
