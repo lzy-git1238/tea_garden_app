@@ -1,0 +1,58 @@
+<h2>改后布局 — 按钮区放大</h2>
+<p class="subtitle">中栏下方：天气卡片(左) + 按钮区(右) 并排</p>
+
+<div class="mockup">
+  <div class="mockup-header">中栏底部区域 — 天气 45% + 按钮区 55%</div>
+  <div class="mockup-body" style="background:#0a1628; color:#E8F4FF; font-family:'Microsoft YaHei',sans-serif; padding:12px;">
+
+    <div style="color:#00d4ff; font-weight:bold; margin-bottom:8px;">▎ 气象预警 & 快捷控制</div>
+    <div style="display:flex; gap:8px;">
+
+      <!-- 天气卡片 45% -->
+      <div style="flex:45; border:1px solid #1a6fa8; border-radius:4px; background:linear-gradient(0deg,#081830,#0a1e38,#0c2540); padding:10px; font-size:11px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="color:#00d4ff; font-weight:bold;">🌤 24h预报 · 珠海·斗门</span>
+          <span style="color:#90caf9; cursor:pointer;">↻</span>
+        </div>
+        <div style="color:#4FC3F7; font-size:18px; font-weight:bold;">☀️ 晴 28℃</div>
+        <div style="color:#90caf9; margin:2px 0;">体感 30℃ | 湿度 65% | 东南风 微风 3.2m/s</div>
+        <div style="color:#90caf9;">降水量 0.0mm | 气温 24~32℃</div>
+        <div style="color:#5a8fb4; font-size:9px; margin-top:4px;">更新: 15:00 | 24小时逐时预报</div>
+      </div>
+
+      <!-- 按钮区 55% -->
+      <div style="flex:55; display:flex; flex-direction:column; gap:6px; justify-content:center;">
+
+        <!-- 2x2 功能按钮 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px;">
+          <div class="mock-button" style="padding:10px; font-size:11px; font-weight:bold;">📊 数据看板</div>
+          <div class="mock-button" style="padding:10px; font-size:11px; font-weight:bold;">🐛 病虫害面板</div>
+          <div class="mock-button" style="padding:10px; font-size:11px; font-weight:bold;">🐛 模拟检测</div>
+          <div class="mock-button" style="padding:10px; font-size:11px; font-weight:bold;">🚗 小车控制</div>
+        </div>
+
+        <!-- 设备控制行 — 横向一排 -->
+        <div style="display:flex; gap:4px; align-items:stretch;">
+          <span class="mock-button" style="flex:1; padding:10px; font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center;">💧 灌溉泵</span>
+          <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:6px 8px; display:flex; align-items:center; font-size:13px;">⏰</span>
+          <span class="mock-button" style="flex:1; padding:10px; font-size:11px; font-weight:bold; display:flex; align-items:center; justify-content:center;">🪲 驱虫灯</span>
+          <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:6px 8px; display:flex; align-items:center; font-size:13px;">⏰</span>
+          <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:6px 8px; display:flex; align-items:center; font-size:13px;">📊</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin-top:20px;">设备控制行</h3>
+<div style="display:flex; gap:16px; justify-content:center; margin-top:12px;">
+  <div style="display:flex; gap:4px; align-items:stretch; background:#0a1628; padding:8px; border-radius:6px;">
+    <span class="mock-button" style="padding:10px 16px; font-size:12px; font-weight:bold;">💧 灌溉泵</span>
+    <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:8px 10px;">⏰</span>
+    <span class="mock-button" style="padding:10px 16px; font-size:12px; font-weight:bold;">🪲 驱虫灯</span>
+    <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:8px 10px;">⏰</span>
+    <span style="background:#0c3050; border:1px solid #1a6fa8; border-radius:3px; padding:8px 10px;">📊</span>
+  </div>
+</div>
+<p class="subtitle">💧灌溉泵 | ⏰ | 🪲驱虫灯 | ⏰ | 📊 — 横向一行，小按钮高度对齐主按钮</p>
