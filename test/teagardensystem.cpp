@@ -1461,12 +1461,7 @@ void TeaGardenSystem::applyTheme() {
     if (pestBtn)
         pestBtn->setStyleSheet(techBtnStyle(pestBtnBg1, pestBtnBg2, pestBtnBorder, pestBtnText));
     if (mockPestBtn)
-        mockPestBtn->setStyleSheet(QString(
-            "QPushButton { background: qlineargradient(x1:0,y1:0,x2:0,y2:1, stop:0 %1, stop:1 %2);"
-            "  color: %5; font-size: 11px; font-weight: bold; padding: 6px;"
-            "  border: 1px solid %3; border-radius: 3px; }"
-            "QPushButton:hover { color: #ffffff; }"
-        ).arg(mockBtnBg1, mockBtnBg2, mockBtnBorder, borderHi, mockBtnText));
+        mockPestBtn->setStyleSheet(techBtnStyle(mockBtnBg1, mockBtnBg2, mockBtnBorder, mockBtnText));
 
     if (pumpBtn)
         pumpBtn->setStyleSheet(QString(
