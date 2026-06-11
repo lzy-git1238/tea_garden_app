@@ -1438,7 +1438,7 @@ void TeaGardenSystem::applyTheme() {
         if (pestPieView->chart()) {
             pestPieView->chart()->setBackgroundBrush(QBrush(QColor(chartBg)));
             pestPieView->chart()->legend()->setLabelColor(QColor(muted));
-            pestPieView->chart()->legend()->setFont(QFont("Microsoft YaHei", 10));
+            pestPieView->chart()->legend()->setFont(QFont("Microsoft YaHei", 8));
         }
     }
     if (loraStateLabel)
