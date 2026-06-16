@@ -164,6 +164,12 @@ void YoloDetector::onReadyRead() {
         QByteArray jsonData = m_recvBuffer.mid(4, jsonLen);
         m_recvBuffer.remove(0, 4 + jsonLen);
 
+        // 心跳响应 / 非检测结果，跳过，不改变 m_waitingResult
+        QJsonObject testObj = QJsonDocument::fromJson(jsonData).object();
+        if (testObj.contains("status") && !testObj.contains("detections")) {
+            continue;
+        }
+
         m_waitingResult = false;
         parseDetectionJson(jsonData);
     }
