@@ -129,7 +129,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     QStringList v4l2Args;
     v4l2Args << "-f" << "v4l2" << "-input_format" << "yuyv422"
              << "-video_size" << "640x480" << "-framerate" << "15"
-             << "-i" << "/dev/video0"
+             << "-i" << "/dev/video21"
              << "-f" << "rawvideo" << "-pix_fmt" << "rgb24"
              << "-vf" << "scale=320:240" << "pipe:1";
     roverFfmpegProc->start("ffmpeg", v4l2Args);
