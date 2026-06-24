@@ -24,14 +24,6 @@ RoverControlPanel::RoverControlPanel(LoraManager *lora, QWidget *parent)
     );
     setFocusPolicy(Qt::StrongFocus);
     setupUI();
-
-    m_repeatTimer = new QTimer(this);
-    m_repeatTimer->setInterval(200);
-    connect(m_repeatTimer, &QTimer::timeout, this, [this]() {
-        if (m_lastCmd != 0) {
-            sendRoverCmd(m_lastCmd);
-        }
-    });
 }
 
 RoverControlPanel::~RoverControlPanel() {
