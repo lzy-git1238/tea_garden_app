@@ -2186,10 +2186,11 @@ void TeaGardenSystem::onIotCommand(const QString &device, bool on,
         lampBtn->blockSignals(false);
     }
 
-    // LoRa 发送（直接发送确保即时响应）
+    // LoRa 发送（走统一调度路径，跟手动点击一致）
     int cmd = (device == "pump") ? (on ? 3 : 4) : (on ? 1 : 2);
-    bool ok = sendLoraCommand(device, cmd);
-    int result = ok ? 0 : 1;
+    scheduleLoraCommand(device, cmd);
+    // 不等结果，命令由调度器保证发出
+    int result = 0;
 
     // 记录日志
     ScheduleLogEntry log;
