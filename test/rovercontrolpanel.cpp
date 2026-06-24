@@ -145,14 +145,20 @@ void RoverControlPanel::onRightReleased() {
 }
 
 void RoverControlPanel::onSprayPressed() {
-    sendRoverCmd('o');
-    m_sprayBtn->setText("💧 喷水中...");
-    m_sprayBtn->setDown(true);
+    m_spraying = !m_spraying;
+    if (m_spraying) {
+        sendRoverCmd('o');
+        m_sprayBtn->setText("💧 喷水中...");
+        m_sprayBtn->setDown(true);
+    } else {
+        sendRoverCmd('f');
+        m_sprayBtn->setText("💧 喷水");
+        m_sprayBtn->setDown(false);
+    }
 }
 
 void RoverControlPanel::onSprayReleased() {
-    m_sprayBtn->setText("💧 喷水");
-    m_sprayBtn->setDown(false);
+    // toggle 模式，松开不做任何事
 }
 
 void RoverControlPanel::keyPressEvent(QKeyEvent *event) {
