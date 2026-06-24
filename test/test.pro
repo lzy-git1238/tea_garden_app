@@ -16,6 +16,12 @@ CONFIG += c++17
 LIBS += -lpaho-mqttpp3 -lpaho-mqtt3as
 
 # ROS2 GPS 订阅 (px4_msgs) — 桌面编译默认关闭，ARM 编译用 qmake TEA_ROS2_GPS_LIBS=...
+isEmpty(TEA_ROS2_GPS_LIBS) {
+    message("ROS2 GPS: disabled (set TEA_ROS2_GPS_LIBS to enable)")
+} else {
+    DEFINES += TEA_ENABLE_ROS2_GPS
+    LIBS += $$TEA_ROS2_GPS_LIBS
+}
 
 SOURCES += \
     chartdashboard.cpp \
