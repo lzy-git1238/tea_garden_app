@@ -162,6 +162,8 @@ private:
     LoraManager *loraManager;
     QNetworkAccessManager *networkManager;
     QWidget *mapView = nullptr;
+    bool m_mapReloading = false;
+    int m_mapRetryMs = 1000;
     QDateTime lastLoraFrameTime;
 
     // MJPEG 视频流
