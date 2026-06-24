@@ -72,8 +72,10 @@ private slots:
     void onVideoStatus(const QString &msg);
     void onYoloResults(const QImage &frame, const QVector<DetectionResult> &results);
     void openRoverPanel();
+    void onDroneGps(double lat, double lon, double alt);
 
 private:
+    void drawDronePath();
     void setupUI();
     void setupMapView(QVBoxLayout *midPanel);
     void setupMjpegStream();
