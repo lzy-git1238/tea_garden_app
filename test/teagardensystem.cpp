@@ -698,6 +698,20 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     mapView->setMinimumHeight(qRound(120 * m_scale));
     mapView->setStyleSheet("border: 1px solid #334455; border-radius: 8px;");
     static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
+    connect(static_cast<QWebEngineView*>(mapView)->page(),
+            &QWebEnginePage::renderProcessTerminated,
+            this, [this](QWebEnginePage::RenderProcessTerminationStatus status, int code) {
+        Q_UNUSED(status); Q_UNUSED(code);
+        if (m_mapReloading) return;
+        m_mapReloading = true;
+        QTimer::singleShot(m_mapRetryMs, this, [this]() {
+            if (mapView) {
+                static_cast<QWebEngineView*>(mapView)->reload();
+            }
+            m_mapReloading = false;
+            m_mapRetryMs = qMin(m_mapRetryMs * 2, 30000);
+        });
+    });
     midPanel->addWidget(mapView, 10);
 #else
     QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable Map.");
