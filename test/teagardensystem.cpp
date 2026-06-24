@@ -129,9 +129,8 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             this, &TeaGardenSystem::onDroneGps);
     connect(m_gpsSubscriber, &Ros2GpsSubscriber::statusMessage,
             this, &TeaGardenSystem::onVideoStatus);
-    bool gpsOk = false;
-    QString gpsTopic = qEnvironmentVariable("TEA_GPS_TOPIC", &gpsOk);
-    if (!gpsOk) gpsTopic = "/fmu/out/vehicle_global_position";
+    QString gpsTopic = qEnvironmentVariable("TEA_GPS_TOPIC");
+    if (gpsTopic.isEmpty()) gpsTopic = "/fmu/out/vehicle_global_position";
     m_gpsSubscriber->start(gpsTopic);
 
     m_drawPathTimer = new QTimer(this);
