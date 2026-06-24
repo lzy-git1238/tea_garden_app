@@ -123,6 +123,21 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     if (!yoloOk) yoloPort = 9800;
     m_yoloDetector->start("127.0.0.1", yoloPort);
 
+    // ROS2 GPS 路径显示（订阅 PX4 飞控位置）
+    m_gpsSubscriber = new Ros2GpsSubscriber(this);
+    connect(m_gpsSubscriber, &Ros2GpsSubscriber::gpsPosition,
+            this, &TeaGardenSystem::onDroneGps);
+    connect(m_gpsSubscriber, &Ros2GpsSubscriber::statusMessage,
+            this, &TeaGardenSystem::onVideoStatus);
+    bool gpsOk = false;
+    QString gpsTopic = qEnvironmentVariable("TEA_GPS_TOPIC", &gpsOk);
+    if (!gpsOk) gpsTopic = "/fmu/out/vehicle_global_position";
+    m_gpsSubscriber->start(gpsTopic);
+
+    m_drawPathTimer = new QTimer(this);
+    m_drawPathTimer->setInterval(kDrawPathIntervalMs);
+    connect(m_drawPathTimer, &QTimer::timeout, this, &TeaGardenSystem::drawDronePath);
+
     // 小车图传采集（V4L2）
     roverFfmpegProc = new QProcess(this);
     roverFfmpegProc->setProcessChannelMode(QProcess::SeparateChannels);
