@@ -2351,3 +2351,61 @@ void TeaGardenSystem::openRoverPanel() {
     roverPanel->activateWindow();
     roverPanel->setFocus();
 }
+
+void TeaGardenSystem::onDroneGps(double lat, double lon, double alt) {
+    Q_UNUSED(alt);
+    if (lat == 0.0 && lon == 0.0) return;
+
+    m_dronePath.append({lat, lon, alt});
+    if (m_dronePath.size() > kMaxPathPoints) {
+        m_dronePath.remove(0, m_dronePath.size() - kMaxPathPoints);
+    }
+
+    if (!m_drawPathTimer->isActive()) {
+        m_drawPathTimer->start();
+    }
+}
+
+void TeaGardenSystem::drawDronePath() {
+    if (m_dronePath.isEmpty()) {
+        m_drawPathTimer->stop();
+        return;
+    }
+
+#ifdef TEA_ENABLE_MAP_WEBVIEW
+    if (!mapView || m_mapReloading) return;
+
+    auto *page = static_cast<QWebEngineView*>(mapView)->page();
+    if (!page) return;
+
+    // 构造坐标数组 JSON
+    QString coords;
+    coords += "[";
+    for (int i = 0; i < m_dronePath.size(); ++i) {
+        if (i > 0) coords += ",";
+        coords += QString("[%1,%2]")
+            .arg(m_dronePath[i].lat, 0, 'f', 6)
+            .arg(m_dronePath[i].lon, 0, 'f', 6);
+    }
+    coords += "]";
+
+    QString js = QString(
+        "try{"
+        "if(typeof map==='undefined'||typeof L==='undefined')return;"
+        "if(window._droneLine)map.removeLayer(window._droneLine);"
+        "if(window._droneMarker)map.removeLayer(window._droneMarker);"
+        "var pts=%1;"
+        "if(pts.length>0){"
+        "window._droneLine=L.polyline(pts,{color:'#00ff88',weight:2,opacity:0.8}).addTo(map);"
+        "var last=pts[pts.length-1];"
+        "var arrow=L.divIcon({"
+        "html:'<div style=\"color:#00ff88;font-size:16px;transform:translate(-8px,-8px)\">▲</div>',"
+        "iconSize:[0,0],className:''});"
+        "window._droneMarker=L.marker(last,{icon:arrow}).addTo(map);"
+        "}"
+        "}catch(e){}"
+    ).arg(coords);
+
+    page->runJavaScript(js);
+#endif
+}
