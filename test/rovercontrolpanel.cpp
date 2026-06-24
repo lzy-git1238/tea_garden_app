@@ -117,53 +117,51 @@ void RoverControlPanel::sendRoverCmd(char cmd) {
 }
 
 void RoverControlPanel::onForwardPressed() {
-    m_lastCmd = 'w';
     sendRoverCmd('w');
-    m_repeatTimer->start();
+    m_forwardBtn->setDown(true);
 }
 void RoverControlPanel::onForwardReleased() {
-    m_lastCmd = 0;
-    m_repeatTimer->stop();
+    sendRoverCmd('r');
+    m_forwardBtn->setDown(false);
 }
 
 void RoverControlPanel::onBackwardPressed() {
-    m_lastCmd = 's';
     sendRoverCmd('s');
-    m_repeatTimer->start();
+    m_backwardBtn->setDown(true);
 }
 void RoverControlPanel::onBackwardReleased() {
-    m_lastCmd = 0;
-    m_repeatTimer->stop();
+    sendRoverCmd('r');
+    m_backwardBtn->setDown(false);
 }
 
 void RoverControlPanel::onLeftPressed() {
-    m_lastCmd = 'a';
     sendRoverCmd('a');
-    m_repeatTimer->start();
+    m_leftBtn->setDown(true);
 }
 void RoverControlPanel::onLeftReleased() {
-    m_lastCmd = 0;
-    m_repeatTimer->stop();
+    sendRoverCmd('r');
+    m_leftBtn->setDown(false);
 }
 
 void RoverControlPanel::onRightPressed() {
-    m_lastCmd = 'd';
     sendRoverCmd('d');
-    m_repeatTimer->start();
+    m_rightBtn->setDown(true);
 }
 void RoverControlPanel::onRightReleased() {
-    m_lastCmd = 0;
-    m_repeatTimer->stop();
+    sendRoverCmd('r');
+    m_rightBtn->setDown(false);
 }
 
 void RoverControlPanel::onSprayPressed() {
-    sendRoverCmd('T');
+    sendRoverCmd('o');
     m_sprayBtn->setText("💧 喷水中...");
+    m_sprayBtn->setDown(true);
 }
 
 void RoverControlPanel::onSprayReleased() {
-    sendRoverCmd('F');
+    sendRoverCmd('f');
     m_sprayBtn->setText("💧 喷水");
+    m_sprayBtn->setDown(false);
 }
 
 void RoverControlPanel::keyPressEvent(QKeyEvent *event) {
