@@ -60,9 +60,6 @@ private:
     bool m_keyA = false;
     bool m_keyS = false;
     bool m_keyD = false;
-
-    QTimer *m_repeatTimer = nullptr;
-    char m_lastCmd = 0;
 };
 
 #endif // ROVERCONTROLPANEL_H
