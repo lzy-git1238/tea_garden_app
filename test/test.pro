@@ -43,6 +43,7 @@ HEADERS += \
     pestdashboard.h \
     pestdata.h \
     rovercontrolpanel.h \
+    ros2gpssubscriber.h \
     scheduledialog.h \
     schedulestore.h \
     srtvideostreamer.h \
