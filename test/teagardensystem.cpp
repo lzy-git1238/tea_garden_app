@@ -2203,10 +2203,9 @@ void TeaGardenSystem::onIotCommand(const QString &device, bool on,
 
     // 聊天通知
     QString devName = (device == "pump") ? "灌溉泵" : "驱虫灯";
-    appendChatMessage("云端", QString("📡 %1: %2 %3")
+    appendChatMessage("云端", QString("📡 %1: %2")
         .arg(devName)
-        .arg(on ? "开启" : "关闭")
-        .arg(ok ? "" : "(LoRa发送失败)"));
+        .arg(on ? "开启" : "关闭"));
 
     // 响应云端
     QString cmdName = (device == "pump") ? "pump_control" : "light_control";
