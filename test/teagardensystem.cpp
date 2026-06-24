@@ -1332,9 +1332,32 @@ void TeaGardenSystem::keyPressEvent(QKeyEvent *event) {
         } else {
             showFullScreen();
         }
-    } else {
-        QWidget::keyPressEvent(event);
+        return;
     }
+
+    // 转发 WASD 到小车控制面板
+    if (roverPanel && roverPanel->isVisible() && !event->isAutoRepeat()) {
+        switch (event->key()) {
+        case Qt::Key_W: case Qt::Key_A:
+        case Qt::Key_S: case Qt::Key_D:
+            QApplication::sendEvent(roverPanel, event);
+            return;
+        }
+    }
+
+    QWidget::keyPressEvent(event);
+}
+
+void TeaGardenSystem::keyReleaseEvent(QKeyEvent *event) {
+    if (roverPanel && roverPanel->isVisible() && !event->isAutoRepeat()) {
+        switch (event->key()) {
+        case Qt::Key_W: case Qt::Key_A:
+        case Qt::Key_S: case Qt::Key_D:
+            QApplication::sendEvent(roverPanel, event);
+            return;
+        }
+    }
+    QWidget::keyReleaseEvent(event);
 }
 
 void TeaGardenSystem::applyTheme() {
