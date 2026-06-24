@@ -15,22 +15,7 @@ CONFIG += c++17
 # Paho MQTT C++ (华为云 IoT 双向通信)
 LIBS += -lpaho-mqttpp3 -lpaho-mqtt3as
 
-# ROS2 GPS 订阅 (px4_msgs) — 桌面编译默认关闭，ARM 编译用 qmake DEFINES+=TEA_ENABLE_ROS2_GPS
-isEmpty(TEA_ROS2_GPS_LIBS) {
-    message("ROS2 GPS: disabled (set TEA_ROS2_GPS_LIBS to enable)")
-} else {
-    DEFINES += TEA_ENABLE_ROS2_GPS
-    LIBS += $$TEA_ROS2_GPS_LIBS
-}
-# 兼容旧版 ROS2 图像订阅
-isEmpty(TEA_ROS2_IMAGE_LIBS) {
-    message("ROS2 Image: disabled")
-} else {
-    DEFINES += TEA_ENABLE_ROS2_IMAGE
-    LIBS += $$TEA_ROS2_IMAGE_LIBS
-    SOURCES += ros2imagesubscriber.cpp
-    HEADERS += ros2imagesubscriber.h
-}
+# ROS2 GPS 订阅 (px4_msgs) — 桌面编译默认关闭，ARM 编译用 qmake TEA_ROS2_GPS_LIBS=...
 
 SOURCES += \
     chartdashboard.cpp \
