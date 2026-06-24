@@ -167,6 +167,13 @@ private:
     QWidget *mapView = nullptr;
     bool m_mapReloading = false;
     int m_mapRetryMs = 1000;
+
+    // 无人机 GPS 路径
+    Ros2GpsSubscriber *m_gpsSubscriber = nullptr;
+    QVector<GpsPosition> m_dronePath;
+    QTimer *m_drawPathTimer = nullptr;
+    static constexpr int kMaxPathPoints = 200;
+    static constexpr int kDrawPathIntervalMs = 500;
     QDateTime lastLoraFrameTime;
 
     // MJPEG 视频流
