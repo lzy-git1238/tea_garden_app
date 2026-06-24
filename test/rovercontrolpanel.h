@@ -60,6 +60,7 @@ private:
     bool m_keyA = false;
     bool m_keyS = false;
     bool m_keyD = false;
+    bool m_spraying = false;
 };
 
 #endif // ROVERCONTROLPANEL_H
