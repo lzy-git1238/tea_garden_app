@@ -41,6 +41,7 @@
 #include <QFontMetrics>
 using namespace QtCharts;
 #include <QApplication>
+#include <QRegularExpression>
 #include <cmath>
 #ifdef TEA_ENABLE_MAP_WEBVIEW
 #include <QtWebEngineWidgets/QWebEngineView>
