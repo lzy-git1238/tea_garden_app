@@ -169,11 +169,12 @@ private:
     int m_mapRetryMs = 1000;
 
     // 无人机 GPS 路径
-    Ros2GpsSubscriber *m_gpsSubscriber = nullptr;
-    QVector<GpsPosition> m_dronePath;
+    QProcess *m_gpsProcess = nullptr;
+    QTimer *m_gpsTimer = nullptr;
     QTimer *m_drawPathTimer = nullptr;
+    QVector<GpsPosition> m_dronePath;
     static constexpr int kMaxPathPoints = 200;
-    static constexpr int kDrawPathIntervalMs = 500;
+    static constexpr int kGpsPollIntervalMs = 500;
     QDateTime lastLoraFrameTime;
 
     // MJPEG 视频流
