@@ -24,7 +24,6 @@ SOURCES += \
     pestdashboard.cpp \
     pestdata.cpp \
     rovercontrolpanel.cpp \
-    ros2gpssubscriber.cpp \
     scheduledialog.cpp \
     schedulestore.cpp \
     srtvideostreamer.cpp \
