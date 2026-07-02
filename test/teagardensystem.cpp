@@ -123,19 +123,29 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     if (!yoloOk) yoloPort = 9800;
     m_yoloDetector->start("127.0.0.1", yoloPort);
 
-    // ROS2 GPS 路径显示（订阅 PX4 飞控位置）
-    m_gpsSubscriber = new Ros2GpsSubscriber(this);
-    connect(m_gpsSubscriber, &Ros2GpsSubscriber::gpsPosition,
-            this, &TeaGardenSystem::onDroneGps);
-    connect(m_gpsSubscriber, &Ros2GpsSubscriber::statusMessage,
-            this, &TeaGardenSystem::onVideoStatus);
-    QString gpsTopic = qEnvironmentVariable("TEA_GPS_TOPIC");
-    if (gpsTopic.isEmpty()) gpsTopic = "/fmu/out/vehicle_global_position";
-    m_gpsSubscriber->start(gpsTopic);
+    // GPS 路径显示（通过 ros2 topic echo 轮询无人机位置）
+    m_gpsTimer = new QTimer(this);
+    m_gpsTimer->setInterval(kGpsPollIntervalMs);
+    connect(m_gpsTimer, &QTimer::timeout, this, [this]() {
+        if (m_gpsProcess && m_gpsProcess->state() != QProcess::NotRunning) return;
+        if (!m_gpsProcess) {
+            m_gpsProcess = new QProcess(this);
+            connect(m_gpsProcess,
+                    QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                    this, &TeaGardenSystem::onGpsPollFinished);
+        }
+        QString topic = qEnvironmentVariable("TEA_GPS_TOPIC",
+                                             "/fmu/out/vehicle_global_position");
+        m_gpsProcess->start("ros2", {"topic", "echo", "--once",
+                                     "--field", "lat", "--field", "lon", "--field", "alt",
+                                     topic});
+    });
+    m_gpsTimer->start();
 
     m_drawPathTimer = new QTimer(this);
-    m_drawPathTimer->setInterval(kDrawPathIntervalMs);
+    m_drawPathTimer->setInterval(kGpsPollIntervalMs);
     connect(m_drawPathTimer, &QTimer::timeout, this, &TeaGardenSystem::drawDronePath);
+    m_drawPathTimer->start();
 
     // 小车图传采集（V4L2）
     roverFfmpegProc = new QProcess(this);
