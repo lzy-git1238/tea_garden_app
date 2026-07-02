@@ -2415,10 +2415,7 @@ void TeaGardenSystem::onGpsPollFinished(int exitCode, QProcess::ExitStatus exitS
 }
 
 void TeaGardenSystem::drawDronePath() {
-    if (m_dronePath.isEmpty()) {
-        m_drawPathTimer->stop();
-        return;
-    }
+    if (m_dronePath.isEmpty()) return;
 
 #ifdef TEA_ENABLE_MAP_WEBVIEW
     if (!mapView || m_mapReloading) return;
