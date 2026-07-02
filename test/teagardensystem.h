@@ -71,7 +71,7 @@ private slots:
     void onVideoStatus(const QString &msg);
     void onYoloResults(const QImage &frame, const QVector<DetectionResult> &results);
     void openRoverPanel();
-    void onDroneGps(double lat, double lon, double alt);
+    void onGpsPollFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
     void drawDronePath();
