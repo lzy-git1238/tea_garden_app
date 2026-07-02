@@ -24,7 +24,6 @@
 
 #include "loramanager.h"
 #include "yolodetector.h"
-#include "ros2gpssubscriber.h"
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QtCharts/QChartView>
