@@ -1699,6 +1699,13 @@ bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::MouseButtonPress) {
         auto *me = static_cast<QMouseEvent*>(event);
         if (me->button() == Qt::LeftButton) {
+            // 点弹窗图片关闭
+            if (obj == m_popupImageLabel) {
+                if (auto *dlg = qobject_cast<QDialog*>(static_cast<QLabel*>(obj)->parentWidget())) {
+                    dlg->close();
+                }
+                return true;
+            }
             if (obj == weatherCard) {
                 showWeatherDetail();
                 return true;
