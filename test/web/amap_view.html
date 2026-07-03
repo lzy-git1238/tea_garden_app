@@ -33,8 +33,8 @@
         return;
       }
 
-      // 星图云 XYZ 瓦片
-      const tileUrl = "https://api.open.geovisearth.com/pj/base/v1/img/{z}/{x}/{y}?format=png&tmsIds=w&token=" + token;
+      // 星图云 XYZ 瓦片 (2025=地图样式ID)
+      const tileUrl = "https://api.open.geovisearth.com/pj/base/v1/2025/{z}/{x}/{y}?format=webp&tmsIds=w&token=" + token;
 
       window.map = L.map("map", {
         center: [lat, lng],
