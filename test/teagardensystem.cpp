@@ -135,8 +135,9 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
                     this, &TeaGardenSystem::onGpsPollFinished);
         }
         QString topic = qEnvironmentVariable("TEA_GPS_TOPIC", "/drone/gps");
-        m_gpsProcess->start("/opt/ros/humble/bin/ros2",
-                             {"topic", "echo", "--once", topic});
+        m_gpsProcess->start("bash", {"-c",
+            QString("source /opt/ros/humble/setup.bash && ros2 topic echo --once '%1'")
+                .arg(topic)});
     });
     m_gpsTimer->start();
 
