@@ -2467,21 +2467,20 @@ void TeaGardenSystem::drawDronePath() {
     coords += "]";
 
     // 横幅 + 轨迹 + 标志
+    // 同时更新横幅和轨迹（去 try-catch 以便排查 JS 错误）
     QString js = QString(
-        "try{"
-        "if(typeof map==='undefined'||typeof L==='undefined')return;"
         "var b=document.getElementById('banner');"
-        "if(b)b.textContent='📍 无人机 | 轨迹:%1点';"
-        "if(window._droneLine)map.removeLayer(window._droneLine);"
-        "if(window._droneMarker)map.removeLayer(window._droneMarker);"
+        "if(b)b.textContent='无人机 | 轨迹:%1点';"
+        "if(window._droneLine){map.removeLayer(window._droneLine);window._droneLine=null;}"
+        "if(window._droneMarker){map.removeLayer(window._droneMarker);window._droneMarker=null;}"
         "var pts=%2;"
-        "if(pts.length>1){"
-        "window._droneLine=L.polyline(pts,{color:'#ff4444',weight:3,opacity:0.9}).addTo(map);"
-        "}"
-        "var last=pts[pts.length-1];"
-        "window._droneMarker=L.circleMarker(last,{radius:10,color:'#ff0000',fillColor:'#ff4444',"
-        "fillOpacity:0.9,weight:3}).addTo(map).bindPopup('无人机');"
-        "}catch(e){}"
+        "if(pts.length>=1){"
+        "window._droneMarker=L.circleMarker(pts[pts.length-1],"
+        "{radius:8,color:'red',fillColor:'red',fillOpacity:1,weight:2})"
+        ".addTo(map).bindPopup('无人机');"
+        "if(pts.length>=2){"
+        "window._droneLine=L.polyline(pts,{color:'red',weight:3,opacity:0.9}).addTo(map);"
+        "}}"
     ).arg(m_dronePath.size()).arg(coords);
 
     page->runJavaScript(js);
