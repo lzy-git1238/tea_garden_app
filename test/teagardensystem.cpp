@@ -147,6 +147,12 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             double lon = obj["lon"].toDouble();
             double alt = obj["alt"].toDouble();
             if (lat == 0.0 && lon == 0.0) continue;
+            // 去重：移动小于 0.00001 度 (~1米) 忽略
+            if (!m_dronePath.isEmpty()) {
+                auto &prev = m_dronePath.last();
+                double dlat = lat - prev.lat, dlon = lon - prev.lon;
+                if (dlat*dlat + dlon*dlon < 1e-10) continue;
+            }
             // 首次收到 GPS，地图居中
             if (m_gpsFirstFix) {
                 m_gpsFirstFix = false;
