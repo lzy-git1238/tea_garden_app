@@ -135,11 +135,8 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
                     QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                     this, &TeaGardenSystem::onGpsPollFinished);
         }
-        QString topic = qEnvironmentVariable("TEA_GPS_TOPIC",
-                                             "/fmu/out/vehicle_global_position");
-        m_gpsProcess->start("ros2", {"topic", "echo", "--once",
-                                     "--field", "lat", "--field", "lon", "--field", "alt",
-                                     topic});
+        QString topic = qEnvironmentVariable("TEA_GPS_TOPIC", "/drone/gps");
+        m_gpsProcess->start("ros2", {"topic", "echo", "--once", topic});
     });
     m_gpsTimer->start();
 
