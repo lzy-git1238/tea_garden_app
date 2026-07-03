@@ -180,6 +180,7 @@ private:
     QTimer *m_gpsTimer = nullptr;
     QTimer *m_drawPathTimer = nullptr;
     QVector<GpsPosition> m_dronePath;
+    bool m_gpsFirstFix = true;
     static constexpr int kMaxPathPoints = 200;
     static constexpr int kGpsPollIntervalMs = 500;
     QDateTime lastLoraFrameTime;
