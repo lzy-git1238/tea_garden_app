@@ -164,6 +164,17 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
         }
     });
     QString topic = qEnvironmentVariable("TEA_GPS_TOPIC", "/drone/gps");
+    connect(m_gpsProcess,
+            QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            this, [this, topic](int, QProcess::ExitStatus) {
+        // 进程退出后延迟重拉
+        QTimer::singleShot(3000, this, [this, topic]() {
+            if (m_gpsProcess) {
+                m_gpsProcess->start("bash", {"-c",
+                    QString("source /opt/ros/humble/setup.bash && ros2 topic echo '%1'").arg(topic)});
+            }
+        });
+    });
     m_gpsProcess->start("bash", {"-c",
         QString("source /opt/ros/humble/setup.bash && ros2 topic echo '%1'").arg(topic)});
 
