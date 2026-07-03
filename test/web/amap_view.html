@@ -43,25 +43,11 @@
         attributionControl: false
       });
 
-      var tileLayer = L.tileLayer(tileUrl, {
+      L.tileLayer(tileUrl, {
         maxZoom: 20,
         maxNativeZoom: 18,
         minZoom: 3
       }).addTo(map);
-
-      tileLayer.on('tileerror', function(e) {
-        banner.innerHTML = '<span class="warn">瓦片加载失败 z=' + e.coords.z + '</span>';
-      });
-      tileLayer.on('load', function() {
-        banner.textContent = '星图云 · 茶园 ✓';
-      });
-
-      // 用 Image 对象测试单张瓦片能否加载
-      var testUrl = tileUrl.replace('{z}','14').replace('{x}','12345').replace('{y}','6789');
-      var testImg = new Image();
-      testImg.onload = function() { banner.textContent = '测试瓦片OK · 茶园'; };
-      testImg.onerror = function() { banner.innerHTML = '<span class="warn">测试瓦片HTTP失败</span>'; };
-      testImg.src = testUrl;
 
       // 茶园中心标记
       L.marker([lat, lng], {
