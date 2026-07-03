@@ -2424,22 +2424,21 @@ void TeaGardenSystem::onGpsPollFinished(int exitCode, QProcess::ExitStatus exitS
     if (exitCode != 0 || !m_gpsProcess) return;
 
     QString output = QString::fromUtf8(m_gpsProcess->readAllStandardOutput());
-    // ros2 topic echo --once --field lat --field lon --field alt 输出格式:
-    // lat: 30.123456
-    // lon: 120.654321
-    // alt: 100.5
-    QRegularExpression re("^lat:\\s*([\\d.\\-]+)\\s*$", QRegularExpression::MultilineOption);
-    QRegularExpressionMatch matchLat = re.match(output);
-    re.setPattern("^lon:\\s*([\\d.\\-]+)\\s*$");
-    QRegularExpressionMatch matchLon = re.match(output);
-    re.setPattern("^alt:\\s*([\\d.\\-]+)\\s*$");
-    QRegularExpressionMatch matchAlt = re.match(output);
+    // ros2 topic echo /drone/gps 输出: data: '{"lat":...,"lon":...,"alt":...}'
+    // 提取 data: '...' 中的 JSON
+    int start = output.indexOf("data: '");
+    if (start < 0) return;
+    start += 7; // 跳过 "data: '"
+    int end = output.indexOf("'", start);
+    if (end < 0) return;
+    QString jsonStr = output.mid(start, end - start);
 
-    if (!matchLat.hasMatch() || !matchLon.hasMatch()) return;
-
-    double lat = matchLat.captured(1).toDouble();
-    double lon = matchLon.captured(1).toDouble();
-    double alt = matchAlt.hasMatch() ? matchAlt.captured(1).toDouble() : 0.0;
+    QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8());
+    if (!doc.isObject()) return;
+    QJsonObject obj = doc.object();
+    double lat = obj["lat"].toDouble();
+    double lon = obj["lon"].toDouble();
+    double alt = obj["alt"].toDouble();
 
     if (lat == 0.0 && lon == 0.0) return;
 
