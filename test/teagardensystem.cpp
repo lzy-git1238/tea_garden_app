@@ -2443,6 +2443,18 @@ void TeaGardenSystem::onGpsPollFinished(int exitCode, QProcess::ExitStatus exitS
 
     if (lat == 0.0 && lon == 0.0) return;
 
+    // 首次收到 GPS 坐标，把地图中心移过去
+    if (m_gpsFirstFix) {
+        m_gpsFirstFix = false;
+#ifdef TEA_ENABLE_MAP_WEBVIEW
+        if (mapView) {
+            QString js = QString("if(typeof map!=='undefined') map.setView([%1,%2],map.getZoom());")
+                .arg(lat, 0, 'f', 6).arg(lon, 0, 'f', 6);
+            static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
+        }
+#endif
+    }
+
     m_dronePath.append({lat, lon, alt});
     if (m_dronePath.size() > kMaxPathPoints) {
         m_dronePath.remove(0, m_dronePath.size() - kMaxPathPoints);
