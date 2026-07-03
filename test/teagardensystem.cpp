@@ -123,23 +123,49 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     if (!yoloOk) yoloPort = 9800;
     m_yoloDetector->start("127.0.0.1", yoloPort);
 
-    // GPS 路径显示（通过 ros2 topic echo 轮询无人机位置）
-    m_gpsTimer = new QTimer(this);
-    m_gpsTimer->setInterval(kGpsPollIntervalMs);
-    connect(m_gpsTimer, &QTimer::timeout, this, [this]() {
-        if (m_gpsProcess && m_gpsProcess->state() != QProcess::NotRunning) return;
-        if (!m_gpsProcess) {
-            m_gpsProcess = new QProcess(this);
-            connect(m_gpsProcess,
-                    QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-                    this, &TeaGardenSystem::onGpsPollFinished);
+    // GPS 路径显示（持久订阅 ros2 topic echo，逐行解析）
+    m_gpsProcess = new QProcess(this);
+    connect(m_gpsProcess, &QProcess::readyReadStandardOutput, this, [this]() {
+        m_gpsBuf.append(m_gpsProcess->readAllStandardOutput());
+        // 解析完整消息 (以 --- 分隔)
+        while (true) {
+            int sep = m_gpsBuf.indexOf("\n---");
+            if (sep < 0) break;
+            QByteArray msg = m_gpsBuf.left(sep).trimmed();
+            m_gpsBuf.remove(0, sep + 4);
+            if (msg.isEmpty()) continue;
+            // 提取 data: '...' 中的 JSON
+            int start = msg.indexOf("data: '");
+            if (start < 0) continue;
+            start += 7;
+            int end = msg.indexOf("'", start);
+            if (end < 0) continue;
+            QJsonDocument doc = QJsonDocument::fromJson(msg.mid(start, end - start));
+            if (!doc.isObject()) continue;
+            QJsonObject obj = doc.object();
+            double lat = obj["lat"].toDouble();
+            double lon = obj["lon"].toDouble();
+            double alt = obj["alt"].toDouble();
+            if (lat == 0.0 && lon == 0.0) continue;
+            // 首次收到 GPS，地图居中
+            if (m_gpsFirstFix) {
+                m_gpsFirstFix = false;
+#ifdef TEA_ENABLE_MAP_WEBVIEW
+                if (mapView) {
+                    QString js = QString("if(typeof map!=='undefined') map.setView([%1,%2],map.getZoom());")
+                        .arg(lat, 0, 'f', 6).arg(lon, 0, 'f', 6);
+                    static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
+                }
+#endif
+            }
+            m_dronePath.append({lat, lon, alt});
+            if (m_dronePath.size() > kMaxPathPoints)
+                m_dronePath.remove(0, m_dronePath.size() - kMaxPathPoints);
         }
-        QString topic = qEnvironmentVariable("TEA_GPS_TOPIC", "/drone/gps");
-        m_gpsProcess->start("bash", {"-c",
-            QString("source /opt/ros/humble/setup.bash && ros2 topic echo --once '%1'")
-                .arg(topic)});
     });
-    m_gpsTimer->start();
+    QString topic = qEnvironmentVariable("TEA_GPS_TOPIC", "/drone/gps");
+    m_gpsProcess->start("bash", {"-c",
+        QString("source /opt/ros/humble/setup.bash && ros2 topic echo '%1'").arg(topic)});
 
     m_drawPathTimer = new QTimer(this);
     m_drawPathTimer->setInterval(kGpsPollIntervalMs);
