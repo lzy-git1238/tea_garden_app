@@ -175,6 +175,7 @@ private:
     int m_mapRetryMs = 1000;
 
     // 无人机 GPS 路径
+    QLabel *m_popupImageLabel = nullptr;
     QProcess *m_gpsProcess = nullptr;
     QTimer *m_gpsTimer = nullptr;
     QTimer *m_drawPathTimer = nullptr;
