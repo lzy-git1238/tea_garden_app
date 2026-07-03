@@ -40,12 +40,13 @@
         center: [lat, lng],
         zoom: zoom,
         zoomControl: true,
-        attributionControl: false
+        attributionControl: false,
+        updateWhenIdle: true
       });
 
       L.tileLayer(tileUrl, {
         maxZoom: 20,
-        maxNativeZoom: 18,
+        maxNativeZoom: 16,
         minZoom: 3
       }).addTo(map);
 
