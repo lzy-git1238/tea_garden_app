@@ -166,9 +166,8 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             if (mapView) {
                 QString js = QString(
                     "var b=document.getElementById('banner');"
-                    "if(b)b.textContent='📍 %.6f, %.6f | 轨迹点:%1';"
-                ).arg(m_dronePath.size())
-                 .arg(lat, 0, 'f', 6).arg(lon, 0, 'f', 6);
+                    "if(b)b.textContent='📍 %1, %2 | 轨迹:%3点';"
+                ).arg(lat, 0, 'f', 6).arg(lon, 0, 'f', 6).arg(m_dronePath.size());
                 static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
             }
 #endif
