@@ -168,7 +168,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
         QString("source /opt/ros/humble/setup.bash && ros2 topic echo '%1'").arg(topic)});
 
     m_drawPathTimer = new QTimer(this);
-    m_drawPathTimer->setInterval(500);
+    m_drawPathTimer->setInterval(2000);
     connect(m_drawPathTimer, &QTimer::timeout, this, &TeaGardenSystem::drawDronePath);
     m_drawPathTimer->start();
 
