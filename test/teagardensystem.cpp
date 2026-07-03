@@ -2446,47 +2446,6 @@ void TeaGardenSystem::openRoverPanel() {
     roverPanel->setFocus();
 }
 
-void TeaGardenSystem::onGpsPollFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    Q_UNUSED(exitStatus);
-    if (exitCode != 0 || !m_gpsProcess) return;
-
-    QString output = QString::fromUtf8(m_gpsProcess->readAllStandardOutput());
-    // ros2 topic echo /drone/gps 输出: data: '{"lat":...,"lon":...,"alt":...}'
-    // 提取 data: '...' 中的 JSON
-    int start = output.indexOf("data: '");
-    if (start < 0) return;
-    start += 7; // 跳过 "data: '"
-    int end = output.indexOf("'", start);
-    if (end < 0) return;
-    QString jsonStr = output.mid(start, end - start);
-
-    QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8());
-    if (!doc.isObject()) return;
-    QJsonObject obj = doc.object();
-    double lat = obj["lat"].toDouble();
-    double lon = obj["lon"].toDouble();
-    double alt = obj["alt"].toDouble();
-
-    if (lat == 0.0 && lon == 0.0) return;
-
-    // 首次收到 GPS 坐标，把地图中心移过去
-    if (m_gpsFirstFix) {
-        m_gpsFirstFix = false;
-#ifdef TEA_ENABLE_MAP_WEBVIEW
-        if (mapView) {
-            QString js = QString("if(typeof map!=='undefined') map.setView([%1,%2],map.getZoom());")
-                .arg(lat, 0, 'f', 6).arg(lon, 0, 'f', 6);
-            static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
-        }
-#endif
-    }
-
-    m_dronePath.append({lat, lon, alt});
-    if (m_dronePath.size() > kMaxPathPoints) {
-        m_dronePath.remove(0, m_dronePath.size() - kMaxPathPoints);
-    }
-}
-
 void TeaGardenSystem::drawDronePath() {
     if (m_dronePath.isEmpty()) return;
 
