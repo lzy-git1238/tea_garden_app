@@ -177,12 +177,11 @@ private:
     // 无人机 GPS 路径
     QLabel *m_popupImageLabel = nullptr;
     QProcess *m_gpsProcess = nullptr;
-    QTimer *m_gpsTimer = nullptr;
+    QByteArray m_gpsBuf;
     QTimer *m_drawPathTimer = nullptr;
     QVector<GpsPosition> m_dronePath;
     bool m_gpsFirstFix = true;
     static constexpr int kMaxPathPoints = 200;
-    static constexpr int kGpsPollIntervalMs = 500;
     QDateTime lastLoraFrameTime;
 
     // MJPEG 视频流
