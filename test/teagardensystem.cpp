@@ -1696,11 +1696,34 @@ void TeaGardenSystem::refreshWeatherAlert() {
 }
 
 bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
-    if (obj == weatherCard && event->type() == QEvent::MouseButtonPress) {
+    if (event->type() == QEvent::MouseButtonPress) {
         auto *me = static_cast<QMouseEvent*>(event);
         if (me->button() == Qt::LeftButton) {
-            showWeatherDetail();
-            return true;
+            if (obj == weatherCard) {
+                showWeatherDetail();
+                return true;
+            }
+            QLabel *label = qobject_cast<QLabel*>(obj);
+            if (label && !label->pixmap(Qt::ReturnByValue).isNull()) {
+                QPixmap pm = label->pixmap(Qt::ReturnByValue);
+                auto *dlg = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint);
+                dlg->setWindowTitle(label == videoLabel ? "无人机实时画面" : "农业检测车实时画面");
+                dlg->setStyleSheet("background: #0a1628;");
+                QScreen *screen = QGuiApplication::primaryScreen();
+                QSize avail = screen->availableSize();
+                QSize target = pm.size().scaled(avail * 0.8, Qt::KeepAspectRatio);
+                dlg->resize(target);
+                auto *imgLabel = new QLabel(dlg);
+                imgLabel->setPixmap(pm.scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                imgLabel->setAlignment(Qt::AlignCenter);
+                imgLabel->setCursor(Qt::PointingHandCursor);
+                auto *layout = new QVBoxLayout(dlg);
+                layout->setContentsMargins(0, 0, 0, 0);
+                layout->addWidget(imgLabel);
+                connect(imgLabel, &QLabel::linkActivated, dlg, &QDialog::close);
+                dlg->exec();
+                return true;
+            }
         }
     }
     return QWidget::eventFilter(obj, event);
