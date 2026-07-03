@@ -161,16 +161,6 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             m_dronePath.append({lat, lon, alt});
             if (m_dronePath.size() > kMaxPathPoints)
                 m_dronePath.remove(0, m_dronePath.size() - kMaxPathPoints);
-#ifdef TEA_ENABLE_MAP_WEBVIEW
-            // 更新地图横幅显示 GPS 状态
-            if (mapView) {
-                QString js = QString(
-                    "var b=document.getElementById('banner');"
-                    "if(b)b.textContent='📍 %1, %2 | 轨迹:%3点';"
-                ).arg(lat, 0, 'f', 6).arg(lon, 0, 'f', 6).arg(m_dronePath.size());
-                static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
-            }
-#endif
         }
     });
     QString topic = qEnvironmentVariable("TEA_GPS_TOPIC", "/drone/gps");
