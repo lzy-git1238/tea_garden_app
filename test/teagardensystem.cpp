@@ -1717,11 +1717,14 @@ bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
                 imgLabel->setPixmap(pm.scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 imgLabel->setAlignment(Qt::AlignCenter);
                 imgLabel->setCursor(Qt::PointingHandCursor);
+                imgLabel->installEventFilter(this);
+                // 记录弹窗标签，用于点击关闭
+                m_popupImageLabel = imgLabel;
                 auto *layout = new QVBoxLayout(dlg);
                 layout->setContentsMargins(0, 0, 0, 0);
                 layout->addWidget(imgLabel);
-                connect(imgLabel, &QLabel::linkActivated, dlg, &QDialog::close);
                 dlg->exec();
+                m_popupImageLabel = nullptr;
                 return true;
             }
         }
