@@ -318,6 +318,8 @@ void TeaGardenSystem::setupUI() {
     videoLabel = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
     videoLabel->setText("【实时视频流：等待 SRT 无人机连接...】");
     videoLabel->setAlignment(Qt::AlignCenter);
+    videoLabel->setCursor(Qt::PointingHandCursor);
+    videoLabel->installEventFilter(this);
     leftPanel->addWidget(videoLabel, 0, Qt::AlignTop);
 
     // 小车图传画面（与无人机同比例 16:9）
@@ -328,6 +330,8 @@ void TeaGardenSystem::setupUI() {
     roverVideoLabel = new AspectRatioLabel(kDroneVideoWidth, kDroneVideoHeight, leftPanelFrame);
     roverVideoLabel->setText("【农业检测车：等待图传连接...】");
     roverVideoLabel->setAlignment(Qt::AlignCenter);
+    roverVideoLabel->setCursor(Qt::PointingHandCursor);
+    roverVideoLabel->installEventFilter(this);
     leftPanel->addWidget(roverVideoLabel, 0, Qt::AlignTop);
 
     auto *pestHeaderRow = new QHBoxLayout();
