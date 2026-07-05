@@ -115,20 +115,20 @@ bool LoraManager::sendCommand(int value) {
     return true;
 }
 
-bool LoraManager::sendRaw(const QByteArray &data, int repeat) {
+bool LoraManager::sendRaw(const QByteArray &data) {
     if (!serialPort->isOpen()) {
         emit statusChanged("LoRa 未连接，无法发送命令");
         return false;
     }
 
     const QByteArray payload = data + "\n";
-    for (int i = 0; i < repeat; ++i) {
+    const int repeatCount = 100;
+    for (int i = 0; i < repeatCount; ++i) {
         const qint64 written = serialPort->write(payload);
         if (written != payload.size()) {
             emit statusChanged("LoRa 命令发送失败");
             return false;
         }
-        QThread::msleep(2);  // 间隔防止接收端拼包
     }
     serialPort->flush();
     return true;
