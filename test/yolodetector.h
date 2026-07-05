@@ -6,15 +6,19 @@
 #include <QRect>
 #include <QString>
 #include <QVector>
-#include <QTcpSocket>
-#include <QTimer>
 #include <QElapsedTimer>
-#include <QByteArray>
+
+#include <atomic>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
+
+#include "yolo_engine.hpp"
 
 struct DetectionResult {
-    QString className;   // "Brown Blight" 等英文类名
+    QString className;   // 英文类名
     double score;        // 0.0~1.0
-    QRect  bbox;         // 基于原始帧坐标系
+    QRect  bbox;         // 原图坐标
 };
 
 class YoloDetector : public QObject {
@@ -23,49 +27,46 @@ public:
     explicit YoloDetector(QObject *parent = nullptr);
     ~YoloDetector();
 
-    void start(const QString &host = "127.0.0.1", int port = 9800);
+    /// 初始化引擎 + 启动推理线程
+    /// @param modelPath  tealeaf.rknn 路径
+    /// @param labelsPath labels_list.txt 路径
+    /// @param coreMask  NPU 核心掩码，默认单核 Core0
+    bool init(const std::string &modelPath,
+              const std::string &labelsPath,
+              int coreMask = 1);
     void stop();
     void setFpsLimit(int fps);
+    void setConfThreshold(float v);
+    void setNmsThreshold(float v);
 
 signals:
-    void detectionReady(const QImage &frame, const QVector<DetectionResult> &results);
+    void detectionReady(const QImage &frame,
+                        const QVector<DetectionResult> &results);
     void statusMessage(const QString &msg);
-    void fpsUpdated(double inferFps);
 
 public slots:
     void onNewFrame(const QImage &frame);
 
-private slots:
-    void onConnected();
-    void onReadyRead();
-    void onSocketError(QAbstractSocket::SocketError err);
-
 private:
-    void connectToServer();
-    void sendFrame(const QImage &frame);
-    void parseDetectionJson(const QByteArray &json);
+    void inferenceLoop();
 
-    QTcpSocket  *m_socket = nullptr;
-    QTimer      *m_reconnectTimer = nullptr;
-    QTimer      *m_heartbeatTimer = nullptr;
-    QString      m_host;
-    int          m_port = 9800;
+    slam_car_yolo::YoloEngine m_engine;
+    bool m_initialized = false;
 
-    QImage       m_lastFrame;         // 用于画框的原始帧
-    QImage       m_lastResizedFrame;  // 降采样后的帧（发送用）
-    int          m_fpsLimit = 3;
+    // 推理工作线程
+    std::thread m_inferThread;
+    std::atomic<bool> m_running{false};
+
+    // 帧缓存 (拉模式: 推理线程取最新帧，Qt 主线程写)
+    std::mutex m_mutex;
+    std::condition_variable m_cv;
+    QImage m_latestFrame;
+    bool m_hasFrame = false;
+
+    // 帧率控制
+    int m_fpsLimit = 3;
     QElapsedTimer m_fpsTimer;
-    int          m_frameCount = 0;
-    double       m_currentFps = 0;
-
-    QByteArray   m_recvBuffer;        // 接收缓冲区
-    bool         m_waitingResult = false;  // 是否正在等待推理结果
-
-    static constexpr int kTargetWidth  = 640;
-    static constexpr int kTargetHeight = 640;
-    static constexpr int kConnectRetryMs = 3000;
-    static constexpr int kHeartbeatMs    = 5000;
-    static constexpr int kInferTimeoutMs = 3000;
+    int m_frameCount = 0;
 };
 
 #endif // YOLODETECTOR_H
