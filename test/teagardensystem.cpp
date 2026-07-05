@@ -733,7 +733,7 @@ void TeaGardenSystem::setupMjpegStream() {
         qWarning() << "WebSocket error:" << videoSocket->errorString();
     });
 
-    appendChatMessage("系统", "WebSocket 视频流已连接: " + streamUrl);
+    qDebug() << "WebSocket 视频流已连接:" << streamUrl;
 }
 #endif // TEA_USE_WEBSOCKET_VIDEO
 
