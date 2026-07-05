@@ -1755,6 +1755,7 @@ bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
             if (label && !label->pixmap(Qt::ReturnByValue).isNull()) {
                 QPixmap pm = label->pixmap(Qt::ReturnByValue);
                 auto *dlg = new QDialog(this, Qt::Window | Qt::WindowCloseButtonHint);
+                dlg->setAttribute(Qt::WA_DeleteOnClose);
                 dlg->setWindowTitle(label == videoLabel ? "无人机实时画面" : "农业检测车实时画面");
                 dlg->setStyleSheet("background: #0a1628;");
                 QScreen *screen = QGuiApplication::primaryScreen();
@@ -1762,17 +1763,33 @@ bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
                 QSize target = pm.size().scaled(avail * 0.8, Qt::KeepAspectRatio);
                 dlg->resize(target);
                 auto *imgLabel = new QLabel(dlg);
-                imgLabel->setPixmap(pm.scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 imgLabel->setAlignment(Qt::AlignCenter);
                 imgLabel->setCursor(Qt::PointingHandCursor);
                 imgLabel->installEventFilter(this);
-                // 记录弹窗标签，用于点击关闭
-                m_popupImageLabel = imgLabel;
                 auto *layout = new QVBoxLayout(dlg);
                 layout->setContentsMargins(0, 0, 0, 0);
                 layout->addWidget(imgLabel);
-                dlg->exec();
-                m_popupImageLabel = nullptr;
+                // 非阻塞 show + 定时刷新画面
+                QPointer<QLabel> srcLabel = label;
+                QPointer<QLabel> popupLabel = imgLabel;
+                QPointer<QDialog> popupDlg = dlg;
+                auto *refreshTimer = new QTimer(dlg);
+                refreshTimer->setInterval(66); // ~15fps
+                connect(refreshTimer, &QTimer::timeout, dlg, [srcLabel, popupLabel, target]() {
+                    if (srcLabel && popupLabel && !srcLabel->pixmap(Qt::ReturnByValue).isNull()) {
+                        popupLabel->setPixmap(
+                            srcLabel->pixmap(Qt::ReturnByValue)
+                                .scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                    }
+                });
+                refreshTimer->start();
+                connect(dlg, &QDialog::finished, refreshTimer, &QTimer::stop);
+                // 处理弹窗关闭信号
+                connect(dlg, &QDialog::finished, this, [this]() {
+                    m_popupImageLabel = nullptr;
+                });
+                m_popupImageLabel = imgLabel;
+                dlg->show();
                 return true;
             }
         }
