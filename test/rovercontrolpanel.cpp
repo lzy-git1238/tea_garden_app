@@ -102,56 +102,56 @@ void RoverControlPanel::setupUI() {
     mainLayout->addStretch();
 }
 
-void RoverControlPanel::sendRoverCmd(char cmd) {
+void RoverControlPanel::sendRoverCmd(const char *cmd) {
     if (m_lora) {
-        m_lora->sendRaw(QByteArray(1, cmd));
+        m_lora->sendRaw(QByteArray(cmd));
     }
 }
 
 void RoverControlPanel::onForwardPressed() {
-    sendRoverCmd('w');
+    sendRoverCmd("cargo$$");
     m_forwardBtn->setDown(true);
 }
 void RoverControlPanel::onForwardReleased() {
-    sendRoverCmd('r');
+    sendRoverCmd("carstop$");
     m_forwardBtn->setDown(false);
 }
 
 void RoverControlPanel::onBackwardPressed() {
-    sendRoverCmd('s');
+    sendRoverCmd("carback$");
     m_backwardBtn->setDown(true);
 }
 void RoverControlPanel::onBackwardReleased() {
-    sendRoverCmd('r');
+    sendRoverCmd("carstop$");
     m_backwardBtn->setDown(false);
 }
 
 void RoverControlPanel::onLeftPressed() {
-    sendRoverCmd('a');
+    sendRoverCmd("turnleft$");
     m_leftBtn->setDown(true);
 }
 void RoverControlPanel::onLeftReleased() {
-    sendRoverCmd('r');
+    sendRoverCmd("carstop$");
     m_leftBtn->setDown(false);
 }
 
 void RoverControlPanel::onRightPressed() {
-    sendRoverCmd('d');
+    sendRoverCmd("turnright$");
     m_rightBtn->setDown(true);
 }
 void RoverControlPanel::onRightReleased() {
-    sendRoverCmd('r');
+    sendRoverCmd("carstop$");
     m_rightBtn->setDown(false);
 }
 
 void RoverControlPanel::onSprayPressed() {
     m_spraying = !m_spraying;
     if (m_spraying) {
-        sendRoverCmd('o');
+        sendRoverCmd("sprayon$");
         m_sprayBtn->setText("💧 喷水中...");
         m_sprayBtn->setDown(true);
     } else {
-        sendRoverCmd('f');
+        sendRoverCmd("sprayoff$");
         m_sprayBtn->setText("💧 喷水");
         m_sprayBtn->setDown(false);
     }
