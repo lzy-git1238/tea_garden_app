@@ -722,7 +722,7 @@ void TeaGardenSystem::setupMjpegStream() {
 
     connect(videoSocket, &QWebSocket::disconnected, this, [this, streamUrl]() {
         qWarning() << "WebSocket video disconnected, reconnecting in 3s...";
-        appendChatMessage("系统", "视频流断开，3 秒后重连...");
+        qDebug() << "视频流断开，3 秒后重连...";
         QTimer::singleShot(3000, this, [this]() {
             setupMjpegStream();
         });
