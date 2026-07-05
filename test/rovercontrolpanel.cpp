@@ -2,6 +2,7 @@
 #include "loramanager.h"
 #include <QDebug>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
