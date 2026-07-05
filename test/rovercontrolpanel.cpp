@@ -161,14 +161,21 @@ void RoverControlPanel::onSprayReleased() {
     // toggle 模式，松开不做任何事
 }
 
-void RoverControlPanel::mouseReleaseEvent(QMouseEvent *event) {
-    // 无论鼠标在哪里松开，都发停止命令并复位所有方向按钮
-    if (event->button() != Qt::LeftButton) { QWidget::mouseReleaseEvent(event); return; }
-    if (m_forwardBtn->isDown())  { onForwardReleased();  m_forwardBtn->setDown(false); }
-    if (m_backwardBtn->isDown()) { onBackwardReleased(); m_backwardBtn->setDown(false); }
-    if (m_leftBtn->isDown())     { onLeftReleased();     m_leftBtn->setDown(false); }
-    if (m_rightBtn->isDown())    { onRightReleased();    m_rightBtn->setDown(false); }
-    QWidget::mouseReleaseEvent(event);
+bool RoverControlPanel::event(QEvent *e) {
+    // 拦截所有鼠标松开事件，确保方向按钮松开时发 carstop$
+    if (e->type() == QEvent::MouseButtonRelease) {
+        auto *me = static_cast<QMouseEvent*>(e);
+        if (me->button() == Qt::LeftButton &&
+            (m_forwardBtn->isDown() || m_backwardBtn->isDown() ||
+             m_leftBtn->isDown() || m_rightBtn->isDown())) {
+            m_forwardBtn->setDown(false);
+            m_backwardBtn->setDown(false);
+            m_leftBtn->setDown(false);
+            m_rightBtn->setDown(false);
+            sendRoverCmd("carstop$");
+        }
+    }
+    return QWidget::event(e);
 }
 
 void RoverControlPanel::keyPressEvent(QKeyEvent *event) {
