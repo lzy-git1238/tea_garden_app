@@ -6,7 +6,7 @@
 
 #define OBJ_NAME_MAX_SIZE     16
 #define OBJ_NUMB_MAX_SIZE     128
-#define OBJ_CLASS_NUM         6
+#define OBJ_CLASS_NUM         3
 #define NMS_THRESH            0.45f
 #define BOX_THRESH            0.25f
 #define DFL_LEN               16         // 64 / 4，YOLOv8 固定

@@ -1,6 +1,3 @@
-Algal Leaf Spot
-Brown Blight
-Gray Blight
-Healthy
-Helopeltis
-Red Leaf Spot
+algal leaf spot
+brown blight
+grey-blight
