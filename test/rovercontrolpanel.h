@@ -38,7 +38,7 @@ private slots:
 
 private:
     void setupUI();
-    void sendRoverCmd(char cmd);
+    void sendRoverCmd(const char *cmd);
     void startVideoCapture();
     void stopVideoCapture();
 
