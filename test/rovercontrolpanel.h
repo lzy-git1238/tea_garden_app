@@ -61,6 +61,7 @@ private:
     bool m_keyS = false;
     bool m_keyD = false;
     bool m_spraying = false;
+    QTimer *m_stopDebounce = nullptr;  // 松开防抖
 };
 
 #endif // ROVERCONTROLPANEL_H
