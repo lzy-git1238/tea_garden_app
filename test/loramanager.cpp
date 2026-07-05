@@ -102,7 +102,7 @@ bool LoraManager::sendCommand(int value) {
 
     const QByteArray payload = QByteArray::number(value) + "\n";
     // LoRa 无线链路存在丢包风险，重复 100 次以带宽换可靠性
-    const int repeatCount = 100;
+    const int repeatCount = 10;
     for (int i = 0; i < repeatCount; ++i) {
         const qint64 written = serialPort->write(payload);
         if (written != payload.size()) {
@@ -122,7 +122,7 @@ bool LoraManager::sendRaw(const QByteArray &data) {
     }
 
     const QByteArray payload = data + "\n";
-    const int repeatCount = 100;
+    const int repeatCount = 10;
     for (int i = 0; i < repeatCount; ++i) {
         const qint64 written = serialPort->write(payload);
         if (written != payload.size()) {
