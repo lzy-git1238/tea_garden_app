@@ -114,7 +114,7 @@ void RoverControlPanel::onForwardPressed() {
     m_forwardBtn->setDown(true);
 }
 void RoverControlPanel::onForwardReleased() {
-    sendRoverCmd("carstop$$");
+    sendRoverCmd("carstop$");
     m_forwardBtn->setDown(false);
 }
 
@@ -123,7 +123,7 @@ void RoverControlPanel::onBackwardPressed() {
     m_backwardBtn->setDown(true);
 }
 void RoverControlPanel::onBackwardReleased() {
-    sendRoverCmd("carstop$$");
+    sendRoverCmd("carstop$");
     m_backwardBtn->setDown(false);
 }
 
@@ -132,7 +132,7 @@ void RoverControlPanel::onLeftPressed() {
     m_leftBtn->setDown(true);
 }
 void RoverControlPanel::onLeftReleased() {
-    sendRoverCmd("carstop$$");
+    sendRoverCmd("carstop$");
     m_leftBtn->setDown(false);
 }
 
@@ -141,7 +141,7 @@ void RoverControlPanel::onRightPressed() {
     m_rightBtn->setDown(true);
 }
 void RoverControlPanel::onRightReleased() {
-    sendRoverCmd("carstop$$");
+    sendRoverCmd("carstop$");
     m_rightBtn->setDown(false);
 }
 
@@ -173,7 +173,7 @@ bool RoverControlPanel::event(QEvent *e) {
             m_backwardBtn->setDown(false);
             m_leftBtn->setDown(false);
             m_rightBtn->setDown(false);
-            sendRoverCmd("carstop$$");
+            sendRoverCmd("carstop$");
         }
     }
     return QWidget::event(e);
