@@ -121,9 +121,9 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
 
     // 初始化引擎：模型和标签路径可通过环境变量覆盖
     QString modelPath = qEnvironmentVariable("TEA_YOLO_MODEL",
-                                             "/home/elf/tealeaf.rknn");
+                                             "/home/elf/sdcard/tealeaf.rknn");
     QString labelsPath = qEnvironmentVariable("TEA_YOLO_LABELS",
-                                              "/home/elf/labels_list.txt");
+                                              "/home/elf/sdcard/labels_list.txt");
     int coreMask = qEnvironmentVariableIntValue("TEA_YOLO_CORE_MASK");
     if (coreMask == 0) coreMask = 1;
     m_yoloDetector->init(modelPath.toStdString(),
