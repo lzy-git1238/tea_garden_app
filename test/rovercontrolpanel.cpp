@@ -152,7 +152,7 @@ void RoverControlPanel::onSprayPressed() {
         m_sprayBtn->setText("💧 喷水中...");
         m_sprayBtn->setDown(true);
     } else {
-        sendRoverCmd("sprayoff$");
+        sendRoverCmd("sprayoff$$");
         m_sprayBtn->setText("💧 喷水");
         m_sprayBtn->setDown(false);
     }
