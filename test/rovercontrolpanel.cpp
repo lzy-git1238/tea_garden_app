@@ -114,8 +114,11 @@ void RoverControlPanel::onForwardPressed() {
     m_forwardBtn->setDown(true);
 }
 void RoverControlPanel::onForwardReleased() {
-    sendRoverCmd("@carstop$");
     m_forwardBtn->setDown(false);
+    if (!m_keyW && !m_keyA && !m_keyS && !m_keyD
+        && !m_forwardBtn->isDown() && !m_leftBtn->isDown()
+        && !m_backwardBtn->isDown() && !m_rightBtn->isDown())
+        sendRoverCmd("@carstop$");
 }
 
 void RoverControlPanel::onBackwardPressed() {
@@ -123,8 +126,11 @@ void RoverControlPanel::onBackwardPressed() {
     m_backwardBtn->setDown(true);
 }
 void RoverControlPanel::onBackwardReleased() {
-    sendRoverCmd("@carstop$");
     m_backwardBtn->setDown(false);
+    if (!m_keyW && !m_keyA && !m_keyS && !m_keyD
+        && !m_forwardBtn->isDown() && !m_leftBtn->isDown()
+        && !m_backwardBtn->isDown() && !m_rightBtn->isDown())
+        sendRoverCmd("@carstop$");
 }
 
 void RoverControlPanel::onLeftPressed() {
@@ -132,8 +138,11 @@ void RoverControlPanel::onLeftPressed() {
     m_leftBtn->setDown(true);
 }
 void RoverControlPanel::onLeftReleased() {
-    sendRoverCmd("@carstop$");
     m_leftBtn->setDown(false);
+    if (!m_keyW && !m_keyA && !m_keyS && !m_keyD
+        && !m_forwardBtn->isDown() && !m_leftBtn->isDown()
+        && !m_backwardBtn->isDown() && !m_rightBtn->isDown())
+        sendRoverCmd("@carstop$");
 }
 
 void RoverControlPanel::onRightPressed() {
@@ -141,8 +150,11 @@ void RoverControlPanel::onRightPressed() {
     m_rightBtn->setDown(true);
 }
 void RoverControlPanel::onRightReleased() {
-    sendRoverCmd("@carstop$");
     m_rightBtn->setDown(false);
+    if (!m_keyW && !m_keyA && !m_keyS && !m_keyD
+        && !m_forwardBtn->isDown() && !m_leftBtn->isDown()
+        && !m_backwardBtn->isDown() && !m_rightBtn->isDown())
+        sendRoverCmd("@carstop$");
 }
 
 void RoverControlPanel::onSprayPressed() {
