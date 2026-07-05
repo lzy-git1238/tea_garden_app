@@ -119,7 +119,7 @@ void RoverControlPanel::onForwardReleased() {
 }
 
 void RoverControlPanel::onBackwardPressed() {
-    sendRoverCmd("carback$");
+    sendRoverCmd("carback$", 15);
     m_backwardBtn->setDown(true);
 }
 void RoverControlPanel::onBackwardReleased() {
