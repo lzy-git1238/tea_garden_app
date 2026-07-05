@@ -109,7 +109,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     qDebug() << "[VIDEO] SrtVideoStreamer::start() called";
     m_videoStreamer->start();
 
-    // YOLO 病虫害检测（Socket 连接 Python 推理服务）
+    // YOLOv8 病虫害检测（C++ 引擎直连，同进程推理）
     m_yoloDetector = new YoloDetector(this);
     m_yoloDetector->setFpsLimit(3);
     connect(m_videoStreamer, &SrtVideoStreamer::frameReadyForYolo,
@@ -118,10 +118,17 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             this, &TeaGardenSystem::onYoloResults);
     connect(m_yoloDetector, &YoloDetector::statusMessage,
             this, &TeaGardenSystem::onVideoStatus);
-    bool yoloOk = false;
-    int yoloPort = qEnvironmentVariableIntValue("TEA_YOLO_PORT", &yoloOk);
-    if (!yoloOk) yoloPort = 9800;
-    m_yoloDetector->start("127.0.0.1", yoloPort);
+
+    // 初始化引擎：模型和标签路径可通过环境变量覆盖
+    QString modelPath = qEnvironmentVariable("TEA_YOLO_MODEL",
+                                             "/home/elf/tealeaf.rknn");
+    QString labelsPath = qEnvironmentVariable("TEA_YOLO_LABELS",
+                                              "/home/elf/labels_list.txt");
+    int coreMask = qEnvironmentVariableIntValue("TEA_YOLO_CORE_MASK");
+    if (coreMask == 0) coreMask = 1;
+    m_yoloDetector->init(modelPath.toStdString(),
+                         labelsPath.toStdString(),
+                         coreMask);
 
     // GPS 路径显示（持久订阅 ros2 topic echo，逐行解析）
     m_gpsProcess = new QProcess(this);
