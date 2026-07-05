@@ -1769,25 +1769,19 @@ bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
                 auto *layout = new QVBoxLayout(dlg);
                 layout->setContentsMargins(0, 0, 0, 0);
                 layout->addWidget(imgLabel);
-                // 非阻塞 show + 定时刷新画面
-                QPointer<QLabel> srcLabel = label;
-                QPointer<QLabel> popupLabel = imgLabel;
-                QPointer<QDialog> popupDlg = dlg;
+                // 定时刷新弹窗画面（非阻塞）
                 auto *refreshTimer = new QTimer(dlg);
                 refreshTimer->setInterval(66); // ~15fps
+                QLabel *srcLabel = label;
+                QLabel *popupLabel = imgLabel;
                 connect(refreshTimer, &QTimer::timeout, dlg, [srcLabel, popupLabel, target]() {
-                    if (srcLabel && popupLabel && !srcLabel->pixmap(Qt::ReturnByValue).isNull()) {
-                        popupLabel->setPixmap(
-                            srcLabel->pixmap(Qt::ReturnByValue)
-                                .scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                    }
+                    if (!srcLabel || !popupLabel) return;
+                    QPixmap cur = srcLabel->pixmap(Qt::ReturnByValue);
+                    if (!cur.isNull())
+                        popupLabel->setPixmap(cur.scaled(target, Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 });
                 refreshTimer->start();
                 connect(dlg, &QDialog::finished, refreshTimer, &QTimer::stop);
-                // 处理弹窗关闭信号
-                connect(dlg, &QDialog::finished, this, [this]() {
-                    m_popupImageLabel = nullptr;
-                });
                 m_popupImageLabel = imgLabel;
                 dlg->show();
                 return true;
