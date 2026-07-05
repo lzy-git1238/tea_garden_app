@@ -161,6 +161,16 @@ void RoverControlPanel::onSprayReleased() {
     // toggle 模式，松开不做任何事
 }
 
+void RoverControlPanel::mouseReleaseEvent(QMouseEvent *event) {
+    // 无论鼠标在哪里松开，都发停止命令并复位所有方向按钮
+    if (event->button() != Qt::LeftButton) { QWidget::mouseReleaseEvent(event); return; }
+    if (m_forwardBtn->isDown())  { onForwardReleased();  m_forwardBtn->setDown(false); }
+    if (m_backwardBtn->isDown()) { onBackwardReleased(); m_backwardBtn->setDown(false); }
+    if (m_leftBtn->isDown())     { onLeftReleased();     m_leftBtn->setDown(false); }
+    if (m_rightBtn->isDown())    { onRightReleased();    m_rightBtn->setDown(false); }
+    QWidget::mouseReleaseEvent(event);
+}
+
 void RoverControlPanel::keyPressEvent(QKeyEvent *event) {
     if (event->isAutoRepeat()) return;
     switch (event->key()) {
