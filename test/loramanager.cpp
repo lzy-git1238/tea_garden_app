@@ -2,7 +2,6 @@
 
 #include <QSerialPort>
 #include <QRegularExpression>
-#include <QThread>
 #include <QDebug>
 #include <limits>
 
