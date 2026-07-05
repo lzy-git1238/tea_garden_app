@@ -128,7 +128,7 @@ bool LoraManager::sendRaw(const QByteArray &data, int repeat) {
             emit statusChanged("LoRa 命令发送失败");
             return false;
         }
-        serialPort->waitForBytesWritten(5);  // 2ms+ 间隔防止接收端拼包
+        QThread::msleep(2);  // 间隔防止接收端拼包
     }
     serialPort->flush();
     return true;
