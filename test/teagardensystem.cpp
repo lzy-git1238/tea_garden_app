@@ -1057,6 +1057,18 @@ void TeaGardenSystem::requestAIAnalysis(const QString &userMessage) {
     // 系统提示词，包含当前环境数据
     QJsonObject systemMsg;
     systemMsg["role"] = "system";
+    // 拼装病虫害统计
+    QMap<QString, int> pestCounts = PestStore::instance()->typeCounts();
+    QString pestInfo;
+    if (pestCounts.isEmpty()) {
+        pestInfo = "暂无病虫情报";
+    } else {
+        QStringList parts;
+        for (auto it = pestCounts.begin(); it != pestCounts.end(); ++it)
+            parts << QString("%1: %2处").arg(it.key()).arg(it.value());
+        pestInfo = parts.join(", ");
+    }
+
     QString systemPrompt = QString("你是一个专业的茶园AI管家。当前茶园环境数据如下：\n"
                                    "空气温度: %1 ℃\n"
                                    "空气湿度: %2 %\n"
@@ -1066,9 +1078,11 @@ void TeaGardenSystem::requestAIAnalysis(const QString &userMessage) {
                                    "土壤温度: %6 ℃\n"
                                    "土壤湿度: %7 %\n"
                                    "土壤电导率: %8 mS/cm\n"
+                                   "病虫情统计: %9\n"
                                    "请根据这些数据和用户的提问，给出专业的茶园管理建议。回答要简明扼要。")
                                .arg(curTemp).arg(curHumi).arg(curLight).arg(curPh)
-                               .arg(curWindSpeed).arg(curSoilTemp).arg(curSoilHumi).arg(curSoilEc);
+                               .arg(curWindSpeed).arg(curSoilTemp).arg(curSoilHumi).arg(curSoilEc)
+                               .arg(pestInfo);
     systemMsg["content"] = systemPrompt;
     messages.append(systemMsg);
     
