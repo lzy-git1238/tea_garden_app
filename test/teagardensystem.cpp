@@ -1057,16 +1057,21 @@ void TeaGardenSystem::requestAIAnalysis(const QString &userMessage) {
     // 系统提示词，包含当前环境数据
     QJsonObject systemMsg;
     systemMsg["role"] = "system";
-    // 拼装病虫害统计
-    QMap<QString, int> pestCounts = PestStore::instance()->typeCounts();
+    // 拼装病虫害统计（含地理位置）
+    QVector<PestRecord> pestRecords = PestStore::instance()->queryAll();
     QString pestInfo;
-    if (pestCounts.isEmpty()) {
+    if (pestRecords.isEmpty()) {
         pestInfo = "暂无病虫情报";
     } else {
+        // 限定最多 80 条防 prompt 过长
+        if (pestRecords.size() > 80)
+            pestRecords = pestRecords.mid(pestRecords.size() - 80);
         QStringList parts;
-        for (auto it = pestCounts.begin(); it != pestCounts.end(); ++it)
-            parts << QString("%1: %2处").arg(it.key()).arg(it.value());
-        pestInfo = parts.join(", ");
+        for (const auto &r : pestRecords) {
+            parts << QString("%1 @ (%.6f, %.6f)")
+                         .arg(r.pestType).arg(r.lat).arg(r.lng);
+        }
+        pestInfo = parts.join("; ");
     }
 
     QString systemPrompt = QString("你是一个专业的茶园AI管家。当前茶园环境数据如下：\n"
