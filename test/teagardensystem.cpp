@@ -2172,7 +2172,8 @@ void TeaGardenSystem::onVideoFrame(const QImage &image) {
 }
 
 void TeaGardenSystem::onVideoStatus(const QString &msg) {
-    appendChatMessage("视频", msg);
+    Q_UNUSED(msg);
+    // 不再推送到聊天界面
 }
 
 // ── YOLO 检测结果处理 ──
