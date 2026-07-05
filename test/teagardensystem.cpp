@@ -126,9 +126,16 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
                                               "/home/elf/sdcard/labels_list.txt");
     int coreMask = qEnvironmentVariableIntValue("TEA_YOLO_CORE_MASK");
     if (coreMask == 0) coreMask = 1;
-    m_yoloDetector->init(modelPath.toStdString(),
-                         labelsPath.toStdString(),
-                         coreMask);
+    printf("[YOLO] Calling init: model=%s labels=%s core=%d\n",
+           modelPath.toUtf8().constData(),
+           labelsPath.toUtf8().constData(),
+           coreMask);
+    fflush(stdout);
+    bool ok = m_yoloDetector->init(modelPath.toStdString(),
+                                   labelsPath.toStdString(),
+                                   coreMask);
+    printf("[YOLO] init returned: %s\n", ok ? "true" : "false");
+    fflush(stdout);
 
     // GPS 路径显示（持久订阅 ros2 topic echo，逐行解析）
     m_gpsProcess = new QProcess(this);

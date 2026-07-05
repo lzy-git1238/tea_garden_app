@@ -27,7 +27,8 @@ bool YoloDetector::init(const std::string &modelPath,
     m_running = true;
     m_inferThread = std::thread(&YoloDetector::inferenceLoop, this);
 
-    qDebug() << "[YOLO] Engine READY";
+    printf("[YOLO] Engine READY, thread started\n");
+    fflush(stdout);
     emit statusMessage("YOLO 引擎就绪");
     return true;
 }
@@ -67,9 +68,16 @@ void YoloDetector::onNewFrame(const QImage &frame) {
         m_hasFrame = true;
     }
     m_cv.notify_one();
+    static int frame_cnt = 0;
+    if (++frame_cnt % 60 == 0) {
+        printf("[YOLO] Frames received: %d\n", frame_cnt);
+        fflush(stdout);
+    }
 }
 
 void YoloDetector::inferenceLoop() {
+    printf("[YOLO] Inference thread started\n");
+    fflush(stdout);
     while (m_running) {
         QImage qtFrame;
         {
@@ -109,8 +117,8 @@ void YoloDetector::inferenceLoop() {
 
         m_frameCount++;
         if (m_frameCount % 30 == 0) {
-            qDebug() << "[YOLO] Frame" << m_frameCount
-                     << "Detections:" << results.size();
+            printf("[YOLO] Frame %d  Detections: %d\n", m_frameCount, (int)results.size());
+            fflush(stdout);
         }
 
         emit detectionReady(qtFrame, results);
