@@ -137,7 +137,7 @@ void RoverControlPanel::onLeftReleased() {
 }
 
 void RoverControlPanel::onRightPressed() {
-    sendRoverCmd("turnright$", 15);
+    sendRoverCmd("turnright$", 5);
     m_rightBtn->setDown(true);
 }
 void RoverControlPanel::onRightReleased() {
