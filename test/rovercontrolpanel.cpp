@@ -103,9 +103,9 @@ void RoverControlPanel::setupUI() {
     mainLayout->addStretch();
 }
 
-void RoverControlPanel::sendRoverCmd(const char *cmd) {
+void RoverControlPanel::sendRoverCmd(const char *cmd, int repeat) {
     if (m_lora) {
-        m_lora->sendRaw(QByteArray(cmd));
+        m_lora->sendRaw(QByteArray(cmd), repeat);
     }
 }
 
