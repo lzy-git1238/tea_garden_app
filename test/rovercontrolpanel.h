@@ -21,6 +21,7 @@ signals:
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
