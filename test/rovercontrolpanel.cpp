@@ -110,7 +110,7 @@ void RoverControlPanel::sendRoverCmd(const char *cmd) {
 }
 
 void RoverControlPanel::onForwardPressed() {
-    sendRoverCmd("cargo$");
+    sendRoverCmd("@cargo$");
     m_forwardBtn->setDown(true);
 }
 void RoverControlPanel::onForwardReleased() {
