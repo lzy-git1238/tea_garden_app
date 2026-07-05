@@ -1742,8 +1742,8 @@ bool TeaGardenSystem::eventFilter(QObject *obj, QEvent *event) {
         if (me->button() == Qt::LeftButton) {
             // 点弹窗图片关闭
             if (obj == m_popupImageLabel) {
-                if (auto *w = qobject_cast<QWidget*>(obj)) {
-                    w->close();  // close the dialog (WA_DeleteOnClose handles cleanup)
+                if (auto *parent = qobject_cast<QWidget*>(obj)) {
+                    if (auto *w = parent->window()) w->close();
                 }
                 return true;
             }
