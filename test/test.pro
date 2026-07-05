@@ -30,7 +30,9 @@ SOURCES += \
     teagardensystem.cpp \
     thresholddialog.cpp \
     widget.cpp \
-    yolodetector.cpp
+    yolodetector.cpp \
+    yolo_engine.cpp \
+    postprocess.cpp
 
 HEADERS += \
     chartdashboard.h \
@@ -46,7 +48,11 @@ HEADERS += \
     teagardensystem.h \
     thresholddialog.h \
     widget.h \
-    yolodetector.h
+    yolodetector.h \
+    yolo_engine.hpp \
+    postprocess.h \
+    rknn_api.h \
+    rknn_matmul_api.h
 
 FORMS += \
     widget.ui
@@ -58,3 +64,11 @@ RESOURCES += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# OpenCV (板端已通过 apt 安装 libopencv-dev)
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += opencv4
+
+# RKNN 运行时库
+LIBS += -L$$PWD/../lib -lrknnrt
+INCLUDEPATH += $$PWD
