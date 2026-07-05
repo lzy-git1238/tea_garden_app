@@ -19,9 +19,9 @@ signals:
     void closed();
 
 protected:
+    bool event(QEvent *e) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
