@@ -25,6 +25,13 @@ RoverControlPanel::RoverControlPanel(LoraManager *lora, QWidget *parent)
     );
     setFocusPolicy(Qt::StrongFocus);
     setupUI();
+
+    m_stopDebounce = new QTimer(this);
+    m_stopDebounce->setSingleShot(true);
+    m_stopDebounce->setInterval(100);
+    connect(m_stopDebounce, &QTimer::timeout, this, [this]() {
+        sendRoverCmd("@carstop$");
+    });
 }
 
 RoverControlPanel::~RoverControlPanel() {
