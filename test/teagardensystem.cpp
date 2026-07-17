@@ -203,42 +203,23 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(m_drawPathTimer, &QTimer::timeout, this, &TeaGardenSystem::drawDronePath);
     m_drawPathTimer->start();
 
-    // 小车图传采集（V4L2）
-    roverFfmpegProc = new QProcess(this);
-    roverFfmpegProc->setProcessChannelMode(QProcess::SeparateChannels);
-    QStringList v4l2Args;
-    v4l2Args << "-f" << "v4l2" << "-input_format" << "yuyv422"
-             << "-video_size" << "640x480" << "-framerate" << "15"
-             << "-i" << "/dev/video21"
-             << "-f" << "rawvideo" << "-pix_fmt" << "rgb24"
-             << "-vf" << "scale=320:240" << "pipe:1";
-    roverFfmpegProc->start("ffmpeg", v4l2Args);
-    if (roverFfmpegProc->waitForStarted(3000)) {
-        connect(roverFfmpegProc, &QProcess::readyReadStandardOutput,
-                this, [this]() {
-            roverVideoBuf.append(roverFfmpegProc->readAllStandardOutput());
-            const int frameSize = 320 * 240 * 3;
-            while (roverVideoBuf.size() >= frameSize) {
-                QByteArray frameData = roverVideoBuf.left(frameSize);
-                roverVideoBuf.remove(0, frameSize);
-                QImage img(reinterpret_cast<const uchar*>(frameData.constData()),
-                           320, 240, QImage::Format_RGB888);
-                QImage copy = img.copy();
-                if (!copy.isNull() && roverVideoLabel) {
-                    QPixmap pix = QPixmap::fromImage(copy);
-                    int w = roverVideoLabel->width() - 4;
-                    int h = w * 240 / 320;
-                    roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
-                        Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                    roverVideoLabel->setText(QString());
-                }
-            }
-        });
-    } else {
-        roverVideoLabel->setText("图传连接失败\n请检查 /dev/video0");
-        delete roverFfmpegProc;
-        roverFfmpegProc = nullptr;
-    }
+    // 小车 SRT 视频流（复用 SrtVideoStreamer，跟无人机一样）
+    m_roverStreamer = new SrtVideoStreamer(this);
+    m_roverStreamer->setUrl(
+        qEnvironmentVariable("TEA_ROVER_SRT_URL", "srt://:9001?mode=listener"));
+    connect(m_roverStreamer, &SrtVideoStreamer::frameReady,
+            this, [this](const QImage &frame) {
+        if (!roverVideoLabel || frame.isNull()) return;
+        QPixmap pix = QPixmap::fromImage(frame);
+        int w = roverVideoLabel->width() - 4;
+        int h = w * frame.height() / frame.width();
+        roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
+            Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        roverVideoLabel->setText(QString());
+    });
+    connect(m_roverStreamer, &SrtVideoStreamer::statusMessage,
+            this, &TeaGardenSystem::onVideoStatus);
+    m_roverStreamer->start();
 
     // 定时器：每3秒更新一次数据
     updateTimer = new QTimer(this);
