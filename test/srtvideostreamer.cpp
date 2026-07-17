@@ -66,8 +66,15 @@ void SrtVideoStreamer::run() {
 
         QByteArray stdoutBuf;
         int frameSize = 0;
+        QElapsedTimer resoTimer;
+        resoTimer.start();
 
         while (m_running && proc.state() == QProcess::Running) {
+            // 连上流后 5 秒内未检测到分辨率 → 重启 ffmpeg
+            if (streamReady && frameSize == 0 && resoTimer.elapsed() > 5000) {
+                qDebug() << "[SRT] resolution timeout, restarting ffmpeg...";
+                break;
+            }
             proc.waitForReadyRead(500);
             QByteArray data = proc.readAllStandardOutput();
             if (!data.isEmpty()) {
