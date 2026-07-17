@@ -87,28 +87,28 @@ void SrtVideoStreamer::run() {
             // 从 stderr 提取分辨率
             if (frameSize == 0 && streamReady) {
                 QString es = QString::fromUtf8(errAccum);
+                // 扫描全部 stderr，找第一个 数字x数字 模式
                 QRegularExpression re("(\\d{2,4})x(\\d{2,4})");
-                auto m = re.match(es);
-                if (m.hasMatch()) {
-                    m_resWidth  = m.captured(1).toInt();
-                    m_resHeight = m.captured(2).toInt();
-                    frameSize   = m_resWidth * m_resHeight * 3;
-                    qDebug() << "[SRT] resolution(stderr):" << m_resWidth << "x" << m_resHeight;
-                    emit statusMessage(QString("视频 %1x%2").arg(m_resWidth).arg(m_resHeight));
+                auto it = re.globalMatch(es);
+                int bestW = 0, bestH = 0;
+                while (it.hasNext()) {
+                    auto m = it.next();
+                    int w = m.captured(1).toInt();
+                    int h = m.captured(2).toInt();
+                    // 前面的可能是像素格式；后面的才是分辨率；取最后或最大的一个
+                    if (w >= 320 && h >= 240) { bestW = w; bestH = h; /* 继续找，取最后一个 */ }
                 }
-            }
-
-            // 回退：stderr 正则失败时，尝试常见分辨率（检测 buffer 能否整除帧大小）
-            if (frameSize == 0 && streamReady && stdoutBuf.size() >= 1280*720*3) {
-                static const int tries[][2] = {{1280,720},{1920,1080},{640,480},{720,576},{1024,768}};
-                for (auto &t : tries) {
-                    int sz = t[0] * t[1] * 3;
-                    if (sz > 0 && stdoutBuf.size() % sz == 0) {
-                        m_resWidth = t[0]; m_resHeight = t[1]; frameSize = sz;
-                        qDebug() << "[SRT] resolution(infer):" << t[0] << "x" << t[1];
-                        emit statusMessage(QString("视频 %1x%2").arg(t[0]).arg(t[1]));
-                        break;
-                    }
+                if (bestW > 0 && bestH > 0) {
+                    m_resWidth  = bestW;
+                    m_resHeight = bestH;
+                    frameSize   = bestW * bestH * 3;
+                    qDebug() << "[SRT] resolution(stderr):" << bestW << "x" << bestH
+                             << "frameSize:" << frameSize;
+                    emit statusMessage(QString("视频 %1x%2").arg(bestW).arg(bestH));
+                } else {
+                    // 将 stderr 最后 500 字节打印出来方便排查
+                    QString tail = es.right(500);
+                    qDebug() << "[SRT] resolution NOT found in stderr, tail:" << tail;
                 }
             }
 
