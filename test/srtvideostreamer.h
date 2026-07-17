@@ -39,6 +39,7 @@ private:
     QElapsedTimer m_fpsTimer;
     int     m_resWidth  = 640;
     int     m_resHeight = 480;
+    bool    m_haveResolution = false;
 };
 
 #endif // SRTVIDEOSTREAMER_H
