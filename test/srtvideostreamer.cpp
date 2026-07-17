@@ -30,11 +30,11 @@ void SrtVideoStreamer::run() {
         // 参照已验证可行的 ffplay 管线:
         // ffplay -vcodec h264_rkmpp -f mpegts -fflags nobuffer -flags low_delay
         //        -framedrop -strict experimental -i "srt://...?mode=listener"
-        args << "-vcodec" << "h264_rkmpp"
+        args << "-vcodec" << (m_hwDecode ? "h264_rkmpp" : "h264")
              << "-f" << "mpegts"
              << "-fflags" << "nobuffer"
              << "-flags"  << "low_delay"
-             << "-i" << m_url              // 简洁 URL，不加额外 SRT 参数
+             << "-i" << m_url
              << "-an"
              << "-f" << "rawvideo"
              << "-pix_fmt" << "rgb24"
