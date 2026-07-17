@@ -98,34 +98,16 @@ void SrtVideoStreamer::run() {
                 }
             }
 
-            // 回退方案：从原始帧数据推断分辨率
-            // 适用于硬件解码器因资源竞争而回退且 stderr 输出格式不匹配的情况
-            if (frameSize == 0 && streamReady && stdoutBuf.size() > 1024*1024) {
-                // 常见分辨率列表
-                static const int candW[] = {1920,1280,1024,960,854,800,720,640,480,320};
-                static const int candH[] = {1080, 720, 768,540,480,600,576,480,360,240};
-                for (int i = 0; i < 10; i++) {
-                    int testSize = candW[i] * candH[i] * 3;
-                    if (testSize > 1 && testSize < stdoutBuf.size()) {
-                        // 验证：跳过一帧后，下一“帧”的开头应与第一帧的结尾在某种程度上匹配
-                        QByteArray f1 = stdoutBuf.mid(0, testSize);
-                        if (stdoutBuf.size() >= testSize * 2) {
-                            // 简单的启发式检查：比较两帧最后几个像素
-                            int diff = 0;
-                            for (int j = 0; j < 10; j++) {
-                                int p1 = testSize - 10 + j;
-                                int p2 = testSize * 2 - 10 + j;
-                                diff += abs((unsigned char)f1[p1] - (unsigned char)stdoutBuf[p2]);
-                            }
-                            if (diff < 50) { // 连续两帧末尾像素相似 → 匹配
-                                m_resWidth  = candW[i];
-                                m_resHeight = candH[i];
-                                frameSize   = testSize;
-                                qDebug() << "[SRT] resolution(fallback):" << m_resWidth << "x" << m_resHeight;
-                                emit statusMessage(QString("视频 %1x%2").arg(m_resWidth).arg(m_resHeight));
-                                break;
-                            }
-                        }
+            // 回退：stderr 正则失败时，尝试常见分辨率（检测 buffer 能否整除帧大小）
+            if (frameSize == 0 && streamReady && stdoutBuf.size() >= 1280*720*3) {
+                static const int tries[][2] = {{1280,720},{1920,1080},{640,480},{720,576},{1024,768}};
+                for (auto &t : tries) {
+                    int sz = t[0] * t[1] * 3;
+                    if (sz > 0 && stdoutBuf.size() % sz == 0) {
+                        m_resWidth = t[0]; m_resHeight = t[1]; frameSize = sz;
+                        qDebug() << "[SRT] resolution(infer):" << t[0] << "x" << t[1];
+                        emit statusMessage(QString("视频 %1x%2").arg(t[0]).arg(t[1]));
+                        break;
                     }
                 }
             }
