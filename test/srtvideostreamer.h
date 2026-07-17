@@ -15,6 +15,7 @@ public:
     ~SrtVideoStreamer();
 
     void setUrl(const QString &url);
+    void setResolution(int w, int h);
     void setHardwareDecoding(bool enable);
     void stop();
 
