@@ -93,6 +93,7 @@ void SrtVideoStreamer::run() {
 
             // 从 stderr 提取分辨率
             if (frameSize == 0 && streamReady) {
+                if (!resoTimer.isValid()) resoTimer.start();
                 QString es = QString::fromUtf8(errAccum);
                 QRegularExpression re("(\\d{2,4})x(\\d{2,4})");
                 auto m = re.match(es);
