@@ -1,6 +1,5 @@
 #include "srtvideostreamer.h"
 #include <QDebug>
-#include <QElapsedTimer>
 #include <QThread>
 #include <QRegularExpression>
 #include <unistd.h>
