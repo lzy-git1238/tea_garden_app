@@ -66,23 +66,18 @@ void SrtVideoStreamer::run() {
 
         QByteArray stdoutBuf;
         int frameSize = 0;
-        QElapsedTimer resoTimer;
 
         while (m_running && proc.state() == QProcess::Running) {
-            // 连上流后 5 秒内未检测到分辨率 → 重启 ffmpeg
-            if (streamReady && frameSize == 0 && resoTimer.elapsed() > 5000) {
-                qDebug() << "[SRT] resolution timeout, restarting ffmpeg...";
-                break;
-            }
             proc.waitForReadyRead(500);
             QByteArray data = proc.readAllStandardOutput();
             if (!data.isEmpty()) {
                 stdoutBuf.append(data);
                 // 安全帽：buffer 超过 10MB 丢弃旧数据，防止内存耗尽崩溃
-                if (stdoutBuf.size() > 10 * 1024 * 1024) {
-                    stdoutBuf = stdoutBuf.right(5 * 1024 * 1024);
+                static const int kMaxBuf = 10 * 1024 * 1024;
+                if (stdoutBuf.size() > kMaxBuf) {
+                    qWarning() << "[SRT] buffer overflow, trimming";
+                    stdoutBuf = stdoutBuf.right(kMaxBuf / 2);
                     if (frameSize > 0) {
-                        // 对齐到帧边界
                         int rem = stdoutBuf.size() % frameSize;
                         if (rem > 0) stdoutBuf.remove(0, rem);
                     }
