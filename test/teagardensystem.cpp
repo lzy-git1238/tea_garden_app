@@ -295,9 +295,8 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
 
 // 【修复报错】明确定义析构函数
 TeaGardenSystem::~TeaGardenSystem() {
-    if (roverFfmpegProc && roverFfmpegProc->state() == QProcess::Running) {
-        roverFfmpegProc->kill();
-        roverFfmpegProc->waitForFinished(2000);
+    if (m_roverStreamer) {
+        m_roverStreamer->stop();
     }
     if (chartDashboard) {
         chartDashboard->close();
