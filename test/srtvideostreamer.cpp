@@ -70,8 +70,18 @@ void SrtVideoStreamer::run() {
         while (m_running && proc.state() == QProcess::Running) {
             proc.waitForReadyRead(500);
             QByteArray data = proc.readAllStandardOutput();
-            if (!data.isEmpty())
+            if (!data.isEmpty()) {
                 stdoutBuf.append(data);
+                // 安全帽：buffer 超过 10MB 丢弃旧数据，防止内存耗尽崩溃
+                if (stdoutBuf.size() > 10 * 1024 * 1024) {
+                    stdoutBuf = stdoutBuf.right(5 * 1024 * 1024);
+                    if (frameSize > 0) {
+                        // 对齐到帧边界
+                        int rem = stdoutBuf.size() % frameSize;
+                        if (rem > 0) stdoutBuf.remove(0, rem);
+                    }
+                }
+            }
 
             // 从 stderr 提取分辨率
             if (frameSize == 0 && streamReady) {
