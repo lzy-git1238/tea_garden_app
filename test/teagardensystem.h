@@ -115,8 +115,7 @@ private:
     QLabel *videoLabel = nullptr;
     QLabel *videoTitleLabel = nullptr;
     QLabel *roverVideoLabel = nullptr;
-    QProcess *roverFfmpegProc = nullptr;
-    QByteArray roverVideoBuf;
+    SrtVideoStreamer *m_roverStreamer = nullptr;
     QTextEdit *chatDisplay;
     QLineEdit *chatInput;
     QPushButton *voiceBtn;
