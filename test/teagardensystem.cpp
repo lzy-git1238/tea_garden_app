@@ -226,9 +226,9 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     connect(updateTimer, &QTimer::timeout, this, &TeaGardenSystem::refreshData);
     updateTimer->start(3000);
 
-    bool ok = false;
-    const int envBaud = qEnvironmentVariableIntValue("TEA_LORA_BAUD", &ok);
-    const qint32 baudRate = ok ? static_cast<qint32>(envBaud) : QSerialPort::Baud9600;
+    bool baudOk = false;
+    const int envBaud = qEnvironmentVariableIntValue("TEA_LORA_BAUD", &baudOk);
+    const qint32 baudRate = baudOk ? static_cast<qint32>(envBaud) : QSerialPort::Baud9600;
     const QString portName = qEnvironmentVariable("TEA_LORA_PORT", "/dev/ttyUSB0");
 
     loraManager = new LoraManager(this);
