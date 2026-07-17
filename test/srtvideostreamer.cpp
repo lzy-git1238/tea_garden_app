@@ -7,6 +7,9 @@
 SrtVideoStreamer::SrtVideoStreamer(QObject *parent) : QThread(parent) {}
 SrtVideoStreamer::~SrtVideoStreamer() { stop(); }
 void SrtVideoStreamer::setUrl(const QString &url) { m_url = url; }
+void SrtVideoStreamer::setResolution(int w, int h) {
+    m_resWidth = w; m_resHeight = h; m_haveResolution = true;
+}
 void SrtVideoStreamer::setHardwareDecoding(bool enable) { m_hwDecode = enable; }
 
 void SrtVideoStreamer::stop() {
