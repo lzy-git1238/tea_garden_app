@@ -777,6 +777,17 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
             m_mapRetryMs = qMin(m_mapRetryMs * 2, 30000);
         });
     });
+    // 监听 JS console.log("PEST_DELETE:<id>") 实现地图上删除虫害标记
+    connect(static_cast<QWebEngineView*>(mapView)->page(),
+            &QWebEnginePage::javaScriptConsoleMessage,
+            this, [this](QWebEnginePage::JavaScriptConsoleMessageLevel level,
+                         const QString &message, int lineNumber, const QString &sourceID) {
+        Q_UNUSED(level); Q_UNUSED(lineNumber); Q_UNUSED(sourceID);
+        if (message.startsWith("PEST_DELETE:")) {
+            int id = message.mid(QString("PEST_DELETE:").length()).toInt();
+            deletePestRecord(id);
+        }
+    });
     midPanel->addWidget(mapView, 10);
 #else
     QLabel *fallback = new QLabel("Qt WebEngine module missing. Install qtwebengine5-dev to enable Map.");
