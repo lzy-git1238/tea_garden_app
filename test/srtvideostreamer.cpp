@@ -151,3 +151,8 @@ void SrtVideoStreamer::run() {
         }
     }
 }
+
+QImage SrtVideoStreamer::latestFrame() const {
+    QMutexLocker lock(&m_frameMutex);
+    return m_latestFrame.isNull() ? QImage() : m_latestFrame.copy();
+}
