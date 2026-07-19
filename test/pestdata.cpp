@@ -80,3 +80,38 @@ QMap<QString, int> PestStore::typeCounts() {
     while (q.next()) m[q.value(0).toString()] = q.value(1).toInt();
     return m;
 }
+
+bool PestStore::hasNearby(const QString &pestType, double lat, double lng, double distanceM) {
+    QSqlDatabase db = QSqlDatabase::database("pest_conn");
+    if (!db.isOpen()) return false;
+    QSqlQuery q(db);
+    // 1° ≈ 111320m，threshold = (distanceM / 111320)^2
+    double threshold = (distanceM / 111320.0) * (distanceM / 111320.0);
+    q.prepare("SELECT COUNT(*) FROM pest_log "
+              "WHERE pest_type = :type "
+              "  AND (lat - :lat)*(lat - :lat) + (lng - :lng)*(lng - :lng) < :th");
+    q.bindValue(":type", pestType);
+    q.bindValue(":lat", lat);
+    q.bindValue(":lng", lng);
+    q.bindValue(":th", threshold);
+    if (!q.exec()) {
+        qWarning() << "PestStore::hasNearby failed:" << q.lastError().text();
+        return false;
+    }
+    if (q.next())
+        return q.value(0).toInt() > 0;
+    return false;
+}
+
+bool PestStore::deleteById(int id) {
+    QSqlDatabase db = QSqlDatabase::database("pest_conn");
+    if (!db.isOpen()) return false;
+    QSqlQuery q(db);
+    q.prepare("DELETE FROM pest_log WHERE id = :id");
+    q.bindValue(":id", id);
+    if (!q.exec()) {
+        qWarning() << "PestStore::deleteById failed:" << q.lastError().text();
+        return false;
+    }
+    return q.numRowsAffected() > 0;
+}
