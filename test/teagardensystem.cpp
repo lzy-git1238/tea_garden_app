@@ -123,8 +123,6 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     m_videoStreamer = new SrtVideoStreamer(this);
     m_videoStreamer->setUrl(
         qEnvironmentVariable("TEA_SRT_URL", "srt://:9000?mode=listener"));
-    connect(m_videoStreamer, &SrtVideoStreamer::frameReady,
-            this, &TeaGardenSystem::onVideoFrame);
     connect(m_videoStreamer, &SrtVideoStreamer::statusMessage,
             this, &TeaGardenSystem::onVideoStatus);
     connect(m_videoStreamer, &SrtVideoStreamer::fpsUpdated,
