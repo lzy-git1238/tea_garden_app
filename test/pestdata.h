@@ -26,6 +26,11 @@ public:
     // 返回种类→数量
     QMap<QString, int> typeCounts();
 
+    // 新增：查询 0.5m 内是否已有同种类病虫害
+    bool hasNearby(const QString &pestType, double lat, double lng, double distanceM = 0.5);
+    // 新增：按 id 硬删除
+    bool deleteById(int id);
+
 private:
     PestStore() = default;
     QString dbPath;
