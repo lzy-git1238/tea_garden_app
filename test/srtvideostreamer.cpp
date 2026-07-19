@@ -127,8 +127,10 @@ void SrtVideoStreamer::run() {
                 if (!copy.isNull()) {
                     {
                         QMutexLocker lock(&m_frameMutex);
-                        m_latestFrame = copy;   // QImage 隐式共享，仅 refcount++
+                        m_latestFrame = copy;
                     }
+                    static int writeCnt = 0;
+                    if (++writeCnt % 90 == 0) qDebug() << "[SRT] wrote frame #" << writeCnt << "to cache";
                     m_frameCount++;
                     if (m_fpsTimer.elapsed() >= 2000) {
                         double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
