@@ -44,6 +44,31 @@ using namespace QtCharts;
 #include <cmath>
 #ifdef TEA_ENABLE_MAP_WEBVIEW
 #include <QtWebEngineWidgets/QWebEngineView>
+#include <QWebEnginePage>
+#include <functional>
+
+// Qt 5 中 javaScriptConsoleMessage 是 protected virtual，不是 signal，
+// 需子类化 QWebEnginePage 覆写它来拦截 JS console.log
+class PestConsolePage : public QWebEnginePage {
+public:
+    using Callback = std::function<void(int)>;
+    explicit PestConsolePage(QObject *parent, Callback onDelete)
+        : QWebEnginePage(parent), m_onDelete(std::move(onDelete)) {}
+protected:
+    void javaScriptConsoleMessage(JavaScriptConsoleMessageLevel level,
+                                   const QString &message,
+                                   int lineNumber,
+                                   const QString &sourceID) override {
+        Q_UNUSED(level); Q_UNUSED(lineNumber); Q_UNUSED(sourceID);
+        if (message.startsWith("PEST_DELETE:") && m_onDelete) {
+            int id = message.mid(QString("PEST_DELETE:").length()).toInt();
+            m_onDelete(id);
+        }
+        QWebEnginePage::javaScriptConsoleMessage(level, message, lineNumber, sourceID);
+    }
+private:
+    Callback m_onDelete;
+};
 #endif
 
 namespace {
