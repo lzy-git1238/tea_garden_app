@@ -1956,37 +1956,69 @@ void TeaGardenSystem::injectPestMarkers() {
 #ifdef TEA_ENABLE_MAP_WEBVIEW
     if (!mapView) return;
     QVector<PestRecord> records = PestStore::instance()->queryAll();
-    if (records.isEmpty()) return;
+    if (records.isEmpty()) {
+        // 无记录时也要清空地图上的旧标记
+        QString js = "try{"
+                     "if(typeof pestMarkers !== 'undefined'){pestMarkers.forEach(function(m){map.removeLayer(m);});}"
+                     "pestMarkers=[];"
+                     "}catch(e){}";
+        static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
+        return;
+    }
 
-    // 构建 JS 注入: 清除旧标注并添加新标注
     QMap<QString, QString> colors;
-    colors["茶尺蠖"]   = "#4CAF50";
+    colors["茶尺蠖"]    = "#4CAF50";
     colors["茶小绿叶蝉"] = "#FF9800";
-    colors["茶炭疽病"]  = "#F44336";
+    colors["茶炭疽病"]   = "#F44336";
+    colors["茶藻斑病"]   = "#2196F3";
+    colors["茶灰斑病"]   = "#9E9E9E";
+    colors["茶红叶斑"]   = "#E91E63";
+
+    auto severityText = [](int sev) -> QString {
+        switch (sev) {
+            case 3: return "严重";
+            case 2: return "中等";
+            default: return "轻微";
+        }
+    };
 
     QString js = "try{"
+                 // 定义 deletePest 全局函数
+                 "window.deletePest=function(id){console.log('PEST_DELETE:'+id);};"
+                 // 清除旧标记
                  "if(typeof pestMarkers !== 'undefined'){pestMarkers.forEach(function(m){map.removeLayer(m);});}"
                  "pestMarkers=[];"
                  "if(typeof map==='undefined'||typeof L==='undefined'){console.log('Map or Leaflet not ready');}"
                  "else{";
+
     for (const auto& r : records) {
-        QString clr = colors.value(r.pestType, "#2196F3");
+        QString clr   = colors.value(r.pestType, "#2196F3");
         QString label = r.pestType;
         label.replace("'", "\\'");
+        QString sev   = severityText(r.severity);
+        QString time  = r.timestamp.toString("yyyy-MM-dd HH:mm:ss");
+        QString latStr = QString::number(r.lat, 'f', 6);
+        QString lngStr = QString::number(r.lng, 'f', 6);
+
         js += QString(
-            // 圆点
-            "var cm=L.circleMarker([%1,%2],{radius:8,color:'%3',fillColor:'%3',fillOpacity:0.7,weight:2}).addTo(map);"
-            // 箭头 + 文字标签 (用 divIcon)
-            "var icon=L.divIcon({"
-            "  html:'<div style=\"position:relative;left:12px;top:-12px;white-space:nowrap;\">"
-            "    <span style=\"font-size:11px;background:rgba(0,0,0,0.75);color:%3;padding:2px 6px;border-radius:3px;"
-            "      border-left:2px solid %3;\">%4</span></div>',"
-            "  iconSize:[0,0],iconAnchor:[-10,8]});"
-            "var lbl=L.marker([%1,%2],{icon:icon}).addTo(map);"
-            "pestMarkers.push(cm);pestMarkers.push(lbl);"
-        ).arg(r.lat, 0, 'f', 6).arg(r.lng, 0, 'f', 6)
-         .arg(clr, label);
+            "var cm=L.circleMarker([%1,%2],{radius:8,color:'%3',fillColor:'%3',fillOpacity:0.7,weight:2});"
+            "var popup=L.popup().setContent("
+            "'<div style=\"min-width:180px;font:12px Microsoft YaHei,sans-serif;color:#b0d0f0;\">"
+            "<b style=\"color:%3;font-size:15px;\">🐛 %4</b><br>"
+            "严重程度：%5<br>"
+            "检测时间：%6<br>"
+            "坐标：%7, %8<br>"
+            "<button onclick=\"deletePest(%9)\" style=\"margin-top:8px;width:100%%;padding:5px;"
+            "background:#D32F2F;color:white;border:none;border-radius:3px;cursor:pointer;font-size:12px;\">"
+            "🗑 删除此标记</button>"
+            "</div>');"
+            "cm.bindPopup(popup);cm.addTo(map);"
+            "pestMarkers.push(cm);"
+        ).arg(latStr, lngStr)
+         .arg(clr, label, sev, time, latStr, lngStr)
+         .arg(r.id);
     }
+
     js += "}}catch(e){console.log('Pest marker error:'+e.message);}";
     static_cast<QWebEngineView*>(mapView)->page()->runJavaScript(js);
 #endif
