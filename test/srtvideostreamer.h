@@ -24,8 +24,7 @@ public:
     QImage latestFrame() const;
 
 signals:
-    void frameReady(const QImage &image);
-    void frameReadyForYolo(const QImage &image);
+    void frameReady(const QImage &image);       // 保留：timer 拉取后仍用此信号通知
     void statusMessage(const QString &msg);
     void streamConnected();
     void streamDisconnected();
