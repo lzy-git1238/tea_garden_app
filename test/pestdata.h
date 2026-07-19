@@ -7,11 +7,12 @@
 #include <QMap>
 
 struct PestRecord {
+    int id = 0;             // 数据库自增主键
     QDateTime timestamp;
     double lat = 0;
     double lng = 0;
-    QString pestType;   // "茶尺蠖" / "茶小绿叶蝉" / "茶炭疽病" / ...
-    int severity = 1;   // 1轻微 2中等 3严重
+    QString pestType;       // "茶尺蠖" / "茶小绿叶蝉" / "茶炭疽病" / ...
+    int severity = 1;       // 1轻微 2中等 3严重
 };
 
 class PestStore {
