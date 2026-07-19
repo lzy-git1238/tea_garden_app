@@ -1,0 +1,62 @@
+<h2>病虫害标记 Popup 交互设计</h2>
+<p class="subtitle">Leaflet 原生 Popup — 点击圆点显示详情，删除按钮触发硬删除</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">📍 地图 Popup（点击病虫害圆点）</div>
+    <div class="mockup-body">
+      <div style="font-family: monospace; background: #0d1f35; color: #b0d0f0; padding: 16px; border-radius: 6px; max-width: 260px; border: 1px solid #1a4a78;">
+        <div style="font-size: 16px; font-weight: bold; color: #F44336; margin-bottom: 8px;">🐛 茶炭疽病</div>
+        <div style="font-size: 12px; line-height: 1.8;">
+          <div>严重程度：<span style="color: #FF9800;">中等 (置信度 67%)</span></div>
+          <div>检测时间：14:32:18</div>
+          <div>坐标：25.080123, 118.232456</div>
+        </div>
+        <button style="margin-top: 10px; width: 100%; padding: 6px; background: #F44336; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;">
+          🗑 删除此标记
+        </button>
+        <div style="font-size: 10px; color: #7890a0; margin-top: 4px; text-align: center;">此操作不可恢复</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">📋 数据流</div>
+    <div class="mockup-body">
+      <div style="font-family: monospace; font-size: 12px; line-height: 2.2; color: #b0d0f0; padding: 12px;">
+        <div style="color: #4CAF50;">YOLO 检测到虫害</div>
+        <div style="color: #2196F3;">├─ 取 m_dronePath.last() GPS</div>
+        <div style="color: #FF9800;">├─ Haversine 去重 (同种类+0.5m)</div>
+        <div style="color: #2196F3;">├─ 写入 SQLite</div>
+        <div style="color: #9C27B0;">├─ 地图注入 Popup 标注</div>
+        <div style="color: #F44336;">└─ 删除 → console.log → Qt</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>交互细节</h3>
+  <table style="width:100%; border-collapse:collapse; color:#b0d0f0; font-size:13px;">
+    <tr style="border-bottom:1px solid #1a3a58;">
+      <th style="text-align:left; padding:8px; color:#4FC3F7;">操作</th>
+      <th style="text-align:left; padding:8px; color:#4FC3F7;">行为</th>
+    </tr>
+    <tr style="border-bottom:1px solid #1a3a58;">
+      <td style="padding:8px;">点击圆点</td>
+      <td style="padding:8px;">弹出 Leaflet Popup，显示种类/严重度/时间/坐标</td>
+    </tr>
+    <tr style="border-bottom:1px solid #1a3a58;">
+      <td style="padding:8px;">点击"删除"</td>
+      <td style="padding:8px;">移除地图标记 + SQLite 硬删除 + 刷新饼图</td>
+    </tr>
+    <tr style="border-bottom:1px solid #1a3a58;">
+      <td style="padding:8px;">点地图空白处</td>
+      <td style="padding:8px;">Popup 关闭（Leaflet 默认行为）</td>
+    </tr>
+    <tr>
+      <td style="padding:8px;">删除后</td>
+      <td style="padding:8px;">标记消失，饼图/面板同步更新，IoT 重新上传汇总</td>
+    </tr>
+  </table>
+</div>
