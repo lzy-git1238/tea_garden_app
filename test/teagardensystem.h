@@ -186,6 +186,7 @@ private:
     QByteArray mjpegBuffer;
     SrtVideoStreamer *m_videoStreamer = nullptr;
     YoloDetector *m_yoloDetector = nullptr;
+    QTimer *m_yoloPullTimer = nullptr;         // 定时从 latestFrame() 拉帧送 YOLO
 
     // 当前环境数值（用于AI分析）
     double curTemp = 22.0;
