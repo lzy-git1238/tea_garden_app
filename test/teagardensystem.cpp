@@ -248,16 +248,20 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     m_roverStreamer->setUrl(
         qEnvironmentVariable("TEA_ROVER_SRT_URL", "srt://:9001?mode=listener"));
     m_roverStreamer->setResolution(1280, 720);
-    connect(m_roverStreamer, &SrtVideoStreamer::frameReady,
-            this, [this](const QImage &frame) {
-        if (!roverVideoLabel || frame.isNull()) return;
-        QPixmap pix = QPixmap::fromImage(frame);
-        int w = roverVideoLabel->width() - 4;
-        int h = w * frame.height() / frame.width();
-        roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
-            Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        roverVideoLabel->setText(QString());
+    m_roverPullTimer = new QTimer(this);
+    m_roverPullTimer->setInterval(33);
+    connect(m_roverPullTimer, &QTimer::timeout, this, [this]() {
+        QImage frame = m_roverStreamer->latestFrame();
+        if (!frame.isNull() && roverVideoLabel) {
+            QPixmap pix = QPixmap::fromImage(frame);
+            int w = roverVideoLabel->width() - 4;
+            int h = w * frame.height() / frame.width();
+            roverVideoLabel->setPixmap(pix.scaled(QSize(w, h),
+                Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            roverVideoLabel->setText(QString());
+        }
     });
+    m_roverPullTimer->start();
     connect(m_roverStreamer, &SrtVideoStreamer::statusMessage,
             this, &TeaGardenSystem::onVideoStatus);
     m_roverStreamer->start();
