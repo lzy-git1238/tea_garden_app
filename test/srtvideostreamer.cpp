@@ -129,8 +129,6 @@ void SrtVideoStreamer::run() {
                         QMutexLocker lock(&m_frameMutex);
                         m_latestFrame = copy;
                     }
-                    static int writeCnt = 0;
-                    if (++writeCnt % 90 == 0) qDebug() << "[SRT] wrote frame #" << writeCnt << "to cache";
                     m_frameCount++;
                     if (m_fpsTimer.elapsed() >= 2000) {
                         double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
