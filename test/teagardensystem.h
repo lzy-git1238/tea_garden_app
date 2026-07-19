@@ -225,6 +225,7 @@ private:
     void injectMockPest();
     void injectPestMarkers();
     void refreshPestPie();
+    void deletePestRecord(int id);   // 新增：按 id 删除虫害记录
     class PestDashboard *pestDashboard = nullptr;
     class QtCharts::QChartView *pestPieView = nullptr;
     QPushButton *roverBtn = nullptr;
