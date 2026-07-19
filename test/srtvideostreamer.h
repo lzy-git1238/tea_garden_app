@@ -6,6 +6,7 @@
 #include <QString>
 #include <QElapsedTimer>
 #include <QProcess>
+#include <QTimer>
 #include <QMutex>
 #include <atomic>
 
@@ -22,6 +23,9 @@ public:
 
     /// 取最新解码帧（线程安全，返回深拷贝）
     QImage latestFrame() const;
+
+    /// 启动主线程拉取 timer（替代 run() 中逐帧 emit）
+    void startPulling(int intervalMs = 33);
 
 signals:
     void frameReady(const QImage &image);
@@ -47,6 +51,9 @@ private:
     // 共享帧缓存（ffmpeg 线程写，主线程读）
     mutable QMutex m_frameMutex;
     QImage m_latestFrame;
+
+    // 主线程拉取 timer，定频 emit frameReady
+    QTimer *m_pullTimer = nullptr;
 };
 
 #endif // SRTVIDEOSTREAMER_H
