@@ -47,15 +47,16 @@ QVector<PestRecord> PestStore::queryAll() {
     QSqlDatabase db = QSqlDatabase::database("pest_conn");
     if (!db.isOpen()) return result;
     QSqlQuery q(db);
-    q.exec("SELECT ts, lat, lng, pest_type, severity FROM pest_log ORDER BY ts DESC");
+    q.exec("SELECT id, ts, lat, lng, pest_type, severity FROM pest_log ORDER BY ts DESC");
     while (q.next()) {
         PestRecord r;
+        r.id        = q.value(0).toInt();
         r.timestamp = QDateTime::fromMSecsSinceEpoch(
-            static_cast<qint64>(q.value(0).toDouble() * 1000.0));
-        r.lat = q.value(1).toDouble();
-        r.lng = q.value(2).toDouble();
-        r.pestType = q.value(3).toString();
-        r.severity = q.value(4).toInt();
+            static_cast<qint64>(q.value(1).toDouble() * 1000.0));
+        r.lat       = q.value(2).toDouble();
+        r.lng       = q.value(3).toDouble();
+        r.pestType  = q.value(4).toString();
+        r.severity  = q.value(5).toInt();
         result.append(r);
     }
     return result;
