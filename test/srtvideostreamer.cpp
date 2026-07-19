@@ -129,7 +129,6 @@ void SrtVideoStreamer::run() {
                         QMutexLocker lock(&m_frameMutex);
                         m_latestFrame = copy;   // QImage 隐式共享，仅 refcount++
                     }
-                    emit frameReady(copy);
                     m_frameCount++;
                     if (m_fpsTimer.elapsed() >= 2000) {
                         double fps = m_frameCount * 1000.0 / m_fpsTimer.elapsed();
