@@ -787,6 +787,11 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
     mapView = new QWebEngineView(this);
     mapView->setMinimumHeight(qRound(120 * m_scale));
     mapView->setStyleSheet("border: 1px solid #334455; border-radius: 8px;");
+    // 安装自定义 Page 以拦截 JS console.log("PEST_DELETE:<id>")
+    auto *pestPage = new PestConsolePage(this, [this](int id) {
+        deletePestRecord(id);
+    });
+    static_cast<QWebEngineView*>(mapView)->setPage(pestPage);
     static_cast<QWebEngineView *>(mapView)->setHtml(html, QUrl("https://api.open.geovisearth.com/"));
     connect(static_cast<QWebEngineView*>(mapView)->page(),
             &QWebEnginePage::renderProcessTerminated,
@@ -801,17 +806,6 @@ void TeaGardenSystem::setupMapView(QVBoxLayout *midPanel) {
             m_mapReloading = false;
             m_mapRetryMs = qMin(m_mapRetryMs * 2, 30000);
         });
-    });
-    // 监听 JS console.log("PEST_DELETE:<id>") 实现地图上删除虫害标记
-    connect(static_cast<QWebEngineView*>(mapView)->page(),
-            &QWebEnginePage::javaScriptConsoleMessage,
-            this, [this](QWebEnginePage::JavaScriptConsoleMessageLevel level,
-                         const QString &message, int lineNumber, const QString &sourceID) {
-        Q_UNUSED(level); Q_UNUSED(lineNumber); Q_UNUSED(sourceID);
-        if (message.startsWith("PEST_DELETE:")) {
-            int id = message.mid(QString("PEST_DELETE:").length()).toInt();
-            deletePestRecord(id);
-        }
     });
     midPanel->addWidget(mapView, 10);
 #else
