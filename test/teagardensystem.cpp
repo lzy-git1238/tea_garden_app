@@ -2254,21 +2254,34 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
     videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     videoLabel->setText(QString());
 
-    // 3. 写入 PestStore（非 Healthy 类别）
+    // 3. 写入 PestStore（非 Healthy 类别，取实时 GPS + 去重）
+    bool hasNewRecord = false;
     for (const DetectionResult &det : results) {
         if (det.className == "Healthy") continue;
 
+        // GPS 未就绪则跳过
+        if (m_dronePath.isEmpty()) continue;
+
+        const QString pestType = mapYoloClassToChinese(det.className);
+        const double lat = m_dronePath.last().lat;
+        const double lng = m_dronePath.last().lon;
+
+        // 同种类 + 0.5m 内去重
+        if (PestStore::instance()->hasNearby(pestType, lat, lng))
+            continue;
+
         PestRecord rec;
         rec.timestamp = QDateTime::currentDateTime();
-        rec.pestType = mapYoloClassToChinese(det.className);
-        rec.lat = 25.08;
-        rec.lng = 118.232;
-        rec.severity = scoreToSeverity(det.score);
+        rec.pestType  = pestType;
+        rec.lat       = lat;
+        rec.lng       = lng;
+        rec.severity  = scoreToSeverity(det.score);
         PestStore::instance()->append(rec);
+        hasNewRecord = true;
     }
 
-    // 4. 刷新 UI
-    if (!results.isEmpty()) {
+    // 4. 刷新 UI（仅当有新记录时）
+    if (hasNewRecord) {
         injectPestMarkers();
         refreshPestPie();
         if (pestDashboard && pestDashboard->isVisible()) {
