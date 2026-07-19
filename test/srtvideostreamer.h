@@ -43,6 +43,10 @@ private:
     int     m_resWidth  = 640;
     int     m_resHeight = 480;
     bool    m_haveResolution = false;
+
+    // 共享帧缓存（ffmpeg 线程写，主线程读）
+    mutable QMutex m_frameMutex;
+    QImage m_latestFrame;
 };
 
 #endif // SRTVIDEOSTREAMER_H
