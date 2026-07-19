@@ -2077,6 +2077,21 @@ void TeaGardenSystem::refreshPestPie() {
     chart->addSeries(series);
 }
 
+void TeaGardenSystem::deletePestRecord(int id) {
+    bool ok = PestStore::instance()->deleteById(id);
+    if (ok) {
+        // 地图移除旧标记并重建（已删除的不会出现在 queryAll 结果中）
+        injectPestMarkers();
+        // 刷新饼图
+        refreshPestPie();
+        // 刷新病虫害面板（如果开着）
+        if (pestDashboard && pestDashboard->isVisible())
+            pestDashboard->refresh();
+        // 上传更新后的汇总到 IoT
+        IotUploader::instance()->uploadPest();
+    }
+}
+
 // ── 定时调度 ──
 
 void TeaGardenSystem::checkSchedules() {
