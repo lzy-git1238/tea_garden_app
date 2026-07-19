@@ -54,12 +54,6 @@ void YoloDetector::setNmsThreshold(float v) {
 }
 
 void YoloDetector::onNewFrame(const QImage &frame) {
-    if (m_fpsTimer.isValid() &&
-        m_fpsTimer.elapsed() < 1000.0 / m_fpsLimit) {
-        return;
-    }
-    m_fpsTimer.restart();
-
     if (!m_initialized) return;
 
     {
@@ -68,11 +62,6 @@ void YoloDetector::onNewFrame(const QImage &frame) {
         m_hasFrame = true;
     }
     m_cv.notify_one();
-    static int frame_cnt = 0;
-    if (++frame_cnt % 60 == 0) {
-        printf("[YOLO] Frames received: %d\n", frame_cnt);
-        fflush(stdout);
-    }
 }
 
 void YoloDetector::inferenceLoop() {
