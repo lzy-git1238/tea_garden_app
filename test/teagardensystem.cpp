@@ -152,7 +152,8 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
             m_yoloDetector->onNewFrame(frame);
         }
     });
-    m_yoloPullTimer->start(100); // 每 100ms 拉一次（~10fps 上限）
+    m_yoloPullTimer->setInterval(333);
+    m_yoloPullTimer->start(); // 每 333ms 拉一次（~3fps）
     connect(m_yoloDetector, &YoloDetector::detectionReady,
             this, &TeaGardenSystem::onYoloResults);
     connect(m_yoloDetector, &YoloDetector::statusMessage,
