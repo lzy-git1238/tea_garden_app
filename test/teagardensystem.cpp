@@ -132,6 +132,15 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     qDebug() << "[VIDEO] SrtVideoStreamer::start() called";
     m_videoStreamer->start();
 
+    // 定时从共享帧缓存拉帧显示（~30fps）
+    m_videoPullTimer = new QTimer(this);
+    m_videoPullTimer->setInterval(33);
+    connect(m_videoPullTimer, &QTimer::timeout, this, [this]() {
+        QImage frame = m_videoStreamer->latestFrame();
+        if (!frame.isNull()) onVideoFrame(frame);
+    });
+    m_videoPullTimer->start();
+
     // YOLOv8 病虫害检测（C++ 引擎直连，同进程推理）
     m_yoloDetector = new YoloDetector(this);
     m_yoloDetector->setFpsLimit(3);
