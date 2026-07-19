@@ -20,6 +20,9 @@ public:
     void setHardwareDecoding(bool enable);
     void stop();
 
+    /// 取最新解码帧（线程安全，返回深拷贝）
+    QImage latestFrame() const;
+
 signals:
     void frameReady(const QImage &image);
     void frameReadyForYolo(const QImage &image);
