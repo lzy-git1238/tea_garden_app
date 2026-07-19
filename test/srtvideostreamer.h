@@ -24,6 +24,7 @@ public:
     QImage latestFrame() const;
 
 signals:
+    void frameReady(const QImage &image);
     void statusMessage(const QString &msg);
     void streamConnected();
     void streamDisconnected();
