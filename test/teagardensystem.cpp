@@ -340,9 +340,12 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
 
 // 【修复报错】明确定义析构函数
 TeaGardenSystem::~TeaGardenSystem() {
-    if (m_roverStreamer) {
-        m_roverStreamer->stop();
-    }
+    // 先停 timer，避免 teardown 期间触发回调
+    if (m_videoPullTimer) m_videoPullTimer->stop();
+    if (m_roverPullTimer) m_roverPullTimer->stop();
+    if (m_yoloPullTimer)  m_yoloPullTimer->stop();
+    if (m_videoStreamer)  m_videoStreamer->stop();
+    if (m_roverStreamer)  m_roverStreamer->stop();
     if (chartDashboard) {
         chartDashboard->close();
         delete chartDashboard;
