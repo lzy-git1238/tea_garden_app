@@ -4,6 +4,7 @@
 #include <QDateTime>
 #include <QString>
 #include <QVector>
+#include <QMap>
 
 struct PestRecord {
     QDateTime timestamp;
