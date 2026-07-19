@@ -187,6 +187,8 @@ private:
     SrtVideoStreamer *m_videoStreamer = nullptr;
     YoloDetector *m_yoloDetector = nullptr;
     QTimer *m_yoloPullTimer = nullptr;         // 定时从 latestFrame() 拉帧送 YOLO
+    QTimer *m_videoPullTimer = nullptr;   // 无人机显示 ~30fps
+    QTimer *m_roverPullTimer = nullptr;   // 小车显示 ~30fps
 
     // 当前环境数值（用于AI分析）
     double curTemp = 22.0;
