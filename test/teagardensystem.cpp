@@ -137,7 +137,14 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     m_videoPullTimer->setInterval(33);
     connect(m_videoPullTimer, &QTimer::timeout, this, [this]() {
         QImage frame = m_videoStreamer->latestFrame();
-        if (!frame.isNull()) onVideoFrame(frame);
+        if (!frame.isNull()) {
+            static int showCnt = 0;
+            if (++showCnt % 30 == 0) qDebug() << "[PULL] showing frame #" << showCnt;
+            onVideoFrame(frame);
+        } else {
+            static int nullCnt = 0;
+            if (++nullCnt % 90 == 0) qDebug() << "[PULL] null frame x" << nullCnt << "- waiting for stream...";
+        }
     });
     m_videoPullTimer->start();
 
