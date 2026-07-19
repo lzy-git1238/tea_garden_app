@@ -6,6 +6,7 @@
 #include <QString>
 #include <QElapsedTimer>
 #include <QProcess>
+#include <QMutex>
 #include <atomic>
 
 class SrtVideoStreamer : public QThread {
