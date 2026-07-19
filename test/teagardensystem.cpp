@@ -137,8 +137,15 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     // YOLOv8 病虫害检测（C++ 引擎直连，同进程推理）
     m_yoloDetector = new YoloDetector(this);
     m_yoloDetector->setFpsLimit(3);
-    connect(m_videoStreamer, &SrtVideoStreamer::frameReadyForYolo,
-            m_yoloDetector, &YoloDetector::onNewFrame);
+    // 使用 QTimer 定时从共享帧缓存拉帧，避免事件队列堆积
+    m_yoloPullTimer = new QTimer(this);
+    connect(m_yoloPullTimer, &QTimer::timeout, this, [this]() {
+        QImage frame = m_videoStreamer->latestFrame();
+        if (!frame.isNull()) {
+            m_yoloDetector->onNewFrame(frame);
+        }
+    });
+    m_yoloPullTimer->start(100); // 每 100ms 拉一次（~10fps 上限）
     connect(m_yoloDetector, &YoloDetector::detectionReady,
             this, &TeaGardenSystem::onYoloResults);
     connect(m_yoloDetector, &YoloDetector::statusMessage,
