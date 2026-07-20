@@ -30,9 +30,9 @@ SOURCES += \
     teagardensystem.cpp \
     thresholddialog.cpp \
     widget.cpp \
-    yolodetector.cpp \
-    yolo_engine.cpp \
-    postprocess.cpp
+    rknn/yolov8/rkYolov5s.cc \
+    rknn/yolov8/postprocess.cc \
+    rknn/yolov8/preprocess.cc
 
 HEADERS += \
     chartdashboard.h \
@@ -48,11 +48,16 @@ HEADERS += \
     teagardensystem.h \
     thresholddialog.h \
     widget.h \
-    yolodetector.h \
-    yolo_engine.hpp \
-    postprocess.h \
-    rknn_api.h \
-    rknn_matmul_api.h
+    rknn/yolov8/rkYolov5s.hpp \
+    rknn/yolov8/rknnPool.hpp \
+    rknn/yolov8/ThreadPool.hpp \
+    rknn/yolov8/postprocess.h \
+    rknn/yolov8/preprocess.h \
+    rknn/yolov8/coreNum.hpp \
+    rknn/yolov8/rga_func.h \
+    rknn/yolov8/drm_func.h \
+    rknn/yolov8/rknn_api.h \
+    rknn/yolov8/rknn_matmul_api.h
 
 FORMS += \
     widget.ui
