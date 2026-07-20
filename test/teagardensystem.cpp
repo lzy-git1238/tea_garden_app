@@ -2367,8 +2367,6 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
             pestDashboard->refresh();
     }
 }
-    }
-}
 
 // ── IoT 云端命令 ──
 
