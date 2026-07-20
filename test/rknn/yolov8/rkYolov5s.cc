@@ -287,6 +287,9 @@ post_process(bufs, zps, scales, height, width,
              box_conf_threshold, nms_threshold, pads,
              scale_w, scale_h, &detect_result_group);
 
+    // 缓存最近一次推理的检测结果，供外部通过 getLastResults() 查询
+    m_lastResults = detect_result_group;
+
     // 绘制框体/Draw the box
 // 绘制框体：每个类别一种固定颜色（BGR），类别数超过表长时取模循环
 static const cv::Scalar CLASS_COLORS[] = {
