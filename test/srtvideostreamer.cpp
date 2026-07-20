@@ -105,7 +105,7 @@ void SrtVideoStreamer::run() {
                 if (bestW > 0 && bestH > 0) {
                     m_resWidth  = bestW;
                     m_resHeight = bestH;
-                    frameSize   = bestW * bestH * 3;
+                    frameSize   = bestW * bestH * 3 / 2;
                     qDebug() << "[SRT] resolution(stderr):" << bestW << "x" << bestH
                              << "frameSize:" << frameSize;
                     emit statusMessage(QString("视频 %1x%2").arg(bestW).arg(bestH));
