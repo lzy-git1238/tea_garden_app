@@ -20,13 +20,12 @@ QTimer 33ms                            QTimer 333ms
 latestFrame()                          latestFrame() → cv::Mat
     │                                      │
     ▼                                      ▼
-onVideoFrame()                         rknnPool.put() → 12线程推理
+onVideoFrame()                         rknnPool.put() → 3线程推理
 直接显示原始画面                            │
 (流畅 30fps，无框)                         ▼
                                       rknnPool.get() → cv::Mat（已画框）
                                           │
                                           ▼
-                                     onYoloResults()
                                      ├─ cv::Mat → QPixmap → 显示（有框）
                                      └─ 提取检测结果 → PestStore + 地图标记
 ```
