@@ -38,7 +38,7 @@ void SrtVideoStreamer::run() {
              << "-i" << m_url
              << "-an"
              << "-f" << "rawvideo"
-             << "-pix_fmt" << "rgb24"
+             << "-pix_fmt" << "nv12"
              << "pipe:1";
 
         qDebug() << "[SRT] spawning: ffmpeg" << args;
