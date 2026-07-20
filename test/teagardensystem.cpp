@@ -1989,8 +1989,8 @@ void TeaGardenSystem::injectMockPest() {
         rec.lat = m_dronePath.last().lat;
         rec.lng = m_dronePath.last().lon;
     } else {
-        rec.lat = 24.614756;
-        rec.lng = 118.310563;
+        rec.lat = qEnvironmentVariable("TEA_MAP_LAT", "25.08039").toDouble();
+        rec.lng = qEnvironmentVariable("TEA_MAP_LNG", "118.232478").toDouble();
     }
     rec.pestType = types[QRandomGenerator::global()->bounded(types.size())];
     rec.severity = 1 + QRandomGenerator::global()->bounded(3);
