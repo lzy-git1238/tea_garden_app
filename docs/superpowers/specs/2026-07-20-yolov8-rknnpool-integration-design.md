@@ -101,7 +101,7 @@ std::unique_ptr<rknnPool<rkYolov5s, cv::Mat, cv::Mat>> m_yoloPool;
 
 // 初始化（替换现有的 m_yoloDetector 相关代码）
 m_yoloPool = std::make_unique<rknnPool<rkYolov5s, cv::Mat, cv::Mat>>(
-    "/home/elf/QTproject/test/model/best.rknn", 12);
+    "/home/elf/QTproject/test/model/best.rknn", 3);  // 3线程，各绑一个NPU核
 m_yoloPool->init();
 
 // YOLO Timer 333ms 拉帧推理
