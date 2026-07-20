@@ -29,6 +29,7 @@ private:
     int img_width, img_height;
 
     float nms_threshold, box_conf_threshold;
+    detect_result_group_t m_lastResults;
 
 public:
     rkYolov5s(const std::string &model_path);
