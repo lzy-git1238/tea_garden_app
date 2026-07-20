@@ -1792,7 +1792,7 @@ void TeaGardenSystem::applyTheme() {
 }
 
 void TeaGardenSystem::refreshWeatherAlert() {
-    QString location = qEnvironmentVariable("TEA_WEATHER_LOCATION", "WTX_CH101280800");
+    QString location = qEnvironmentVariable("TEA_WEATHER_LOCATION", "WTX_CH101230201");
     QString token    = qEnvironmentVariable("TEA_WEATHER_TOKEN");
     if (token.isEmpty()) {
         weatherLevelLabel->setText("⚠ 未配置Token");
