@@ -2335,8 +2335,6 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
                                      const detect_result_group_t &results) {
     if (!videoLabel || frame.isNull()) return;
 
-    m_lastYoloFrameTime.start();  // 记录贴帧时刻，锁定 500ms
-
     // 1. 直接显示（框已由推理线程 OpenCV 绘制）
     const int w = qMax(videoLabel->width(), 280);
     const int h = w * kDroneVideoHeight / kDroneVideoWidth;
