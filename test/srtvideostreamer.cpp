@@ -121,14 +121,11 @@ void SrtVideoStreamer::run() {
                 QByteArray frameData = stdoutBuf.left(frameSize);
                 stdoutBuf.remove(0, frameSize);
 
-                QImage img((const uchar*)frameData.constData(),
-                           m_resWidth, m_resHeight,
-                           QImage::Format_RGB888);
-                QImage copy = img.copy();
-                if (!copy.isNull()) {
+                if (!frameData.isEmpty()) {
                     {
-                        QMutexLocker lock(&m_frameMutex);
-                        m_latestFrame = copy;
+                        QMutexLocker lock(&m_frameRawMutex);
+                        m_latestFrameRaw = frameData;   // 深拷贝 NV12 字节
+                        m_frameRawSize = frameData.size();
                     }
                     m_frameCount++;
                     if (m_fpsTimer.elapsed() >= 2000) {
