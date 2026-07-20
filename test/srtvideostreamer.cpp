@@ -69,7 +69,7 @@ void SrtVideoStreamer::run() {
         });
 
         QByteArray stdoutBuf;
-        int frameSize = m_haveResolution ? (m_resWidth * m_resHeight * 3) : 0;
+        int frameSize = m_haveResolution ? (m_resWidth * m_resHeight * 3 / 2) : 0;
 
         while (m_running && proc.state() == QProcess::Running) {
             proc.waitForReadyRead(500);
