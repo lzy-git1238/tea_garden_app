@@ -76,4 +76,4 @@ unix: PKGCONFIG += opencv4
 
 # RKNN 运行时库
 LIBS += -L$$PWD/../lib -lrknnrt
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD $$PWD/rknn/yolov8
