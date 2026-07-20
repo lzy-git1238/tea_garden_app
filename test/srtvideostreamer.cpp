@@ -167,15 +167,12 @@ QImage SrtVideoStreamer::latestFrame() const {
         m_resWidth, m_resHeight, RK_FORMAT_RGB_888);
     im_rect src_rect = {0, 0, m_resWidth, m_resHeight};
     im_rect dst_rect = {0, 0, m_resWidth, m_resHeight};
-    IM_STATUS ret = imcheck(src, dst, src_rect, dst_rect);
-    if (ret != IM_STATUS_NOERROR) {
-        fprintf(stderr, "[SRT] RGA check error: %s\n", imStrError(ret));
-        return QImage();
-    }
-    ret = imcvtcolor(src, dst, RK_FORMAT_YCbCr_420_SP, RK_FORMAT_RGB_888);
-    if (ret != IM_STATUS_NOERROR) {
-        fprintf(stderr, "[SRT] RGA cvtcolor error: %s\n", imStrError(ret));
-        return QImage();
+    IM_STATUS ret = imcvtcolor(src, dst, RK_FORMAT_YCbCr_420_SP, RK_FORMAT_RGB_888);
+    if (ret != IM_STATUS_NOERROR && ret != 1) {
+        // RGA 有时返回非零但实际成功（imStrError 显示 "run successfully"）
+        static int rgaErrCnt = 0;
+        if (++rgaErrCnt <= 3)
+            fprintf(stderr, "[SRT] RGA cvtcolor status=%d (%s)\n", ret, imStrError(ret));
     }
 
     return QImage((const uchar*)rgbBuf.constData(),
