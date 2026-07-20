@@ -2324,55 +2324,28 @@ static int scoreToSeverity(double score) {
 }
 
 void TeaGardenSystem::onYoloResults(const QImage &frame,
-                                     const QVector<DetectionResult> &results) {
+                                     const detect_result_group_t &results) {
     if (!videoLabel || frame.isNull()) return;
 
-    // 1. 画框叠加
-    QImage overlay = frame.copy();
-    QPainter painter(&overlay);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    for (const DetectionResult &det : results) {
-        QColor color = colorForYoloClass(det.className);
-        painter.setPen(QPen(color, 2));
-        painter.setBrush(Qt::NoBrush);
-        painter.drawRect(det.bbox);
-
-        // 标签背景
-        QString label = QString("%1 %2%").arg(det.className).arg(det.score * 100, 0, 'f', 0);
-        QFont font = painter.font();
-        font.setPixelSize(12);
-        painter.setFont(font);
-        QFontMetrics fm(font);
-        QRect textRect = fm.boundingRect(label);
-        QRect bgRect(det.bbox.topLeft() - QPoint(0, textRect.height() + 4),
-                     QSize(textRect.width() + 8, textRect.height() + 4));
-        painter.fillRect(bgRect, color);
-        painter.setPen(Qt::white);
-        painter.drawText(bgRect, Qt::AlignCenter, label);
-    }
-    painter.end();
-
-    // 2. 显示到 UI
+    // 1. 直接显示（框已由推理线程 OpenCV 绘制）
     const int w = qMax(videoLabel->width(), 280);
     const int h = w * kDroneVideoHeight / kDroneVideoWidth;
-    const QPixmap pix = QPixmap::fromImage(overlay);
+    const QPixmap pix = QPixmap::fromImage(frame);
     videoLabel->setPixmap(pix.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     videoLabel->setText(QString());
 
-    // 3. 写入 PestStore（非 Healthy 类别，取实时 GPS + 去重）
+    // 2. 写入 PestStore（非 Healthy 类别，取实时 GPS + 去重）
     bool hasNewRecord = false;
-    for (const DetectionResult &det : results) {
-        if (det.className == "Healthy") continue;
+    for (int i = 0; i < results.count; i++) {
+        const detect_result_t &d = results.results[i];
+        QString pestType = mapYoloClassToChinese(QString::fromUtf8(d.name));
+        if (pestType == "Healthy" || pestType.isEmpty()) continue;
 
-        // GPS 未就绪则跳过
         if (m_dronePath.isEmpty()) continue;
 
-        const QString pestType = mapYoloClassToChinese(det.className);
-        const double lat = m_dronePath.last().lat;
-        const double lng = m_dronePath.last().lon;
+        double lat = m_dronePath.last().lat;
+        double lng = m_dronePath.last().lon;
 
-        // 同种类 + 0.5m 内去重
         if (PestStore::instance()->hasNearby(pestType, lat, lng))
             continue;
 
@@ -2381,18 +2354,19 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
         rec.pestType  = pestType;
         rec.lat       = lat;
         rec.lng       = lng;
-        rec.severity  = scoreToSeverity(det.score);
+        rec.severity  = scoreToSeverity(d.prop);
         PestStore::instance()->append(rec);
         hasNewRecord = true;
     }
 
-    // 4. 刷新 UI（仅当有新记录时）
+    // 3. 刷新 UI
     if (hasNewRecord) {
         injectPestMarkers();
         refreshPestPie();
-        if (pestDashboard && pestDashboard->isVisible()) {
+        if (pestDashboard && pestDashboard->isVisible())
             pestDashboard->refresh();
-        }
+    }
+}
     }
 }
 
