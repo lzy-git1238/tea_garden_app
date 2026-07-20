@@ -140,41 +140,44 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     });
     m_videoPullTimer->start();
 
-    // YOLOv8 病虫害检测（C++ 引擎直连，同进程推理）
-    m_yoloDetector = new YoloDetector(this);
-    m_yoloDetector->setFpsLimit(3);
-    // 使用 QTimer 定时从共享帧缓存拉帧，避免事件队列堆积
+    // rknnPool 推理引擎（替代旧 YoloDetector），3 线程各绑一个 NPU 核
+    QString modelPath = qEnvironmentVariable("TEA_YOLO_MODEL",
+                                             "/home/elf/QTproject/test/model/best.rknn");
+    m_yoloPool = std::make_unique<rknnPool<rkYolov5s, cv::Mat, cv::Mat>>(
+        modelPath.toStdString(), 3);
+    if (m_yoloPool->init() != 0) {
+        fprintf(stderr, "[YOLO] rknnPool init FAILED\n");
+        fflush(stderr);
+    } else {
+        fprintf(stderr, "[YOLO] rknnPool READY (3 threads, 3 NPU cores)\n");
+        fflush(stderr);
+    }
+
+    // YOLO Timer 333ms 拉帧 → rknnPool 推理
     m_yoloPullTimer = new QTimer(this);
+    m_yoloPullTimer->setInterval(333);
     connect(m_yoloPullTimer, &QTimer::timeout, this, [this]() {
+        if (!m_yoloPool) return;
         QImage frame = m_videoStreamer->latestFrame();
-        if (!frame.isNull()) {
-            m_yoloDetector->onNewFrame(frame);
+        if (frame.isNull()) return;
+        cv::Mat mat(frame.height(), frame.width(), CV_8UC3,
+                    const_cast<uchar*>(frame.bits()), frame.bytesPerLine());
+        cv::Mat bgr;
+        cv::cvtColor(mat, bgr, cv::COLOR_RGB2BGR);
+        if (m_yoloPool->put(bgr) != 0) return;
+        cv::Mat result;
+        if (m_yoloPool->get(result) != 0) return;
+        cv::cvtColor(result, result, cv::COLOR_BGR2RGB);
+        QImage qimg(result.data, result.cols, result.rows, result.step,
+                    QImage::Format_RGB888);
+        auto model = m_yoloPool->lastModel();
+        if (model) {
+            onYoloResults(qimg.copy(), model->getLastResults());
+        } else {
+            onYoloResults(qimg.copy(), detect_result_group_t{});
         }
     });
-    m_yoloPullTimer->setInterval(333);
-    m_yoloPullTimer->start(); // 每 333ms 拉一次（~3fps）
-    connect(m_yoloDetector, &YoloDetector::detectionReady,
-            this, &TeaGardenSystem::onYoloResults);
-    connect(m_yoloDetector, &YoloDetector::statusMessage,
-            this, &TeaGardenSystem::onVideoStatus);
-
-    // 初始化引擎：模型和标签路径可通过环境变量覆盖
-    QString modelPath = qEnvironmentVariable("TEA_YOLO_MODEL",
-                                             "/home/elf/sdcard/tealeaf.rknn");
-    QString labelsPath = qEnvironmentVariable("TEA_YOLO_LABELS",
-                                              "/home/elf/sdcard/labels_list.txt");
-    int coreMask = qEnvironmentVariableIntValue("TEA_YOLO_CORE_MASK");
-    if (coreMask == 0) coreMask = 1;
-    printf("[YOLO] Calling init: model=%s labels=%s core=%d\n",
-           modelPath.toUtf8().constData(),
-           labelsPath.toUtf8().constData(),
-           coreMask);
-    fflush(stdout);
-    bool ok = m_yoloDetector->init(modelPath.toStdString(),
-                                   labelsPath.toStdString(),
-                                   coreMask);
-    printf("[YOLO] init returned: %s\n", ok ? "true" : "false");
-    fflush(stdout);
+    m_yoloPullTimer->start();
 
     // GPS 路径显示（持久订阅 ros2 topic echo，逐行解析）
     m_gpsProcess = new QProcess(this);
