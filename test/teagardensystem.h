@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTimer>
+#include <QElapsedTimer>
 #include <QFrame>
 #include <QList>
 #include <QMap>
