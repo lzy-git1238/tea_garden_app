@@ -188,7 +188,7 @@ private:
     class QWebSocket *videoSocket = nullptr;
     QByteArray mjpegBuffer;
     SrtVideoStreamer *m_videoStreamer = nullptr;
-    YoloDetector *m_yoloDetector = nullptr;
+    std::unique_ptr<rknnPool<rkYolov5s, cv::Mat, cv::Mat>> m_yoloPool;
     QTimer *m_yoloPullTimer = nullptr;         // 定时从 latestFrame() 拉帧送 YOLO
     QTimer *m_videoPullTimer = nullptr;   // 无人机显示 ~30fps
     QTimer *m_roverPullTimer = nullptr;   // 小车显示 ~30fps
