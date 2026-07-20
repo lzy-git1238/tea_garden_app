@@ -48,9 +48,10 @@ private:
     int     m_resHeight = 480;
     bool    m_haveResolution = false;
 
-    // 共享帧缓存（ffmpeg 线程写，主线程读）
-    mutable QMutex m_frameMutex;
-    QImage m_latestFrame;
+    // 共享原始帧缓存（ffmpeg 线程写 NV12 字节，主线程通过 latestFrame() 用 RGA 转 RGB）
+    mutable QMutex m_frameRawMutex;
+    QByteArray m_latestFrameRaw;
+    int m_frameRawSize = 0;
 
     // 主线程拉取 timer，定频 emit frameReady
     QTimer *m_pullTimer = nullptr;
