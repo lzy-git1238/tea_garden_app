@@ -1986,11 +1986,9 @@ void TeaGardenSystem::injectMockPest() {
     PestRecord rec;
     rec.timestamp = QDateTime::currentDateTime();
     if (!m_dronePath.isEmpty()) {
-        // 有无人机 GPS：用当前位置 + 微小随机偏移
-        rec.lat = m_dronePath.last().lat + (QRandomGenerator::global()->bounded(20) - 10) / 100000.0;
-        rec.lng = m_dronePath.last().lon + (QRandomGenerator::global()->bounded(20) - 10) / 100000.0;
+        rec.lat = m_dronePath.last().lat;
+        rec.lng = m_dronePath.last().lon;
     } else {
-        // 无 GPS：使用默认标记点
         rec.lat = 24.614756;
         rec.lng = 118.310563;
     }
