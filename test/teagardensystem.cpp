@@ -137,7 +137,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     m_videoPullTimer->setInterval(33);
     connect(m_videoPullTimer, &QTimer::timeout, this, [this]() {
         // YOLO 有框帧锁定 2 秒，期间跳过原始帧覆盖
-        if (m_lastYoloFrameTime.isValid() && m_lastYoloFrameTime.elapsed() < 2000)
+        if (m_lastYoloFrameTime.isValid() && m_lastYoloFrameTime.elapsed() < 500)
             return;
         QImage frame = m_videoStreamer->latestFrame();
         if (!frame.isNull()) onVideoFrame(frame);
