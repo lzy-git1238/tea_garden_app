@@ -23,7 +23,8 @@
 #include <QProcess>
 
 #include "loramanager.h"
-#include "yolodetector.h"
+#include "rknnPool.hpp"
+#include "rkYolov5s.hpp"
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QtCharts/QChartView>
