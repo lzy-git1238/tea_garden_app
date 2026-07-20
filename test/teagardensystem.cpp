@@ -2345,10 +2345,14 @@ void TeaGardenSystem::onYoloResults(const QImage &frame,
         QString pestType = mapYoloClassToChinese(QString::fromUtf8(d.name));
         if (pestType == "Healthy" || pestType.isEmpty()) continue;
 
-        if (m_dronePath.isEmpty()) continue;
-
-        double lat = m_dronePath.last().lat;
-        double lng = m_dronePath.last().lon;
+        double lat, lng;
+        if (m_dronePath.isEmpty()) {
+            lat = qEnvironmentVariable("TEA_MAP_LAT", "25.08039").toDouble();
+            lng = qEnvironmentVariable("TEA_MAP_LNG", "118.232478").toDouble();
+        } else {
+            lat = m_dronePath.last().lat;
+            lng = m_dronePath.last().lon;
+        }
 
         if (PestStore::instance()->hasNearby(pestType, lat, lng))
             continue;
