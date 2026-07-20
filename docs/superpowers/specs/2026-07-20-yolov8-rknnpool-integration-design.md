@@ -40,7 +40,9 @@ onVideoFrame()                         rknnPool.put() → 3线程推理
 6. `cv::Mat` → `QImage` → `QPixmap` → `setPixmap` 更新显示
 7. 提取虫害信息写入 `PestStore`
 
-### 性能
+- 模型：`best.rknn`，标签：`labels_list.txt`（6 类茶病虫害）
+- 置信度阈值 0.6，NMS 阈值 0.45（与 yolov8_test 一致）
+- 3 线程 rknnPool，每线程独占一个 NPU 核（Core0/1/2）
 
 - 推理在独立线程池（3 线程，每线程绑一个 NPU 核），不阻塞主线程也不阻塞 ffmpeg 解码
 - 显示走 33ms Timer 原始帧，大部分时间无框但流畅
