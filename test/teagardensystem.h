@@ -76,7 +76,8 @@ private slots:
     void onIotCommand(const QString &device, bool on, const QString &requestId);
     void onVideoFrame(const QImage &image);
     void onVideoStatus(const QString &msg);
-    void onYoloResults(const QImage &frame, const QVector<DetectionResult> &results);
+    void onYoloResults(const QImage &frame,
+                       const detect_result_group_t &results);
     void openRoverPanel();
 private:
     void drawDronePath();
