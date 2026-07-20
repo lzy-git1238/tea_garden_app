@@ -150,6 +150,34 @@ void SrtVideoStreamer::run() {
 }
 
 QImage SrtVideoStreamer::latestFrame() const {
-    QMutexLocker lock(&m_frameMutex);
-    return m_latestFrame.isNull() ? QImage() : m_latestFrame.copy();
+    QMutexLocker lock(&m_frameRawMutex);
+    if (m_latestFrameRaw.isEmpty() || m_frameRawSize <= 0)
+        return QImage();
+    if (m_resWidth <= 0 || m_resHeight <= 0)
+        return QImage();
+
+    // RGA 硬件 NV12 → RGB888
+    rga_buffer_t src = wrapbuffer_virtualaddr(
+        (void*)m_latestFrameRaw.constData(),
+        m_resWidth, m_resHeight, RK_FORMAT_YCbCr_420_SP);
+    int rgbSize = m_resWidth * m_resHeight * 3;
+    QByteArray rgbBuf(rgbSize, Qt::Uninitialized);
+    rga_buffer_t dst = wrapbuffer_virtualaddr(
+        (void*)rgbBuf.data(),
+        m_resWidth, m_resHeight, RK_FORMAT_RGB_888);
+    im_rect src_rect = {0, 0, m_resWidth, m_resHeight};
+    im_rect dst_rect = {0, 0, m_resWidth, m_resHeight};
+    IM_STATUS ret = imcheck(src, dst, src_rect, dst_rect);
+    if (ret != IM_STATUS_NOERROR) {
+        fprintf(stderr, "[SRT] RGA check error: %s\n", imStrError(ret));
+        return QImage();
+    }
+    ret = imcvtcolor(src, dst, RK_FORMAT_YCbCr_420_SP, RK_FORMAT_RGB_888);
+    if (ret != IM_STATUS_NOERROR) {
+        fprintf(stderr, "[SRT] RGA cvtcolor error: %s\n", imStrError(ret));
+        return QImage();
+    }
+
+    return QImage((const uchar*)rgbBuf.constData(),
+                  m_resWidth, m_resHeight, QImage::Format_RGB888).copy();
 }
