@@ -1985,8 +1985,15 @@ void TeaGardenSystem::injectMockPest() {
     QStringList types = {"茶尺蠖", "茶小绿叶蝉", "茶炭疽病", "茶尺蠖", "茶小绿叶蝉"};
     PestRecord rec;
     rec.timestamp = QDateTime::currentDateTime();
-    rec.lat = 25.08 + (QRandomGenerator::global()->bounded(200) - 100) / 10000.0;
-    rec.lng = 118.232 + (QRandomGenerator::global()->bounded(200) - 100) / 10000.0;
+    if (!m_dronePath.isEmpty()) {
+        // 有无人机 GPS：用当前位置 + 微小随机偏移
+        rec.lat = m_dronePath.last().lat + (QRandomGenerator::global()->bounded(20) - 10) / 100000.0;
+        rec.lng = m_dronePath.last().lon + (QRandomGenerator::global()->bounded(20) - 10) / 100000.0;
+    } else {
+        // 无 GPS：使用默认标记点
+        rec.lat = 24.614756;
+        rec.lng = 118.310563;
+    }
     rec.pestType = types[QRandomGenerator::global()->bounded(types.size())];
     rec.severity = 1 + QRandomGenerator::global()->bounded(3);
     PestStore::instance()->append(rec);
