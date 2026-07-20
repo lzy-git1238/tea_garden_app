@@ -32,6 +32,13 @@ public:
     int put(inputType inputData);
     // 获取推理结果/Get the results of your inference
     int get(outputType &outputData);
+    // 获取最近一次推理使用的模型实例
+    std::shared_ptr<rknnModel> lastModel() {
+        std::lock_guard<std::mutex> lock(idMtx);
+        if (id == 0) return nullptr;
+        int idx = (id - 1) % threadNum;
+        return models[idx];
+    }
     ~rknnPool();
 };
 
