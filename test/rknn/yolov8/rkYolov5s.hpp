@@ -4,6 +4,7 @@
 #include "rknn_api.h"
 
 #include "opencv2/core/core.hpp"
+#include "postprocess.h"
 
 static void dump_tensor_attr(rknn_tensor_attr *attr);
 static unsigned char *load_data(FILE *fp, size_t ofst, size_t sz);
