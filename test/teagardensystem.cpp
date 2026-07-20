@@ -9,7 +9,6 @@
 #include "schedulestore.h"
 #include "scheduledialog.h"
 #include "srtvideostreamer.h"
-#include "yolodetector.h"
 #include "rovercontrolpanel.h"
 
 #include <QRandomGenerator>
