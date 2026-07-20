@@ -2018,6 +2018,10 @@ void TeaGardenSystem::injectMockPest() {
 void TeaGardenSystem::injectPestMarkers() {
 #ifdef TEA_ENABLE_MAP_WEBVIEW
     if (!mapView) return;
+    // 限流：2 秒内最多刷新一次地图标注
+    if (m_lastMarkerInject.isValid() && m_lastMarkerInject.elapsed() < 2000)
+        return;
+    m_lastMarkerInject.start();
     QVector<PestRecord> records = PestStore::instance()->queryAll();
     if (records.isEmpty()) {
         // 无记录时也要清空地图上的旧标记
