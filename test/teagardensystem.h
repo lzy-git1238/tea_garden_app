@@ -21,6 +21,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QProcess>
+#include <memory>
 
 #include "loramanager.h"
 #include "rknnPool.hpp"
