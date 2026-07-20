@@ -75,6 +75,6 @@ unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv4
 
 # RKNN 运行时库
-LIBS += -L$$PWD/../lib -lrknnrt
+LIBS += -L$$PWD/../lib -lrknnrt -lrga
 INCLUDEPATH += $$PWD $$PWD/rknn/yolov8
 unix:!macx: INCLUDEPATH += /usr/include/rga
