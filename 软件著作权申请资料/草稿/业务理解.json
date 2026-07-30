@@ -571,11 +571,13 @@
   "model_authored": true,
   "external_research_notes": "",
   "confirmation_required": true,
-  "user_confirmed": false,
+  "user_confirmed": true,
   "confirmation_stage": "business",
   "next_action": "请确认 草稿/业务理解.md 中的软件用途、行业、目标用户、核心功能、手册结构和申请口径；确认后运行 confirm_stage.py --stage business。",
   "review_notes": [
     "请确认模型判断的行业领域、目标用户和主要功能是否符合实际申报口径。",
     "请确认操作手册结构是否按真实页面和流程展开，而不是套用抽象功能列表。"
-  ]
+  ],
+  "confirmation_note": "用户确认业务理解：行业智慧农业、目标用户、10项核心功能、6个操作手册模块均无异议",
+  "confirmed_at": "2026-07-30T14:58:37+00:00"
 }
