@@ -74,7 +74,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv4
 
-# ARM-only 运行时库（板端编译时 QT_ARCH 为 arm64，桌面端无此变量跳过）
-contains(QT_ARCH, arm64): LIBS += -L$$PWD/../lib -lrknnrt -lrga
+# ARM-only 运行时库（文件存在才链接，x86 上自动跳过）
+exists($$PWD/../lib/librknnrt.so): LIBS += -L$$PWD/../lib -lrknnrt -lrga
 INCLUDEPATH += $$PWD $$PWD/rknn/yolov8
 unix:!macx: INCLUDEPATH += /usr/include/rga
