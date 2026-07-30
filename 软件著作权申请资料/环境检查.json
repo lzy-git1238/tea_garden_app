@@ -1,0 +1,23 @@
+{
+  "output_directory": "当前目录/软件著作权申请资料",
+  "capabilities": {
+    "markdown_drafts": true,
+    "application_txt": true,
+    "basic_docx": true,
+    "python_docx": true,
+    "pandoc_preview": true,
+    "docx_openxml_full": false,
+    "dotnet_sdk": true
+  },
+  "versions": {
+    "pandoc": "pandoc 2.9.2.1",
+    "dotnet": "6.0.136"
+  },
+  "final_docx_mode": "python-docx",
+  "recommendation": "完整 DOCX OpenXML 环境未就绪。可以继续使用兜底 DOCX 生成；如需更规范的 Word 结构和校验，请先安装 .NET SDK 并运行 vendor/docx-toolkit/scripts/setup.sh。",
+  "install_prompt": "是否安装完整 DOCX 环境？安装后文档生成和校验更规范；不安装也可以继续生成 Markdown、TXT 和基础 DOCX。",
+  "requires_user_input": true,
+  "confirmation_stage": "environment",
+  "next_action": "请选择：1) 安装完整 DOCX 环境；2) 使用基础 DOCX 兜底继续。回复选择后再进入项目分析。",
+  "docx_env_output": "=== DOCX Environment Check ===\n\n[FAIL]    dotnet         6.0.136 (requires >= 8.0)\n[OK]      project        built\n[OK]      pandoc         2.9.2 (content preview)\n[OK]      soffice        7.3.7 (.doc conversion)\n[OK]      zip/unzip      available\n[OK]      locale         zh_CN.UTF-8\n[OK]      permissions    all scripts executable\n\nStatus: NOT READY\n\nCritical dependencies missing. Run the full setup:\n  bash scripts/setup.sh          # macOS / Linux / WSL\n  powershell scripts/setup.ps1   # Windows PowerShell"
+}
