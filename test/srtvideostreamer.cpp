@@ -3,7 +3,9 @@
 #include <QThread>
 #include <QRegularExpression>
 #include <unistd.h>
+#ifdef __aarch64__
 #include "im2d.h"
+#endif
 
 SrtVideoStreamer::SrtVideoStreamer(QObject *parent) : QThread(parent) {}
 SrtVideoStreamer::~SrtVideoStreamer() { stop(); }
