@@ -1,0 +1,32 @@
+{
+  "software_name": "智慧茶园综合管理系统",
+  "version": "V1.0",
+  "project_root": "/home/lzy/文档/QTproject",
+  "file_count": 1,
+  "material_line_count": 307,
+  "source_line_count": 305,
+  "selected_source_line_count": 305,
+  "lines_per_page": 50,
+  "total_pages": 7,
+  "target_pages": 60,
+  "available_candidate_line_count": 5956,
+  "available_candidate_pages": 120,
+  "supplement_status": "候选源码可达到前30页/后30页要求",
+  "mode": "all_under_60_pages",
+  "selection_file": "软件著作权申请资料/草稿/代码文件选择.json",
+  "outputs": [
+    "代码-全部.md"
+  ],
+  "files": [
+    {
+      "path": "test/rknn_yolo_server.py",
+      "source_line_count": 305,
+      "selected_line_start": 1,
+      "selected_line_end": 305,
+      "selected_line_count": 305,
+      "material_line_start": 1,
+      "material_line_end": 307
+    }
+  ],
+  "safe_software_filename": "智慧茶园综合管理系统"
+}

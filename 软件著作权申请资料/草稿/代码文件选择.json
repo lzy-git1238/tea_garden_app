@@ -3,7 +3,7 @@
   "selection_required": true,
   "model_selection_required": true,
   "confirmation_required": true,
-  "user_confirmed": false,
+  "user_confirmed": true,
   "target_pages": 60,
   "lines_per_page": 50,
   "target_lines": 3000,
@@ -250,5 +250,7 @@
       "evidence": "Python RKNN YOLOv5s推理服务：RKNN模型加载、socket监听接受TCP连接、接收Qt端发送的[4B总长度][4B宽][4B高]+RGB像素二进制帧、NPU推理(rknn.inference)、YOLOv5后处理(3输出头9 anchor/物体置信度0.25/xywh2xyxy坐标还原)、JSON结果返回、进程生命周期管理",
       "model_reason": "AI推理核心：展示RKNN NPU模型加载与推理、自定义二进制Socket通信协议、YOLOv5后处理算法(anchor解码+坐标映射还原)的完整Python实现，是病虫害检测功能的关键代码"
     }
-  ]
+  ],
+  "confirmation_note": "用户确认：25个文件+teagardensystem.cpp共26个文件，约5904行118页",
+  "confirmed_at": "2026-07-30T15:09:10+00:00"
 }

@@ -9,31 +9,54 @@
     "scripts": {},
     "dependency_names": []
   },
-  "frameworks": [],
-  "language": "Python、Shell",
+  "frameworks": [
+    "Qt 5/6",
+    "FFmpeg",
+    "Paho MQTT",
+    "RKNN"
+  ],
+  "language": "C++、Python",
   "source": {
-    "file_count": 8,
+    "file_count": 26,
     "line_count": 790,
-    "total_file_count": 8,
-    "total_line_count": 790,
+    "total_file_count": 26,
+    "total_line_count": 5904,
     "extension_counts": {
-      ".html": 2,
-      ".py": 3,
-      ".sh": 3
+      ".cpp": 12,
+      ".h": 13,
+      ".py": 1
     },
     "category_counts": {
       "source": 8
     },
     "categorized_files": {
       "source": [
-        "build-desktop-Debug/amap_view.html",
-        "test/gps_bridge.py",
-        "test/start_yolo_server.sh",
-        "test/rknn_yolo_server.py",
-        "test/run_test.sh",
-        "test/run_on_board.sh",
-        "test/web/amap_view.html",
-        "docs/gemini-code-1780938750949.py"
+        "test/main.cpp",
+        "test/widget.h",
+        "test/widget.cpp",
+        "test/teagardensystem.h",
+        "test/teagardensystem.cpp",
+        "test/rovercontrolpanel.h",
+        "test/rovercontrolpanel.cpp",
+        "test/loramanager.h",
+        "test/loramanager.cpp",
+        "test/iotuploader.h",
+        "test/iotuploader.cpp",
+        "test/srtvideostreamer.h",
+        "test/srtvideostreamer.cpp",
+        "test/chartdashboard.h",
+        "test/datastore.h",
+        "test/datastore.cpp",
+        "test/pestdata.h",
+        "test/pestdata.cpp",
+        "test/pestdashboard.h",
+        "test/pestdashboard.cpp",
+        "test/scheduledialog.h",
+        "test/schedulestore.h",
+        "test/schedulestore.cpp",
+        "test/thresholddialog.h",
+        "test/thresholddialog.cpp",
+        "test/rknn_yolo_server.py"
       ]
     }
   },
