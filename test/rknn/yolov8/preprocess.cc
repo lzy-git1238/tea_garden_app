@@ -41,6 +41,7 @@ void letterbox(const cv::Mat &image, cv::Mat &padded_image, BOX_RECT &pads, cons
     cv::copyMakeBorder(resized_image, padded_image, pads.top, pads.bottom, pads.left, pads.right, cv::BORDER_CONSTANT, pad_color);
 }
 
+#ifdef __aarch64__
 int resize_rga(rga_buffer_t &src, rga_buffer_t &dst, const cv::Mat &image, cv::Mat &resized_image, const cv::Size &target_size)
 {
     im_rect src_rect;
