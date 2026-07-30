@@ -158,7 +158,8 @@ QImage SrtVideoStreamer::latestFrame() const {
     if (m_resWidth <= 0 || m_resHeight <= 0)
         return QImage();
 
-    // RGA 硬件 NV12 → RGB888
+#ifdef __aarch64__
+    // RGA 硬件 NV12 → RGB888（ARM 板端）
     rga_buffer_t src = wrapbuffer_virtualaddr(
         (void*)m_latestFrameRaw.constData(),
         m_resWidth, m_resHeight, RK_FORMAT_YCbCr_420_SP);
@@ -167,16 +168,16 @@ QImage SrtVideoStreamer::latestFrame() const {
     rga_buffer_t dst = wrapbuffer_virtualaddr(
         (void*)rgbBuf.data(),
         m_resWidth, m_resHeight, RK_FORMAT_RGB_888);
-    im_rect src_rect = {0, 0, m_resWidth, m_resHeight};
-    im_rect dst_rect = {0, 0, m_resWidth, m_resHeight};
     IM_STATUS ret = imcvtcolor(src, dst, RK_FORMAT_YCbCr_420_SP, RK_FORMAT_RGB_888);
     if (ret != IM_STATUS_NOERROR && ret != 1) {
-        // RGA 有时返回非零但实际成功（imStrError 显示 "run successfully"）
         static int rgaErrCnt = 0;
         if (++rgaErrCnt <= 3)
             fprintf(stderr, "[SRT] RGA cvtcolor status=%d (%s)\n", ret, imStrError(ret));
     }
-
     return QImage((const uchar*)rgbBuf.constData(),
                   m_resWidth, m_resHeight, QImage::Format_RGB888).copy();
+#else
+    // x86 桌面端：无 SRT 流，返回空图不崩溃
+    return QImage();
+#endif
 }
