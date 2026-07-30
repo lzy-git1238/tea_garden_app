@@ -68,3 +68,4 @@ int resize_rga(rga_buffer_t &src, rga_buffer_t &dst, const cv::Mat &image, cv::M
     IM_STATUS STATUS = imresize(src, dst);
     return 0;
 }
+#endif
