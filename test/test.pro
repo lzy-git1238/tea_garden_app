@@ -29,10 +29,15 @@ SOURCES += \
     srtvideostreamer.cpp \
     teagardensystem.cpp \
     thresholddialog.cpp \
-    widget.cpp \
-    rknn/yolov8/rkYolov5s.cc \
-    rknn/yolov8/postprocess.cc \
-    rknn/yolov8/preprocess.cc
+    widget.cpp
+
+# ARM-only YOLO 推理源文件
+!equals(QMAKE_HOST.arch, x86_64) {
+    SOURCES += \
+        rknn/yolov8/rkYolov5s.cc \
+        rknn/yolov8/postprocess.cc \
+        rknn/yolov8/preprocess.cc
+}
 
 HEADERS += \
     chartdashboard.h \
