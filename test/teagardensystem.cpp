@@ -141,6 +141,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
     });
     m_videoPullTimer->start();
 
+#ifdef __aarch64__
     // rknnPool 推理引擎（替代旧 YoloDetector），3 线程各绑一个 NPU 核
     QString modelPath = qEnvironmentVariable("TEA_YOLO_MODEL",
                                              "/home/elf/QTproject/test/model/best.rknn");
