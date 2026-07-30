@@ -180,6 +180,7 @@ TeaGardenSystem::TeaGardenSystem(QWidget *parent) : QWidget(parent) {
         }
     });
     m_yoloPullTimer->start();
+#endif
 
     // GPS 路径显示（持久订阅 ros2 topic echo，逐行解析）
     m_gpsProcess = new QProcess(this);
