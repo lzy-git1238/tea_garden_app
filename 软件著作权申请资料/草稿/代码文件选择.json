@@ -53,6 +53,15 @@
       "model_reason": "核心架构声明：此头文件声明了系统全部200+成员变量和50+方法，是理解整个软件架构和模块间关系的最关键文件"
     },
     {
+      "path": "test/teagardensystem.cpp",
+      "selected": true,
+      "line_count": 2631,
+      "priority": 100,
+      "selection_tier": "frontend",
+      "evidence": "主系统类完整实现：三栏面板UI构建(setupUI)、8张传感器数据卡片创建(createDataCard)、LoRa数据接收与解析(onLoraData)、视频显示Timer(onVideoFrame)、YOLO推理结果处理(onYoloResults: 画框+写库+地图标注去重+GPS关联)、灌溉泵/驱虫灯控制(onPumpToggled/onLampToggled+LoRa下行+指令防抖)、定时调度检查(checkSchedules+流量卡片刷新)、华为云IoT命令接收(onIotCommand)、DeepSeek AI对话(handleChat+requestAIAnalysis+语音录音转文字)、高德地图WebEngine设置(setupMapView+病虫害JS注入+renderProcessTerminated崩溃自动恢复)、SRT视频流集成(拉取模式+m_videoPullTimer/m_roverPullTimer/m_yoloPullTimer)、天气预警(refreshWeatherAlert+24h逐时预报弹窗)、日间/夜间主题切换(toggleTheme+applyTheme)、系统托盘(阈值超限弹泡告警)、GPS路径绘制(drawDronePath)、Excel导出",
+      "model_reason": "核心实现：系统最核心的2613行主类实现，涵盖UI构建、数据流处理、设备控制、AI集成、地图交互、视频管线、定时调度等全部业务逻辑。这是最能体现实软件真实功能和运行逻辑的文件，用户已明确要求加入。"
+    },
+    {
       "path": "test/rovercontrolpanel.h",
       "selected": true,
       "line_count": 67,
