@@ -74,8 +74,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv4
 
-# ARM-only 运行时库（x86 上文件不存在自动跳过）
-exists($$PWD/../lib/librknnrt.so) {
+# ARM-only 运行时库
+!equals(QMAKE_HOST.arch, x86_64) {
     LIBS += -L$$PWD/../lib -lrknnrt -lrga
 }
 INCLUDEPATH += $$PWD $$PWD/rknn/yolov8
