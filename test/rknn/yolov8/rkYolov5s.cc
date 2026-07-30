@@ -227,23 +227,19 @@ cv::Mat rkYolov5s::infer(cv::Mat &orig_img)
     // 图像缩放/Image scaling
     if (img_width != width || img_height != height)
     {
-        // rga
+#ifdef __aarch64__
         rga_buffer_t src;
         rga_buffer_t dst;
         memset(&src, 0, sizeof(src));
         memset(&dst, 0, sizeof(dst));
         ret = resize_rga(src, dst, img, resized_img, target_size);
-        if (ret != 0)
-        {
+        if (ret != 0) {
             fprintf(stderr, "resize with rga error\n");
         }
-        /*********
-        // opencv
+#else
         float min_scale = std::min(scale_w, scale_h);
-        scale_w = min_scale;
-        scale_h = min_scale;
         letterbox(img, resized_img, pads, min_scale, target_size);
-        *********/
+#endif
         inputs[0].buf = resized_img.data;
     }
     else
