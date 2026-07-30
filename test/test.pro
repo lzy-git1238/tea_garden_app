@@ -74,8 +74,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += opencv4
 
-# RKNN 运行时库 (ARM 板端 only)
-unix:!macx: LIBS += -lrga
-contains(QMAKE_HOST.arch, aarch64): LIBS += -L$$PWD/../lib -lrknnrt
+# ARM-only 运行时库
+!contains(QT_ARCH, x86_64)|!contains(QT_ARCH, i386) {
+    LIBS += -L$$PWD/../lib -lrknnrt -lrga
+}
 INCLUDEPATH += $$PWD $$PWD/rknn/yolov8
 unix:!macx: INCLUDEPATH += /usr/include/rga
