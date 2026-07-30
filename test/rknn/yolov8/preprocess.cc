@@ -13,9 +13,11 @@
 // limitations under the License.
 
 #include <stdio.h>
+#include "opencv2/core/core.hpp"
+#ifdef __aarch64__
 #include "im2d.h"
 #include "rga.h"
-#include "opencv2/core/core.hpp"
+#endif
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "postprocess.h"
