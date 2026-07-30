@@ -1,0 +1,46 @@
+{
+  "project_root": "/home/lzy/文档/QTproject",
+  "project_name": "QTproject",
+  "software_name_candidate": "QTproject",
+  "package": {
+    "name": "",
+    "path": "",
+    "version": "V1.0",
+    "scripts": {},
+    "dependency_names": []
+  },
+  "frameworks": [],
+  "language": "Python、Shell",
+  "source": {
+    "file_count": 8,
+    "line_count": 790,
+    "total_file_count": 8,
+    "total_line_count": 790,
+    "extension_counts": {
+      ".html": 2,
+      ".py": 3,
+      ".sh": 3
+    },
+    "category_counts": {
+      "source": 8
+    },
+    "categorized_files": {
+      "source": [
+        "build-desktop-Debug/amap_view.html",
+        "test/gps_bridge.py",
+        "test/start_yolo_server.sh",
+        "test/rknn_yolo_server.py",
+        "test/run_test.sh",
+        "test/run_on_board.sh",
+        "test/web/amap_view.html",
+        "docs/gemini-code-1780938750949.py"
+      ]
+    }
+  },
+  "routes": [
+    "/"
+  ],
+  "readme_excerpt": "",
+  "run_command_candidates": [],
+  "feature_candidates": []
+}
