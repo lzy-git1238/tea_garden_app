@@ -25,8 +25,10 @@
 #include <memory>
 
 #include "loramanager.h"
+#ifdef __aarch64__
 #include "rknnPool.hpp"
 #include "rkYolov5s.hpp"
+#endif
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QtCharts/QChartView>
